@@ -1,0 +1,41 @@
+package com.sldlt.entity;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public class NAVPSEntry {
+
+    private String fund;
+    private LocalDate date;
+    private BigDecimal value;
+
+    public String getFund() {
+        return fund;
+    }
+
+    public void setFund(String fund) {
+        this.fund = fund;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public BigDecimal getValue() {
+        return value;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return fund + " " + date.toString() + " " + value.toPlainString();
+    }
+
+}
