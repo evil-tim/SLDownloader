@@ -1,5 +1,6 @@
 package com.sldlt.scheduled;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +24,9 @@ public class DownloaderScheduledTask {
     @Autowired
     private NAVPSService navpsService;
 
-    @Scheduled(fixedRate = 10000) // 21600000)
+    @Scheduled(fixedRate = 30000) // 21600000)
     public void run() {
+        LOG.debug("Running downloader for " + LocalDateTime.now().toString());
         List<NAVPSEntryDto> allNavpsList = navpsDownloader.findAvailableFunds().stream()
                 .map(fundName -> navpsDownloader.fetchNAVPSFromPage(fundName)).flatMap(List::stream)
                 .collect(Collectors.toList());

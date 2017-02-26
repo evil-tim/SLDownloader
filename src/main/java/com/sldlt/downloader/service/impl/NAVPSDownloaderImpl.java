@@ -47,10 +47,12 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
     @Override
     public List<String> findAvailableFunds() {
         try {
-            return Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
+            List<String> result = Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
                     .filter(element -> element.attr("name").equals(FUND_NAME_FIELD_NAME)).findFirst()
                     .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream()
                     .map(element -> element.attr("value")).collect(Collectors.toList());
+            LOG.debug(result);
+            return result;
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -60,7 +62,7 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
     @Override
     public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo) {
         try {
-            return Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund)
+            List<NAVPSEntryDto> result = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund)
                     .data(FROM_MONTH_FIELD_NAME, "" + limitFrom.getMonthValue())
                     .data(FROM_DAY_FIELD_NAME, "" + limitFrom.getDayOfMonth())
                     .data(FROM_YEAR_FIELD_NAME, "" + limitFrom.getYear())
@@ -75,7 +77,8 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
                         entry.setValue(new BigDecimal(cells.get(3).text().trim()));
                         return entry;
                     }).collect(Collectors.toList());
-
+            LOG.debug(result);
+            return result;
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }
