@@ -24,7 +24,7 @@ public class NAVPSEntry implements Serializable {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 6)
     private BigDecimal value;
 
     public String getFund() {
