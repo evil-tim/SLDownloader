@@ -24,7 +24,7 @@ public class DownloaderScheduledTask {
     @Autowired
     private NAVPSService navpsService;
 
-    @Scheduled(fixedRate = 30000) // 21600000)
+    @Scheduled(fixedRate = 21600000)
     public void run() {
         LOG.debug("Running downloader for " + LocalDateTime.now().toString());
         List<NAVPSEntryDto> allNavpsList = navpsDownloader.findAvailableFunds().stream()
