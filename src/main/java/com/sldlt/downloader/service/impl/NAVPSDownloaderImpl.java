@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.sldlt.downloader.service.NAVPSDownloader;
-import com.sldlt.entity.NAVPSEntry;
+import com.sldlt.navps.dto.NAVPSEntryDto;
 
 @Service
 public class NAVPSDownloaderImpl implements NAVPSDownloader {
@@ -47,7 +47,7 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
     @Override
     public List<String> findAvailableFunds() {
         try {
-            return Jsoup.connect(fundsUrl).get().getElementsByTag("select").stream()
+            return Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
                     .filter(element -> element.attr("name").equals(FUND_NAME_FIELD_NAME)).findFirst()
                     .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream()
                     .map(element -> element.attr("value")).collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
     }
 
     @Override
-    public List<NAVPSEntry> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo) {
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo) {
         try {
             return Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund)
                     .data(FROM_MONTH_FIELD_NAME, "" + limitFrom.getMonthValue())
@@ -66,10 +66,10 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
                     .data(FROM_YEAR_FIELD_NAME, "" + limitFrom.getYear())
                     .data(TO_MONTH_FIELD_NAME, "" + limitTo.getMonthValue())
                     .data(TO_DAY_FIELD_NAME, "" + limitTo.getDayOfMonth())
-                    .data(TO_YEAR_FIELD_NAME, "" + limitTo.getYear()).post().getElementsByTag("table").get(2)
-                    .getElementsByTag("tr").stream().skip(2).map(row -> {
+                    .data(TO_YEAR_FIELD_NAME, "" + limitTo.getYear()).timeout(60000).post().getElementsByTag("table")
+                    .get(2).getElementsByTag("tr").stream().skip(2).map(row -> {
                         Elements cells = row.getElementsByTag("td");
-                        NAVPSEntry entry = new NAVPSEntry();
+                        NAVPSEntryDto entry = new NAVPSEntryDto();
                         entry.setFund(fund);
                         entry.setDate(LocalDate.parse(cells.get(1).text().trim(), format));
                         entry.setValue(new BigDecimal(cells.get(3).text().trim()));
@@ -83,7 +83,7 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
     }
 
     @Override
-    public List<NAVPSEntry> fetchNAVPSFromPage(String fund) {
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund) {
         LocalDate currentDate = LocalDate.now();
         return fetchNAVPSFromPage(fund, currentDate, currentDate);
     }

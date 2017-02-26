@@ -9,7 +9,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.sldlt.downloader.service.NAVPSDownloader;
-import com.sldlt.entity.NAVPSEntry;
+import com.sldlt.navps.dto.NAVPSEntryDto;
+import com.sldlt.navps.service.NAVPSService;
 
 @Component
 public class DownloaderScheduledTask {
@@ -19,12 +20,15 @@ public class DownloaderScheduledTask {
     @Autowired
     private NAVPSDownloader navpsDownloader;
 
+    @Autowired
+    private NAVPSService navpsService;
+
     @Scheduled(fixedRate = 10000) // 21600000)
     public void run() {
-        List<NAVPSEntry> allNavpsList = navpsDownloader.findAvailableFunds().stream()
+        List<NAVPSEntryDto> allNavpsList = navpsDownloader.findAvailableFunds().stream()
                 .map(fundName -> navpsDownloader.fetchNAVPSFromPage(fundName)).flatMap(List::stream)
                 .collect(Collectors.toList());
-
+        navpsService.saveNAVPS(allNavpsList);
     }
 
 }

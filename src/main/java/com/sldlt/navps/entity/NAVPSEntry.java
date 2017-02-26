@@ -1,4 +1,4 @@
-package com.sldlt.entity;
+package com.sldlt.navps.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

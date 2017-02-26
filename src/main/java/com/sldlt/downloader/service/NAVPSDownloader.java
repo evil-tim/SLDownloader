@@ -3,14 +3,14 @@ package com.sldlt.downloader.service;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.sldlt.entity.NAVPSEntry;
+import com.sldlt.navps.dto.NAVPSEntryDto;
 
 public interface NAVPSDownloader {
 
     public List<String> findAvailableFunds();
 
-    public List<NAVPSEntry> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo);
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo);
 
-    public List<NAVPSEntry> fetchNAVPSFromPage(String fund);
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund);
 
 }
