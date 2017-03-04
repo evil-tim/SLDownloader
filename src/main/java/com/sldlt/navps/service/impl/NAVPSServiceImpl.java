@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,15 @@ public class NAVPSServiceImpl implements NAVPSService {
                 return mapper.map(source, NAVPSEntryDto.class);
             }
         });
+    }
+
+    @Override
+    public List<NAVPSEntryDto> listAllNAVPS(String fund) {
+        BooleanBuilder predicate = new BooleanBuilder();
+        predicate.and(nAVPSEntry.fund.eq(fund));
+        return StreamSupport
+                .stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
+                .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.toList());
     }
 
 }

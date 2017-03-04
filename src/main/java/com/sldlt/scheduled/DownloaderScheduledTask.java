@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.sldlt.downloader.service.NAVPSDownloader;
 import com.sldlt.navps.dto.NAVPSEntryDto;
+import com.sldlt.navps.service.FundService;
 import com.sldlt.navps.service.NAVPSService;
 
 @Component
@@ -22,13 +23,17 @@ public class DownloaderScheduledTask {
     private NAVPSDownloader navpsDownloader;
 
     @Autowired
+    private FundService fundService;
+
+    @Autowired
     private NAVPSService navpsService;
 
-    @Scheduled(fixedRate = 21600000)
+    @Scheduled(cron = "0 0 0/2 * * ?")
     public void run() {
         LOG.debug("Running downloader for " + LocalDateTime.now().toString());
         List<NAVPSEntryDto> allNavpsList = navpsDownloader.findAvailableFunds().stream()
-                .map(fundName -> navpsDownloader.fetchNAVPSFromPage(fundName)).flatMap(List::stream)
+                .map(fund -> fundService.saveFund(fund).getCode())
+                .map(fundCode -> navpsDownloader.fetchNAVPSFromPage(fundCode)).flatMap(List::stream)
                 .collect(Collectors.toList());
         navpsService.saveNAVPS(allNavpsList);
     }

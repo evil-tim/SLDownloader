@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.sldlt.downloader.service.NAVPSDownloader;
+import com.sldlt.navps.dto.FundDto;
 import com.sldlt.navps.dto.NAVPSEntryDto;
 
 @Service
@@ -45,12 +46,16 @@ public class NAVPSDownloaderImpl implements NAVPSDownloader {
     private String navpsUrl;
 
     @Override
-    public List<String> findAvailableFunds() {
+    public List<FundDto> findAvailableFunds() {
         try {
-            List<String> result = Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
+            List<FundDto> result = Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
                     .filter(element -> element.attr("name").equals(FUND_NAME_FIELD_NAME)).findFirst()
-                    .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream()
-                    .map(element -> element.attr("value")).collect(Collectors.toList());
+                    .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream().map(element -> {
+                        FundDto fund = new FundDto();
+                        fund.setCode(element.attr("value"));
+                        fund.setName(element.text().trim());
+                        return fund;
+                    }).collect(Collectors.toList());
             LOG.debug(result);
             return result;
         } catch (IOException e) {

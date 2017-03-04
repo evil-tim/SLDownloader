@@ -3,10 +3,15 @@ package com.sldlt.navps.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class NAVPSEntryDto {
 
     private String fund;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
+
     private BigDecimal value;
 
     public String getFund() {
