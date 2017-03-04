@@ -3,6 +3,9 @@
 <link rel="stylesheet" type="text/css"
   href="/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css"
 ></link>
+<link rel="stylesheet" type="text/css"
+  href="/webjars/bootstrap-select/1.12.2/dist/css/bootstrap-select.min.css"
+></link>
 </head>
 <body class="container">
   <div class="row">
@@ -16,15 +19,20 @@
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
       <hr />
     </div>
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">put
-      content here</div>
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+      <select id="fundPicker" class="selectpicker" multiple="multiple" data-width="100%">
+      </select>
+    </div>
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6"></div>
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <hr />
+    </div>
   </div>
   <!-- Scripts -->
   <!-- google chart -->
   <script type="text/javascript"
     src="https://www.gstatic.com/charts/loader.js"
   ></script>
-  <script type="text/javascript" src="/js/chart.js"></script>
   <!-- webjars -->
   <script type="text/javascript"
     src="/webjars/jquery/3.1.1-1/jquery.min.js"
@@ -32,5 +40,10 @@
   <script type="text/javascript"
     src="/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js"
   ></script>
+  <script type="text/javascript"
+    src="/webjars/bootstrap-select/1.12.2/dist/js/bootstrap-select.min.js"
+  ></script>
+  <script type="text/javascript" src="/js/chart.js"></script>
+  <script type="text/javascript" src="/js/load.js"></script>
 </body>
 </html>

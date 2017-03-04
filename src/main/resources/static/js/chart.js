@@ -1,39 +1,100 @@
 google.charts.load('current', {
     'packages' : [ 'annotationchart' ]
 });
-google.charts.setOnLoadCallback(drawChart);
+google.charts.setOnLoadCallback(updateChart);
 
-function drawChart() {
+function updateChart(fundList) {
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Date');
-    data.addColumn('number', 'Kepler-22b mission');
-    data.addColumn('string', 'Kepler title');
-    data.addColumn('string', 'Kepler text');
-    data.addColumn('number', 'Gliese 163 mission');
-    data.addColumn('string', 'Gliese title');
-    data.addColumn('string', 'Gliese text');
-    data.addRows([
-            [ new Date(2314, 2, 15), 12400, undefined, undefined, 10645,
-                    undefined, undefined ],
-            [ new Date(2314, 2, 16), 24045, 'Lalibertines', 'First encounter',
-                    12374, undefined, undefined ],
-            [ new Date(2314, 2, 17), 35022, 'Lalibertines',
-                    'They are very tall', 15766, 'Gallantors',
-                    'First Encounter' ],
-            [ new Date(2314, 2, 18), 12284, 'Lalibertines',
-                    'Attack on our crew!', 34334, 'Gallantors',
-                    'Statement of shared principles' ],
-            [ new Date(2314, 2, 19), 8476, 'Lalibertines', 'Heavy casualties',
-                    66467, 'Gallantors', 'Mysteries revealed' ],
-            [ new Date(2314, 2, 20), 0, 'Lalibertines', 'All crew lost', 3,
-                    'Gallantors', 'Omniscience achieved' ] ]);
+    if (fundList && fundList.length > 0) {
+        for (var i = 0; i < fundList.length; i++) {
+            data.addColumn('number', fundList[i].name);
+        }
+        var deferreds = [];
+        for (var i = 0; i < fundList.length; i++) {
+            deferreds.push(getNAVPSDataDeferred(fundList[i].code));
+        }
+        $.when.apply($, deferreds).then(function() {
+            buildDataRows(fundList.length, arguments, data)
+            drawChart(data);
+        });
+    } else {
+        data.addColumn('number', 'Value');
+        data.addRows([ [ new Date(), 0 ] ]);
+        drawChart(data);
+    }
+}
 
+function drawChart(data) {
     var chart = new google.visualization.AnnotationChart(document
             .getElementById('chart_div'));
-
     var options = {
         displayAnnotations : false
     };
-
     chart.draw(data, options);
+    enableFundPicker();
+}
+
+function getNAVPSDataDeferred(code) {
+    return $.ajax({
+        url : "/navps/all",
+        data : {
+            fund : code
+        }
+    });
+}
+
+function buildDataRows(count, arguments, data) {
+    // fix arguments if only 1 result
+    if (count == 1) {
+        arguments = {
+            0 : arguments
+        };
+    }
+
+    var hasData = false;
+    var fundCtrs = new Array(count).fill(0);
+    var rows = [];
+    // cycle through all result items
+    do {
+        // check if args still has data
+        hasData = false;
+        for (var i = 0; i < count; i++) {
+            if (arguments[i] && arguments[i][0] && arguments[i][0][fundCtrs[i]]) {
+                hasData = true;
+            }
+        }
+        if (hasData) {
+            // convert all dates of current entries
+            var dateArr = [];
+            for (var i = 0; i < count; i++) {
+                if (arguments[i] && arguments[i][0]
+                        && arguments[i][0][fundCtrs[i]]) {
+                    arguments[i][0][fundCtrs[i]].date = new Date(
+                            arguments[i][0][fundCtrs[i]].date);
+                    dateArr.push(arguments[i][0][fundCtrs[i]].date);
+                }
+            }
+            // get latest date
+            var maxDate = new Date(Math.max.apply(null, dateArr));
+            // build data table row
+            var row = [];
+            row.push(maxDate);
+            for (var i = 0; i < count; i++) {
+                if (arguments[i]
+                        && arguments[i][0]
+                        && arguments[i][0][fundCtrs[i]]
+                        && arguments[i][0][fundCtrs[i]].date.getTime() === maxDate
+                                .getTime()) {
+                    // add entries that have the latest dates to the data table
+                    row.push(arguments[i][0][fundCtrs[i]].value);
+                    fundCtrs[i]++;
+                } else {
+                    row.push(null);
+                }
+            }
+            rows.push(row);
+        }
+    } while (hasData);
+    data.addRows(rows);
 }
