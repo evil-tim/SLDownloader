@@ -1,7 +1,6 @@
 package com.sldlt.scheduled;
 
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -35,8 +34,7 @@ public class DownloaderScheduledTask {
         LOG.debug("Running downloader for " + LocalDateTime.now().toString());
         List<NAVPSEntryDto> allNavpsList = navpsDownloader.findAvailableFunds().stream()
                 .map(fund -> fundService.saveFund(fund).getCode()).map(fundCode -> {
-                    List<NAVPSEntryDto> result = navpsDownloader.fetchNAVPSFromPage(fundCode, LocalDate.of(2017, 2, 1),
-                            LocalDate.of(2017, 2, 9));
+                    List<NAVPSEntryDto> result = navpsDownloader.fetchNAVPSFromPage(fundCode);
                     try {
                         TimeUnit.SECONDS.sleep(5);
                     } catch (InterruptedException e) {
