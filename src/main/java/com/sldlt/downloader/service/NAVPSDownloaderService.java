@@ -6,7 +6,7 @@ import java.util.List;
 import com.sldlt.navps.dto.FundDto;
 import com.sldlt.navps.dto.NAVPSEntryDto;
 
-public interface NAVPSDownloader {
+public interface NAVPSDownloaderService {
 
     public List<FundDto> findAvailableFunds();
 

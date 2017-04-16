@@ -14,14 +14,14 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.sldlt.downloader.service.NAVPSDownloader;
+import com.sldlt.downloader.service.NAVPSDownloaderService;
 import com.sldlt.navps.dto.FundDto;
 import com.sldlt.navps.dto.NAVPSEntryDto;
 
 @Service
-public class NAVPSDownloaderImpl implements NAVPSDownloader {
+public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
-    private static Logger LOG = Logger.getLogger(NAVPSDownloaderImpl.class);
+    private static Logger LOG = Logger.getLogger(NAVPSDownloaderServiceImpl.class);
 
     private static final String TO_YEAR_FIELD_NAME = "toYear";
 

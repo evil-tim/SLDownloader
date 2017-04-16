@@ -1,0 +1,76 @@
+package com.sldlt.downloader.entity;
+
+import static com.sldlt.downloader.TaskStatus.PENDING;
+
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+import com.sldlt.downloader.TaskStatus;
+
+@Entity
+public class Task {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false)
+    private LocalDate dateFrom;
+
+    @Column(nullable = false)
+    private LocalDate dateTo;
+
+    @Column(nullable = false)
+    private String fund;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status = PENDING;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDate getDateFrom() {
+        return dateFrom;
+    }
+
+    public void setDateFrom(LocalDate dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    public LocalDate getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(LocalDate dateTo) {
+        this.dateTo = dateTo;
+    }
+
+    public String getFund() {
+        return fund;
+    }
+
+    public void setFund(String fund) {
+        this.fund = fund;
+    }
+
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
+}
