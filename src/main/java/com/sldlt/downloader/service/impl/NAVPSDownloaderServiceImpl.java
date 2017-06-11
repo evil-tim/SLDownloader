@@ -65,7 +65,8 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     }
 
     @Override
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo) {
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo)
+            throws IOException {
         try {
             List<NAVPSEntryDto> result = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund)
                     .data(FROM_MONTH_FIELD_NAME, "" + limitFrom.getMonthValue())
@@ -83,15 +84,21 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                         return entry;
                     }).collect(Collectors.toList());
             LOG.debug(result);
+            result.stream().filter(entry -> entry.getDate().isBefore(limitFrom) || entry.getDate().isAfter(limitTo))
+                    .findAny().ifPresent(entry -> {
+                        String message = "Found out of range entry - " + entry;
+                        LOG.error(message);
+                        throw new RuntimeException(message);
+                    });
             return result;
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
+            throw e;
         }
-        return Collections.emptyList();
     }
 
     @Override
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund) {
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund) throws IOException {
         LocalDate currentDate = LocalDate.now();
         return fetchNAVPSFromPage(fund, currentDate, currentDate);
     }

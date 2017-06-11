@@ -32,8 +32,9 @@ public class TaskManager {
     @Autowired
     private NAVPSDownloaderService navpsDownloader;
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(fixedRate = 7200000)
     public void run() {
+        LOG.info("regenerating task list");
         getFunds();
         setupPastTasks();
         setupCurrentTask();
@@ -53,14 +54,25 @@ public class TaskManager {
         LocalDate minDate = LocalDate.parse(minDateStr);
         LocalDate dateFrom = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
         LocalDate dateTo = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 7);
-        List<FundDto> taskList = fundService.listAllFunds();
+        List<FundDto> fundList = fundService.listAllFunds();
 
         while (dateFrom.isAfter(minDate)) {
             final LocalDate internalDateFrom = dateFrom = dateFrom.minusDays(7);
             final LocalDate internalDateTo = dateTo = dateTo.minusDays(7);
-            taskList.forEach(fund -> {
+            fundList.forEach(fund -> {
                 taskService.createTask(fund.getCode(), internalDateFrom, internalDateTo);
             });
+        }
+
+        LocalDate dateFromSingle = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
+        LocalDate dateToSingle = LocalDate.now().minusDays(1);
+
+        while (!dateFromSingle.isAfter(dateToSingle)) {
+            final LocalDate internalDateFrom = dateFromSingle;
+            fundList.forEach(fund -> {
+                taskService.createTask(fund.getCode(), internalDateFrom, internalDateFrom);
+            });
+            dateFromSingle = dateFromSingle.plusDays(1);
         }
     }
 }
