@@ -17,11 +17,13 @@ function updateChart(fundList) {
         $.when.apply($, deferreds).then(function() {
             buildDataRows(fundList.length, arguments, data)
             drawChart(data);
+            enableFundPicker();
         });
     } else {
         data.addColumn('number', 'Value');
         data.addRows([ [ new Date(), 0 ] ]);
         drawChart(data);
+        enableFundPicker();
     }
 }
 
@@ -32,7 +34,6 @@ function drawChart(data) {
         displayAnnotations : false
     };
     chart.draw(data, options);
-    enableFundPicker();
 }
 
 function getNAVPSDataDeferred(code) {
