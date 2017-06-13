@@ -37,24 +37,29 @@ public class TaskManager {
         LOG.info("regenerating task list");
         getFunds();
         setupPastTasks();
-        setupCurrentTask();
     }
 
     private void getFunds() {
         navpsDownloader.findAvailableFunds().stream().forEach(fund -> fundService.saveFund(fund));
     }
 
-    private void setupCurrentTask() {
-        fundService.listAllFunds().forEach(fund -> {
-            taskService.createTask(fund.getCode(), LocalDate.now(), LocalDate.now());
-        });
-    }
-
     private void setupPastTasks() {
+        List<FundDto> fundList = fundService.listAllFunds();
+
+        LocalDate dateFromSingle = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
+        LocalDate dateToSingle = LocalDate.now().minusDays(1);
+
+        while (!dateToSingle.isBefore(dateFromSingle)) {
+            final LocalDate internalDateTo = dateToSingle;
+            fundList.forEach(fund -> {
+                taskService.createTask(fund.getCode(), internalDateTo, internalDateTo);
+            });
+            dateToSingle = dateToSingle.minusDays(1);
+        }
+
         LocalDate minDate = LocalDate.parse(minDateStr);
         LocalDate dateFrom = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
         LocalDate dateTo = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 7);
-        List<FundDto> fundList = fundService.listAllFunds();
 
         while (dateFrom.isAfter(minDate)) {
             final LocalDate internalDateFrom = dateFrom = dateFrom.minusDays(7);
@@ -64,15 +69,5 @@ public class TaskManager {
             });
         }
 
-        LocalDate dateFromSingle = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
-        LocalDate dateToSingle = LocalDate.now().minusDays(1);
-
-        while (!dateFromSingle.isAfter(dateToSingle)) {
-            final LocalDate internalDateFrom = dateFromSingle;
-            fundList.forEach(fund -> {
-                taskService.createTask(fund.getCode(), internalDateFrom, internalDateFrom);
-            });
-            dateFromSingle = dateFromSingle.plusDays(1);
-        }
     }
 }
