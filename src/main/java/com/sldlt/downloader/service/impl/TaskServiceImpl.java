@@ -53,7 +53,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> getExecutableTasks(int count) {
-        Sort sort = new Sort(new Order(DESC, "status"), new Order(DESC, "dateTo"));
+        Sort sort = new Sort(new Order(DESC, "dateTo"));
         PageRequest pageable = new PageRequest(0, count, sort);
         return taskRepository.findAll(task.status.in(PENDING, FAILED), pageable).getContent().stream()
                 .map(task -> mapper.map(task, TaskDto.class)).collect(Collectors.toList());
