@@ -30,7 +30,7 @@ public class TaskExecutor {
     @Autowired
     private NAVPSTaskExecutorService navpsTaskExecutorService;
 
-    @Scheduled(initialDelay = 120000, fixedRate = 5000)
+    @Scheduled(initialDelay = 120000, fixedRate = 1000)
     public void run() {
         LOG.info("Running executor");
         if (runningTaskIdSet.size() >= maxRunningTasks) {
