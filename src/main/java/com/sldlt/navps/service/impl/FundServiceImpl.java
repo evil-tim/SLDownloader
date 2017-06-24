@@ -43,4 +43,9 @@ public class FundServiceImpl implements FundService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public FundDto getFundByCode(String code) {
+        return mapper.map(fundRepository.findOneByCode(code), FundDto.class);
+    }
+
 }

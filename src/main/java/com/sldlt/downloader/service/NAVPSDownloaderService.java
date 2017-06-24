@@ -11,9 +11,9 @@ public interface NAVPSDownloaderService {
 
     public List<FundDto> findAvailableFunds();
 
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo)
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund, LocalDate limitFrom, LocalDate limitTo)
             throws IOException;
 
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund) throws IOException;
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund) throws IOException;
 
 }

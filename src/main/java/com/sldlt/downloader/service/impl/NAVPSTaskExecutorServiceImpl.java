@@ -16,6 +16,7 @@ import com.sldlt.downloader.service.NAVPSDownloaderService;
 import com.sldlt.downloader.service.NAVPSTaskExecutorService;
 import com.sldlt.downloader.service.TaskService;
 import com.sldlt.navps.dto.NAVPSEntryDto;
+import com.sldlt.navps.service.FundService;
 import com.sldlt.navps.service.NAVPSService;
 
 @Service
@@ -33,11 +34,14 @@ public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private FundService fundService;
+
     @Override
     public TaskStatus executeTask(TaskDto task) {
         try {
-            List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(task.getFund(), task.getDateFrom(),
-                    task.getDateTo());
+            List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(
+                    fundService.getFundByCode(task.getFund()), task.getDateFrom(), task.getDateTo());
             navpsService.saveNAVPS(navpsList);
             taskService.updateTaskStatus(task.getId(), SUCCESS);
             return SUCCESS;

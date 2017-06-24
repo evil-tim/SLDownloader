@@ -10,9 +10,11 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.sldlt.downloader.service.NAVPSDownloaderService;
 import com.sldlt.navps.dto.FundDto;
@@ -65,20 +67,36 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     }
 
     @Override
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund, LocalDate limitFrom, LocalDate limitTo)
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund, LocalDate limitFrom, LocalDate limitTo)
             throws IOException {
         try {
-            List<NAVPSEntryDto> result = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund)
+            Document document = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund.getCode())
                     .data(FROM_MONTH_FIELD_NAME, "" + limitFrom.getMonthValue())
                     .data(FROM_DAY_FIELD_NAME, "" + limitFrom.getDayOfMonth())
                     .data(FROM_YEAR_FIELD_NAME, "" + limitFrom.getYear())
                     .data(TO_MONTH_FIELD_NAME, "" + limitTo.getMonthValue())
                     .data(TO_DAY_FIELD_NAME, "" + limitTo.getDayOfMonth())
-                    .data(TO_YEAR_FIELD_NAME, "" + limitTo.getYear()).timeout(60000).post().getElementsByTag("table")
-                    .get(2).getElementsByTag("tr").stream().skip(2).map(row -> {
+                    .data(TO_YEAR_FIELD_NAME, "" + limitTo.getYear()).timeout(60000).post();
+
+            String documentFund = null;
+            String documentFundStr = document.getElementsByTag("table").get(1).getElementsByTag("b").html();
+            if (StringUtils.hasText(documentFundStr)) {
+                String[] documentFundStrParts = documentFundStr.split("<br />");
+                if (documentFundStrParts.length > 1) {
+                    documentFund = documentFundStrParts[0].trim();
+                }
+            }
+            if (!fund.getName().toUpperCase().contains(documentFund)) {
+                String message = "Found mismatched entry - [" + documentFund + "] should be ["
+                        + fund.getName().toUpperCase() + "]";
+                throw new RuntimeException(message);
+            }
+
+            List<NAVPSEntryDto> result = document.getElementsByTag("table").get(2).getElementsByTag("tr").stream()
+                    .skip(2).map(row -> {
                         Elements cells = row.getElementsByTag("td");
                         NAVPSEntryDto entry = new NAVPSEntryDto();
-                        entry.setFund(fund);
+                        entry.setFund(fund.getCode());
                         entry.setDate(LocalDate.parse(cells.get(1).text().trim(), format));
                         entry.setValue(new BigDecimal(cells.get(3).text().trim()));
                         return entry;
@@ -87,18 +105,16 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
             result.stream().filter(entry -> entry.getDate().isBefore(limitFrom) || entry.getDate().isAfter(limitTo))
                     .findAny().ifPresent(entry -> {
                         String message = "Found out of range entry - " + entry;
-                        LOG.error(message);
                         throw new RuntimeException(message);
                     });
             return result;
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
             throw e;
         }
     }
 
     @Override
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(String fund) throws IOException {
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund) throws IOException {
         LocalDate currentDate = LocalDate.now();
         return fetchNAVPSFromPage(fund, currentDate, currentDate);
     }

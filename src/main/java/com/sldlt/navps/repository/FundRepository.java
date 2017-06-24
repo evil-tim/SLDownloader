@@ -9,4 +9,6 @@ import com.sldlt.navps.entity.Fund;
 @Component
 public interface FundRepository extends JpaRepository<Fund, Long>, QueryDslPredicateExecutor<Fund> {
 
+    Fund findOneByCode(String code);
+
 }

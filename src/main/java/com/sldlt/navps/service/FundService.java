@@ -10,4 +10,6 @@ public interface FundService {
 
     List<FundDto> listAllFunds();
 
+    FundDto getFundByCode(String code);
+
 }
