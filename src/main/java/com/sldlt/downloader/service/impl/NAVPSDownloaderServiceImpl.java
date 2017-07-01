@@ -111,7 +111,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                 documentFund = documentFundStrParts[0].trim();
             }
         }
-        if (!fund.getName().toUpperCase().contains(documentFund)) {
+        if (!StringUtils.hasText(documentFund) || !fund.getName().toUpperCase().contains(documentFund)) {
             String message = "Found mismatched entry - [" + documentFund + "] should be ["
                     + fund.getName().toUpperCase() + "]";
             throw new RuntimeException(message);
