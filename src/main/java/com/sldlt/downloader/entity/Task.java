@@ -3,6 +3,7 @@ package com.sldlt.downloader.entity;
 import static com.sldlt.downloader.TaskStatus.PENDING;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +33,12 @@ public class Task {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TaskStatus status = PENDING;
+
+    @Column(nullable = false)
+    private int attempts = 0;
+
+    @Column
+    private LocalDateTime nextAttemptAfter;
 
     public Long getId() {
         return id;
@@ -71,6 +78,22 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
+    }
+
+    public LocalDateTime getNextAttemptAfter() {
+        return nextAttemptAfter;
+    }
+
+    public void setNextAttemptAfter(LocalDateTime nextAttemptAfter) {
+        this.nextAttemptAfter = nextAttemptAfter;
     }
 
 }

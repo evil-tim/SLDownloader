@@ -43,11 +43,11 @@ public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
             List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(
                     fundService.getFundByCode(task.getFund()), task.getDateFrom(), task.getDateTo());
             navpsService.saveNAVPS(navpsList);
-            taskService.updateTaskStatus(task.getId(), SUCCESS);
+            taskService.updateTaskSucceeded(task.getId());
             return SUCCESS;
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
-            taskService.updateTaskStatus(task.getId(), FAILED);
+            taskService.updateTaskFailed(task.getId());
             return FAILED;
         }
     }

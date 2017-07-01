@@ -1,6 +1,7 @@
 package com.sldlt.downloader.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.sldlt.downloader.TaskStatus;
 
@@ -15,6 +16,10 @@ public class TaskDto {
     private String fund;
 
     private TaskStatus status;
+
+    private int attempts = 0;
+
+    private LocalDateTime nextAttemptAfter;
 
     public Long getId() {
         return id;
@@ -54,6 +59,22 @@ public class TaskDto {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
+    }
+
+    public LocalDateTime getNextAttemptAfter() {
+        return nextAttemptAfter;
+    }
+
+    public void setNextAttemptAfter(LocalDateTime nextAttemptAfter) {
+        this.nextAttemptAfter = nextAttemptAfter;
     }
 
     @Override

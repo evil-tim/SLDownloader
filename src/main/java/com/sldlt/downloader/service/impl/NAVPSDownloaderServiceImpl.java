@@ -78,19 +78,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                     .data(TO_DAY_FIELD_NAME, "" + limitTo.getDayOfMonth())
                     .data(TO_YEAR_FIELD_NAME, "" + limitTo.getYear()).timeout(60000).post();
 
-            String documentFund = null;
-            String documentFundStr = document.getElementsByTag("table").get(1).getElementsByTag("b").html();
-            if (StringUtils.hasText(documentFundStr)) {
-                String[] documentFundStrParts = documentFundStr.split("<br />");
-                if (documentFundStrParts.length > 1) {
-                    documentFund = documentFundStrParts[0].trim();
-                }
-            }
-            if (!fund.getName().toUpperCase().contains(documentFund)) {
-                String message = "Found mismatched entry - [" + documentFund + "] should be ["
-                        + fund.getName().toUpperCase() + "]";
-                throw new RuntimeException(message);
-            }
+            validateFundNameMatches(document, fund);
 
             List<NAVPSEntryDto> result = document.getElementsByTag("table").get(2).getElementsByTag("tr").stream()
                     .skip(2).map(row -> {
@@ -101,16 +89,48 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                         entry.setValue(new BigDecimal(cells.get(3).text().trim()));
                         return entry;
                     }).collect(Collectors.toList());
+
             LOG.debug(result);
-            result.stream().filter(entry -> entry.getDate().isBefore(limitFrom) || entry.getDate().isAfter(limitTo))
-                    .findAny().ifPresent(entry -> {
-                        String message = "Found out of range entry - " + entry;
-                        throw new RuntimeException(message);
-                    });
+
+            validateResultsNotEmpty(result);
+
+            validateResultsInRange(result, limitFrom, limitTo);
+
             return result;
         } catch (IOException e) {
             throw e;
         }
+    }
+
+    private void validateFundNameMatches(Document document, FundDto fund) {
+        String documentFund = null;
+        String documentFundStr = document.getElementsByTag("table").get(1).getElementsByTag("b").html();
+        if (StringUtils.hasText(documentFundStr)) {
+            String[] documentFundStrParts = documentFundStr.split("<br />");
+            if (documentFundStrParts.length > 1) {
+                documentFund = documentFundStrParts[0].trim();
+            }
+        }
+        if (!fund.getName().toUpperCase().contains(documentFund)) {
+            String message = "Found mismatched entry - [" + documentFund + "] should be ["
+                    + fund.getName().toUpperCase() + "]";
+            throw new RuntimeException(message);
+        }
+    }
+
+    private void validateResultsNotEmpty(List<NAVPSEntryDto> result) {
+        if (result == null || result.isEmpty()) {
+            String message = "No entries found";
+            throw new RuntimeException(message);
+        }
+    }
+
+    private void validateResultsInRange(List<NAVPSEntryDto> result, LocalDate limitFrom, LocalDate limitTo) {
+        result.stream().filter(entry -> entry.getDate().isBefore(limitFrom) || entry.getDate().isAfter(limitTo))
+                .findAny().ifPresent(entry -> {
+                    String message = "Found out of range entry - " + entry;
+                    throw new RuntimeException(message);
+                });
     }
 
     @Override
