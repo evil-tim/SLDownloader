@@ -100,6 +100,13 @@
       <artifactId>bootstrap-datepicker</artifactId>
       <version>1.6.4</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.webjars/datatables -->
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>datatables</artifactId>
+      <version>1.10.15</version>
+    </dependency>
+
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

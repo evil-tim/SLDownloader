@@ -3,14 +3,17 @@ package com.sldlt.downloader.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sldlt.downloader.TaskStatus;
 
 public class TaskDto {
 
     private Long id;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateFrom;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateTo;
 
     private String fund;

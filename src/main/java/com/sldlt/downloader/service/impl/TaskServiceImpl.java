@@ -15,11 +15,16 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.querydsl.core.BooleanBuilder;
+import com.sldlt.downloader.TaskStatus;
 import com.sldlt.downloader.dto.TaskDto;
 import com.sldlt.downloader.entity.Task;
 import com.sldlt.downloader.repository.TaskRepository;
@@ -56,9 +61,9 @@ public class TaskServiceImpl implements TaskService {
         Sort sort = new Sort(new Order(DESC, "dateTo"));
         PageRequest pageable = new PageRequest(0, count, sort);
         return taskRepository
-                .findAll(task.status.in(PENDING, FAILED).and(task.attempts.lt(taskMaxRetries)).and(
-                        task.nextAttemptAfter.isNull().or(task.nextAttemptAfter.before(LocalDateTime.now()))), pageable)
-                .getContent().stream().map(task -> mapper.map(task, TaskDto.class)).collect(Collectors.toList());
+                .findAll(task.status.in(PENDING, FAILED).and(task.attempts.lt(taskMaxRetries))
+                        .and(task.nextAttemptAfter.isNull().or(task.nextAttemptAfter.before(LocalDateTime.now()))), pageable)
+                .getContent().stream().map(item -> mapper.map(item, TaskDto.class)).collect(Collectors.toList());
     }
 
     @Override
@@ -80,6 +85,24 @@ public class TaskServiceImpl implements TaskService {
             taskRepository.save(task);
         });
 
+    }
+
+    @Override
+    public Page<TaskDto> listTasks(LocalDate date, String fund, TaskStatus status, Pageable pageable) {
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        if (date != null) {
+            predicate.and(task.dateFrom.loe(date));
+            predicate.and(task.dateTo.goe(date));
+        }
+        if (StringUtils.hasText(fund)) {
+            predicate.and(task.fund.eq(fund));
+        }
+        if (status != null) {
+            predicate.and(task.status.eq(status));
+        }
+
+        return taskRepository.findAll(predicate, pageable).map(item -> mapper.map(item, TaskDto.class));
     }
 
 }

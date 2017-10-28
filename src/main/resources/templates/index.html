@@ -6,8 +6,17 @@
 <link rel="stylesheet" type="text/css"
   href="/webjars/bootstrap-select/1.12.2/dist/css/bootstrap-select.min.css"
 ></link>
+<link rel="stylesheet" type="text/css"
+  href="/webjars/datatables/1.10.15/css/jquery.dataTables.min.css"
+></link>
+<link rel="stylesheet" type="text/css" href="/css/app.css"></link>
 </head>
 <body class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <h1>Graph</h1>
+    </div>
+  </div>
   <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
       <div id='chart_div'
@@ -34,6 +43,39 @@
       <hr />
     </div>
   </div>
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <h1>Running Tasks</h1>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12"></div>
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <hr />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <h1>All Tasks</h1>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <table id="allTasks"
+        class="table table-bordered table-condensed"
+      >
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Date From</th>
+            <th>Date To</th>
+            <th>Fund</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <hr />
+    </div>
+  </div>
   <!-- Scripts -->
   <!-- google chart -->
   <script type="text/javascript"
@@ -49,7 +91,11 @@
   <script type="text/javascript"
     src="/webjars/bootstrap-select/1.12.2/dist/js/bootstrap-select.min.js"
   ></script>
-  <script type="text/javascript" src="/js/chart.js"></script>
-  <script type="text/javascript" src="/js/load.js"></script>
+  <script type="text/javascript"
+    src="/webjars/datatables/1.10.15/js/jquery.dataTables.min.js"
+  ></script>
+  <script type="text/javascript" src="/js/fund_chart.js"></script>
+  <script type="text/javascript" src="/js/fund_picker.js"></script>
+  <script type="text/javascript" src="/js/all_tasks.js"></script>
 </body>
 </html>
