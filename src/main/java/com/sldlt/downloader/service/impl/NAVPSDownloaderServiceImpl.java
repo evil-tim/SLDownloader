@@ -67,8 +67,13 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     }
 
     @Override
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund, LocalDate limitFrom, LocalDate limitTo)
-            throws IOException {
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund) throws IOException {
+        LocalDate currentDate = LocalDate.now();
+        return fetchNAVPSFromPage(fund, currentDate, currentDate);
+    }
+
+    @Override
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund, LocalDate limitFrom, LocalDate limitTo) throws IOException {
         try {
             Document document = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund.getCode())
                     .data(FROM_MONTH_FIELD_NAME, "" + limitFrom.getMonthValue())
@@ -131,12 +136,6 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                     String message = "Found out of range entry - " + entry;
                     throw new RuntimeException(message);
                 });
-    }
-
-    @Override
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund) throws IOException {
-        LocalDate currentDate = LocalDate.now();
-        return fetchNAVPSFromPage(fund, currentDate, currentDate);
     }
 
 }
