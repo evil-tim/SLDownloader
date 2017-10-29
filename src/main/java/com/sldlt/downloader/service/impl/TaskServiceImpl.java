@@ -29,6 +29,8 @@ import com.sldlt.downloader.dto.TaskDto;
 import com.sldlt.downloader.entity.Task;
 import com.sldlt.downloader.repository.TaskRepository;
 import com.sldlt.downloader.service.TaskService;
+import com.sldlt.navps.dto.FundDto;
+import com.sldlt.navps.service.FundService;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -38,6 +40,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private FundService fundService;
 
     @Value("${task.maxRetries}")
     private long taskMaxRetries;
@@ -102,7 +107,18 @@ public class TaskServiceImpl implements TaskService {
             predicate.and(task.status.eq(status));
         }
 
-        return taskRepository.findAll(predicate, pageable).map(item -> mapper.map(item, TaskDto.class));
+        List<FundDto> funds = fundService.listAllFunds();
+
+        return taskRepository.findAll(predicate, pageable).map(item -> {
+            TaskDto mappedTask = mapper.map(item, TaskDto.class);
+            mappedTask.setRetryable(mappedTask.getAttempts() < taskMaxRetries);
+            mappedTask.setFundName(getFundName(funds, mappedTask.getFund()));
+            return mappedTask;
+        });
+    }
+
+    private String getFundName(List<FundDto> funds, String fundCode) {
+        return funds.stream().filter(fund -> fund.getCode().equals(fundCode)).findFirst().map(FundDto::getName).orElse("");
     }
 
 }

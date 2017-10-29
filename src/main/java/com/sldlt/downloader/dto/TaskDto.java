@@ -18,11 +18,16 @@ public class TaskDto {
 
     private String fund;
 
+    private String fundName;
+
     private TaskStatus status;
 
     private int attempts = 0;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime nextAttemptAfter;
+
+    private boolean retryable = true;
 
     public Long getId() {
         return id;
@@ -56,6 +61,14 @@ public class TaskDto {
         this.fund = fund;
     }
 
+    public String getFundName() {
+        return fundName;
+    }
+
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
+    }
+
     public TaskStatus getStatus() {
         return status;
     }
@@ -78,6 +91,14 @@ public class TaskDto {
 
     public void setNextAttemptAfter(LocalDateTime nextAttemptAfter) {
         this.nextAttemptAfter = nextAttemptAfter;
+    }
+
+    public boolean isRetryable() {
+        return retryable;
+    }
+
+    public void setRetryable(boolean retryable) {
+        this.retryable = retryable;
     }
 
     @Override
