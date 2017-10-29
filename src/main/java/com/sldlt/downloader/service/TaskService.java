@@ -21,4 +21,6 @@ public interface TaskService {
 
     Page<TaskDto> listTasks(LocalDate date, String fund, TaskStatus status, Pageable pageable);
 
+    List<TaskDto> listRunningTasks();
+
 }

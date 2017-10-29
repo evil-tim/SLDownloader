@@ -1,9 +1,6 @@
 package com.sldlt.scheduled;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,8 @@ public class TaskExecutor {
     @Value("${task.maxRunning}")
     private Integer maxRunningTasks;
 
-    private Set<Long> runningTaskIdSet = Collections.newSetFromMap(new ConcurrentHashMap<Long, Boolean>());
+    @Autowired
+    private RunningTaskHolder runningTaskHolder;
 
     @Autowired
     private TaskService taskService;
@@ -31,19 +29,19 @@ public class TaskExecutor {
     @Autowired
     private NAVPSTaskExecutorService navpsTaskExecutorService;
 
-    @Scheduled(initialDelay = 120000, fixedRate = 1000)
+    @Scheduled(initialDelay = 120000, fixedRate = 1500)
     public void run() {
         LOG.info("Running executor");
-        if (runningTaskIdSet.size() >= maxRunningTasks) {
+        if (runningTaskHolder.size() >= maxRunningTasks) {
             return;
         }
 
         List<TaskDto> tasks = taskService.getExecutableTasks(maxRunningTasks);
 
-        tasks.parallelStream().filter(task -> runningTaskIdSet.add(task.getId())).forEach(task -> {
+        tasks.parallelStream().filter(task -> runningTaskHolder.add(task.getId())).forEach(task -> {
             LOG.info("Executing " + task);
             navpsTaskExecutorService.executeTask(task);
-            runningTaskIdSet.remove(task.getId());
+            runningTaskHolder.remove(task.getId());
         });
     }
 }

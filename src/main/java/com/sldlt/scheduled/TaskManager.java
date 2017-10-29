@@ -1,5 +1,6 @@
 package com.sldlt.scheduled;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
 import java.util.List;
@@ -50,10 +51,13 @@ public class TaskManager {
         LocalDate dateToSingle = LocalDate.now().minusDays(1);
 
         while (!dateToSingle.isBefore(dateFromSingle)) {
-            final LocalDate internalDateTo = dateToSingle;
-            fundList.forEach(fund -> {
-                taskService.createTask(fund.getCode(), internalDateTo, internalDateTo);
-            });
+            DayOfWeek singleTaskDay = dateToSingle.getDayOfWeek();
+            if (!singleTaskDay.equals(DayOfWeek.SATURDAY) && !singleTaskDay.equals(DayOfWeek.SUNDAY)) {
+                final LocalDate internalDateTo = dateToSingle;
+                fundList.forEach(fund -> {
+                    taskService.createTask(fund.getCode(), internalDateTo, internalDateTo);
+                });
+            }
             dateToSingle = dateToSingle.minusDays(1);
         }
 

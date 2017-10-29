@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sldlt.downloader.TaskStatus;
 
-public class TaskDto {
+public class TaskDto implements Comparable<TaskDto> {
 
     private Long id;
 
@@ -104,6 +104,18 @@ public class TaskDto {
     @Override
     public String toString() {
         return "Task - " + fund + " - " + this.id + " " + this.dateTo.toString() + " -> " + this.dateFrom.toString();
+    }
+
+    @Override
+    public int compareTo(TaskDto task) {
+        if (id == task.getId()) {
+            return 0;
+        }
+        if (id > task.getId()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
 }

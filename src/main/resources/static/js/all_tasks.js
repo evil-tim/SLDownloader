@@ -50,6 +50,9 @@ function initAllTaskTable() {
             } else if (data.status === "SUCCESS") {
                 $(row).addClass('success');
             }
+        },
+        language : {
+            zeroRecords : "No Entries"
         }
     });
 }

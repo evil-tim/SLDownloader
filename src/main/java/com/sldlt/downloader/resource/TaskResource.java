@@ -1,6 +1,7 @@
 package com.sldlt.downloader.resource;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,7 @@ public class TaskResource {
     private TaskService taskService;
 
     @RequestMapping(path = "/tasks", method = RequestMethod.GET)
-    public Page<TaskDto> getFunds(
+    public Page<TaskDto> getTasks(
             @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(name = "fund", required = false) String fund, @RequestParam(name = "status", required = false) String status,
             Pageable pageable) {
@@ -36,5 +37,10 @@ public class TaskResource {
             }
         }
         return taskService.listTasks(date, fund, taskStatus, pageable);
+    }
+
+    @RequestMapping(path = "/tasks/running", method = RequestMethod.GET)
+    public List<TaskDto> getRunningTasks() {
+        return taskService.listRunningTasks();
     }
 }

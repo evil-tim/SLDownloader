@@ -31,6 +31,7 @@ import com.sldlt.downloader.repository.TaskRepository;
 import com.sldlt.downloader.service.TaskService;
 import com.sldlt.navps.dto.FundDto;
 import com.sldlt.navps.service.FundService;
+import com.sldlt.scheduled.RunningTaskHolder;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -40,6 +41,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private RunningTaskHolder runningTaskHolder;
 
     @Autowired
     private FundService fundService;
@@ -115,6 +119,17 @@ public class TaskServiceImpl implements TaskService {
             mappedTask.setFundName(getFundName(funds, mappedTask.getFund()));
             return mappedTask;
         });
+    }
+
+    @Override
+    public List<TaskDto> listRunningTasks() {
+        List<FundDto> funds = fundService.listAllFunds();
+
+        return runningTaskHolder.stream().map(id -> mapper.map(taskRepository.findOne(id), TaskDto.class)).map(task -> {
+            task.setRetryable(task.getAttempts() < taskMaxRetries);
+            task.setFundName(getFundName(funds, task.getFund()));
+            return task;
+        }).sorted().collect(Collectors.toList());
     }
 
     private String getFundName(List<FundDto> funds, String fundCode) {
