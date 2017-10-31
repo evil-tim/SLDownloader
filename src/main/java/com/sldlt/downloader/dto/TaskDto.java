@@ -2,6 +2,7 @@ package com.sldlt.downloader.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sldlt.downloader.TaskStatus;
@@ -108,10 +109,13 @@ public class TaskDto implements Comparable<TaskDto> {
 
     @Override
     public int compareTo(TaskDto task) {
-        if (id == task.getId()) {
+        long ownId = Optional.ofNullable(id).map(Long::longValue).orElse(0L);
+        long otherId = Optional.ofNullable(task).map(TaskDto::getId).map(Long::longValue).orElse(0L);
+
+        if (ownId == otherId) {
             return 0;
         }
-        if (id > task.getId()) {
+        if (ownId > otherId) {
             return 1;
         } else {
             return -1;
