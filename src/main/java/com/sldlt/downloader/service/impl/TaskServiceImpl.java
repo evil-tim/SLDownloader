@@ -70,9 +70,9 @@ public class TaskServiceImpl implements TaskService {
         Sort sort = new Sort(new Order(DESC, "dateTo"));
         PageRequest pageable = new PageRequest(0, count, sort);
         return taskRepository
-                .findAll(task.status.in(PENDING, FAILED).and(task.attempts.lt(taskMaxRetries))
-                        .and(task.nextAttemptAfter.isNull().or(task.nextAttemptAfter.before(LocalDateTime.now()))), pageable)
-                .getContent().stream().map(item -> mapper.map(item, TaskDto.class)).collect(Collectors.toList());
+            .findAll(task.status.in(PENDING, FAILED).and(task.attempts.lt(taskMaxRetries))
+                .and(task.nextAttemptAfter.isNull().or(task.nextAttemptAfter.before(LocalDateTime.now()))), pageable)
+            .getContent().stream().map(item -> mapper.map(item, TaskDto.class)).collect(Collectors.toList());
     }
 
     @Override

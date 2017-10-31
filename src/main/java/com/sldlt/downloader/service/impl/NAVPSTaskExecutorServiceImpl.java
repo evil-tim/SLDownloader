@@ -40,8 +40,8 @@ public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
     @Override
     public TaskStatus executeTask(TaskDto task) {
         try {
-            List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(
-                    fundService.getFundByCode(task.getFund()), task.getDateFrom(), task.getDateTo());
+            List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(fundService.getFundByCode(task.getFund()),
+                task.getDateFrom(), task.getDateTo());
             navpsService.saveNAVPS(navpsList);
             taskService.updateTaskSucceeded(task.getId());
             return SUCCESS;

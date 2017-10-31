@@ -51,13 +51,13 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     public List<FundDto> findAvailableFunds() {
         try {
             List<FundDto> result = Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
-                    .filter(element -> element.attr("name").equals(FUND_NAME_FIELD_NAME)).findFirst()
-                    .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream().map(element -> {
-                        FundDto fund = new FundDto();
-                        fund.setCode(element.attr("value"));
-                        fund.setName(element.text().trim());
-                        return fund;
-                    }).collect(Collectors.toList());
+                .filter(element -> element.attr("name").equals(FUND_NAME_FIELD_NAME)).findFirst()
+                .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream().map(element -> {
+                    FundDto fund = new FundDto();
+                    fund.setCode(element.attr("value"));
+                    fund.setName(element.text().trim());
+                    return fund;
+                }).collect(Collectors.toList());
             LOG.debug(result);
             return result;
         } catch (IOException e) {
@@ -76,24 +76,21 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund, LocalDate limitFrom, LocalDate limitTo) throws IOException {
         try {
             Document document = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund.getCode())
-                    .data(FROM_MONTH_FIELD_NAME, "" + limitFrom.getMonthValue())
-                    .data(FROM_DAY_FIELD_NAME, "" + limitFrom.getDayOfMonth())
-                    .data(FROM_YEAR_FIELD_NAME, "" + limitFrom.getYear())
-                    .data(TO_MONTH_FIELD_NAME, "" + limitTo.getMonthValue())
-                    .data(TO_DAY_FIELD_NAME, "" + limitTo.getDayOfMonth())
-                    .data(TO_YEAR_FIELD_NAME, "" + limitTo.getYear()).timeout(60000).post();
+                .data(FROM_MONTH_FIELD_NAME, "" + limitFrom.getMonthValue()).data(FROM_DAY_FIELD_NAME, "" + limitFrom.getDayOfMonth())
+                .data(FROM_YEAR_FIELD_NAME, "" + limitFrom.getYear()).data(TO_MONTH_FIELD_NAME, "" + limitTo.getMonthValue())
+                .data(TO_DAY_FIELD_NAME, "" + limitTo.getDayOfMonth()).data(TO_YEAR_FIELD_NAME, "" + limitTo.getYear()).timeout(60000)
+                .post();
 
             validateFundNameMatches(document, fund);
 
-            List<NAVPSEntryDto> result = document.getElementsByTag("table").get(2).getElementsByTag("tr").stream()
-                    .skip(2).map(row -> {
-                        Elements cells = row.getElementsByTag("td");
-                        NAVPSEntryDto entry = new NAVPSEntryDto();
-                        entry.setFund(fund.getCode());
-                        entry.setDate(LocalDate.parse(cells.get(1).text().trim(), format));
-                        entry.setValue(new BigDecimal(cells.get(3).text().trim()));
-                        return entry;
-                    }).collect(Collectors.toList());
+            List<NAVPSEntryDto> result = document.getElementsByTag("table").get(2).getElementsByTag("tr").stream().skip(2).map(row -> {
+                Elements cells = row.getElementsByTag("td");
+                NAVPSEntryDto entry = new NAVPSEntryDto();
+                entry.setFund(fund.getCode());
+                entry.setDate(LocalDate.parse(cells.get(1).text().trim(), format));
+                entry.setValue(new BigDecimal(cells.get(3).text().trim()));
+                return entry;
+            }).collect(Collectors.toList());
 
             LOG.debug(result);
 
@@ -117,8 +114,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
             }
         }
         if (!StringUtils.hasText(documentFund) || !fund.getName().toUpperCase().contains(documentFund)) {
-            String message = "Found mismatched entry - [" + documentFund + "] should be ["
-                    + fund.getName().toUpperCase() + "]";
+            String message = "Found mismatched entry - [" + documentFund + "] should be [" + fund.getName().toUpperCase() + "]";
             throw new RuntimeException(message);
         }
     }
@@ -131,11 +127,11 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     }
 
     private void validateResultsInRange(List<NAVPSEntryDto> result, LocalDate limitFrom, LocalDate limitTo) {
-        result.stream().filter(entry -> entry.getDate().isBefore(limitFrom) || entry.getDate().isAfter(limitTo))
-                .findAny().ifPresent(entry -> {
-                    String message = "Found out of range entry - " + entry;
-                    throw new RuntimeException(message);
-                });
+        result.stream().filter(entry -> entry.getDate().isBefore(limitFrom) || entry.getDate().isAfter(limitTo)).findAny()
+            .ifPresent(entry -> {
+                String message = "Found out of range entry - " + entry;
+                throw new RuntimeException(message);
+            });
     }
 
 }

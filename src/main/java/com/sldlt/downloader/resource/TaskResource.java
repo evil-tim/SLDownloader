@@ -25,9 +25,9 @@ public class TaskResource {
 
     @RequestMapping(path = "/tasks", method = RequestMethod.GET)
     public Page<TaskDto> getTasks(
-            @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam(name = "fund", required = false) String fund, @RequestParam(name = "status", required = false) String status,
-            Pageable pageable) {
+        @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+        @RequestParam(name = "fund", required = false) String fund, @RequestParam(name = "status", required = false) String status,
+        Pageable pageable) {
         TaskStatus taskStatus = null;
         if (StringUtils.hasText(status)) {
             try {

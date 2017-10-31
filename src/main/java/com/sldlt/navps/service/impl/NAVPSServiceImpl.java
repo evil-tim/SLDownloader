@@ -40,9 +40,9 @@ public class NAVPSServiceImpl implements NAVPSService {
     @Override
     public void saveNAVPS(List<NAVPSEntryDto> entries) {
         navpsEntryRepository.save(entries.stream()
-                .filter(entry -> navpsEntryRepository
-                        .count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
-                .map(entry -> mapper.map(entry, NAVPSEntry.class)).collect(Collectors.toList()));
+            .filter(
+                entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
+            .map(entry -> mapper.map(entry, NAVPSEntry.class)).collect(Collectors.toList()));
 
     }
 
@@ -69,9 +69,8 @@ public class NAVPSServiceImpl implements NAVPSService {
     public List<NAVPSEntryDto> listAllNAVPS(String fund) {
         BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSEntry.fund.eq(fund));
-        return StreamSupport
-                .stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
-                .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.toList());
+        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
+            .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.toList());
     }
 
 }

@@ -39,8 +39,7 @@ public class FundServiceImpl implements FundService {
 
     @Override
     public List<FundDto> listAllFunds() {
-        return fundRepository.findAll().stream().map(fund -> mapper.map(fund, FundDto.class))
-                .collect(Collectors.toList());
+        return fundRepository.findAll().stream().map(fund -> mapper.map(fund, FundDto.class)).collect(Collectors.toList());
     }
 
     @Override
