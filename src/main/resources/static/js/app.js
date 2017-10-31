@@ -1,0 +1,1 @@
+$.fn.dataTable.ext.errMode = 'throw';
