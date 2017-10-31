@@ -1,5 +1,8 @@
 # SLDownloader
 
     mvn package
-    docker volume create --name sldownloader-database
-    docker run -d -p 80:8080 -v sldownloader-database:/var/lib/apps/sldownloader/database crabranch/sldownloader:0.0.2-SNAPSHOT
+    sudo mkdir /etc/docker-gen
+    sudo mkdir /etc/docker-gen/templates
+    sudo chown ubuntu:ubuntu /etc/docker-gen/templates
+    cp nginx.tmpl /etc/docker-gen/templates/nginx.tmpl
+    docker-compose up -d
