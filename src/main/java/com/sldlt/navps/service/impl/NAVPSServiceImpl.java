@@ -10,7 +10,6 @@ import java.util.stream.StreamSupport;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,22 +32,21 @@ public class NAVPSServiceImpl implements NAVPSService {
     private NAVPSEntryRepository navpsEntryRepository;
 
     @Override
-    public void saveNAVPS(NAVPSEntryDto entry) {
+    public void saveNAVPS(final NAVPSEntryDto entry) {
         saveNAVPS(Collections.singletonList(entry));
     }
 
     @Override
-    public void saveNAVPS(List<NAVPSEntryDto> entries) {
+    public void saveNAVPS(final List<NAVPSEntryDto> entries) {
         navpsEntryRepository.save(entries.stream()
             .filter(
                 entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
             .map(entry -> mapper.map(entry, NAVPSEntry.class)).collect(Collectors.toList()));
-
     }
 
     @Override
-    public Page<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo, Pageable page) {
-        BooleanBuilder predicate = new BooleanBuilder();
+    public Page<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo, final Pageable page) {
+        final BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSEntry.fund.eq(fund));
         if (dateFrom != null) {
             predicate.and(nAVPSEntry.date.goe(dateFrom));
@@ -56,18 +54,13 @@ public class NAVPSServiceImpl implements NAVPSService {
         if (dateTo != null) {
             predicate.and(nAVPSEntry.date.loe(dateTo));
         }
-        Page<NAVPSEntry> result = navpsEntryRepository.findAll(predicate, page);
-        return result.map(new Converter<NAVPSEntry, NAVPSEntryDto>() {
-            @Override
-            public NAVPSEntryDto convert(NAVPSEntry source) {
-                return mapper.map(source, NAVPSEntryDto.class);
-            }
-        });
+        final Page<NAVPSEntry> result = navpsEntryRepository.findAll(predicate, page);
+        return result.map(entry -> mapper.map(entry, NAVPSEntryDto.class));
     }
 
     @Override
-    public List<NAVPSEntryDto> listAllNAVPS(String fund) {
-        BooleanBuilder predicate = new BooleanBuilder();
+    public List<NAVPSEntryDto> listAllNAVPS(final String fund) {
+        final BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSEntry.fund.eq(fund));
         return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.toList());

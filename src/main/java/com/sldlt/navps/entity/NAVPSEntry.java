@@ -27,6 +27,14 @@ public class NAVPSEntry implements Serializable {
     @Column(nullable = false, precision = 10, scale = 6)
     private BigDecimal value;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getFund() {
         return fund;
     }

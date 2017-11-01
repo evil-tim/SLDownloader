@@ -15,7 +15,7 @@ import com.sldlt.downloader.service.TaskService;
 @Component
 public class TaskExecutor {
 
-    private static Logger LOG = Logger.getLogger(TaskExecutor.class);
+    private static final Logger LOG = Logger.getLogger(TaskExecutor.class);
 
     @Value("${task.maxRunning}")
     private Integer maxRunningTasks;
@@ -36,10 +36,12 @@ public class TaskExecutor {
             return;
         }
 
-        List<TaskDto> tasks = taskService.getExecutableTasks(maxRunningTasks);
+        final List<TaskDto> tasks = taskService.getExecutableTasks(maxRunningTasks);
 
         tasks.parallelStream().filter(task -> runningTaskHolder.add(task.getId())).forEach(task -> {
-            LOG.info("Executing " + task);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Executing " + task);
+            }
             navpsTaskExecutorService.executeTask(task);
             runningTaskHolder.remove(task.getId());
         });

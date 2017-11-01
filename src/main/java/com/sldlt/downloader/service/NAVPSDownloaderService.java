@@ -9,10 +9,10 @@ import com.sldlt.navps.dto.NAVPSEntryDto;
 
 public interface NAVPSDownloaderService {
 
-    public List<FundDto> findAvailableFunds();
+    List<FundDto> findAvailableFunds();
 
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund, LocalDate limitFrom, LocalDate limitTo) throws IOException;
+    List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund, LocalDate limitFrom, LocalDate limitTo) throws IOException;
 
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund) throws IOException;
+    List<NAVPSEntryDto> fetchNAVPSFromPage(FundDto fund) throws IOException;
 
 }

@@ -4,7 +4,6 @@ import static com.sldlt.downloader.TaskStatus.FAILED;
 import static com.sldlt.downloader.TaskStatus.PENDING;
 import static com.sldlt.downloader.TaskStatus.SUCCESS;
 import static com.sldlt.downloader.entity.QTask.task;
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -67,8 +66,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> getExecutableTasks(int count) {
-        Sort sort = new Sort(new Order(DESC, "dateTo"));
-        PageRequest pageable = new PageRequest(0, count, sort);
+        final PageRequest pageable = new PageRequest(0, count, new Sort(new Order(Sort.Direction.DESC, "dateTo")));
         return taskRepository
             .findAll(task.status.in(PENDING, FAILED).and(task.attempts.lt(taskMaxRetries))
                 .and(task.nextAttemptAfter.isNull().or(task.nextAttemptAfter.before(LocalDateTime.now()))), pageable)
@@ -111,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
             predicate.and(task.status.eq(status));
         }
 
-        List<FundDto> funds = fundService.listAllFunds();
+        final List<FundDto> funds = fundService.listAllFunds();
 
         return taskRepository.findAll(predicate, pageable).map(item -> {
             TaskDto mappedTask = mapper.map(item, TaskDto.class);
@@ -123,7 +121,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> listRunningTasks() {
-        List<FundDto> funds = fundService.listAllFunds();
+        final List<FundDto> funds = fundService.listAllFunds();
 
         return runningTaskHolder.stream().map(id -> mapper.map(taskRepository.findOne(id), TaskDto.class)).map(task -> {
             task.setRetryable(task.getAttempts() < taskMaxRetries);

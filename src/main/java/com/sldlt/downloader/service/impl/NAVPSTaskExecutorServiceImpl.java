@@ -23,7 +23,7 @@ import com.sldlt.navps.service.NAVPSService;
 @Transactional
 public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
 
-    private static Logger LOG = Logger.getLogger(NAVPSTaskExecutorServiceImpl.class);
+    private static final Logger LOG = Logger.getLogger(NAVPSTaskExecutorServiceImpl.class);
 
     @Autowired
     private NAVPSDownloaderService navpsDownloader;
@@ -38,18 +38,20 @@ public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
     private FundService fundService;
 
     @Override
-    public TaskStatus executeTask(TaskDto task) {
+    public TaskStatus executeTask(final TaskDto task) {
+        TaskStatus finalStatus = null;
         try {
-            List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(fundService.getFundByCode(task.getFund()),
+            final List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(fundService.getFundByCode(task.getFund()),
                 task.getDateFrom(), task.getDateTo());
             navpsService.saveNAVPS(navpsList);
             taskService.updateTaskSucceeded(task.getId());
-            return SUCCESS;
+            finalStatus = SUCCESS;
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
             taskService.updateTaskFailed(task.getId());
-            return FAILED;
+            finalStatus = FAILED;
         }
+        return finalStatus;
     }
 
 }

@@ -27,7 +27,7 @@ public class FundServiceImpl implements FundService {
     private FundRepository fundRepository;
 
     @Override
-    public FundDto saveFund(FundDto newFund) {
+    public FundDto saveFund(final FundDto newFund) {
         Fund fundObj = fundRepository.findOne(new BooleanBuilder().and(fund.code.eq(newFund.getCode())));
         if (fundObj == null) {
             fundObj = mapper.map(newFund, Fund.class);
@@ -43,7 +43,7 @@ public class FundServiceImpl implements FundService {
     }
 
     @Override
-    public FundDto getFundByCode(String code) {
+    public FundDto getFundByCode(final String code) {
         return mapper.map(fundRepository.findOneByCode(code), FundDto.class);
     }
 

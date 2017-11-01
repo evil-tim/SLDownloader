@@ -19,7 +19,7 @@ import com.sldlt.navps.service.FundService;
 @Component
 public class TaskManager {
 
-    private static Logger LOG = Logger.getLogger(TaskManager.class);
+    private static final Logger LOG = Logger.getLogger(TaskManager.class);
 
     @Autowired
     private TaskService taskService;
@@ -45,13 +45,13 @@ public class TaskManager {
     }
 
     private void setupPastTasks() {
-        List<FundDto> fundList = fundService.listAllFunds();
+        final List<FundDto> fundList = fundService.listAllFunds();
 
-        LocalDate dateFromSingle = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
+        final LocalDate dateFromSingle = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
         LocalDate dateToSingle = LocalDate.now().minusDays(1);
 
         while (!dateToSingle.isBefore(dateFromSingle)) {
-            DayOfWeek singleTaskDay = dateToSingle.getDayOfWeek();
+            final DayOfWeek singleTaskDay = dateToSingle.getDayOfWeek();
             if (!singleTaskDay.equals(DayOfWeek.SATURDAY) && !singleTaskDay.equals(DayOfWeek.SUNDAY)) {
                 final LocalDate internalDateTo = dateToSingle;
                 fundList.forEach(fund -> {
@@ -61,7 +61,7 @@ public class TaskManager {
             dateToSingle = dateToSingle.minusDays(1);
         }
 
-        LocalDate minDate = LocalDate.parse(minDateStr);
+        final LocalDate minDate = LocalDate.parse(minDateStr);
         LocalDate dateFrom = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
         LocalDate dateTo = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 7);
 
