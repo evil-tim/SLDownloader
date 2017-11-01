@@ -24,7 +24,7 @@ services:
       - nginx
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - /etc/docker-gen/templates/nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl
+      - ./nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl
 
   nginxletsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
