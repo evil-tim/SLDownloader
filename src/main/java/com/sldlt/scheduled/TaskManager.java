@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.sldlt.downloader.service.NAVPSDownloaderService;
@@ -33,7 +33,7 @@ public class TaskManager {
     @Autowired
     private NAVPSDownloaderService navpsDownloader;
 
-    //@Scheduled(fixedRate = 7200000)
+    @Scheduled(fixedRate = 7200000)
     public void run() {
         LOG.info("regenerating task list");
         getFunds();
