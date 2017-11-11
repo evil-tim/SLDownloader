@@ -16,7 +16,7 @@ public class FundResource {
     @Autowired
     private FundService fundService;
 
-    @RequestMapping(path = "/fund/all", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/funds", method = RequestMethod.GET)
     public List<FundDto> getFunds() {
         return fundService.listAllFunds();
     }

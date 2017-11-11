@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
+//import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.sldlt.downloader.dto.TaskDto;
@@ -29,7 +29,7 @@ public class TaskExecutor {
     @Autowired
     private NAVPSTaskExecutorService navpsTaskExecutorService;
 
-    @Scheduled(initialDelay = 120000, fixedRateString = "${task.fixedRate:1500}")
+    //@Scheduled(initialDelay = 120000, fixedRateString = "${task.fixedRate:1500}")
     public void run() {
         LOG.info("Running executor");
         if (runningTaskHolder.size() >= maxRunningTasks) {

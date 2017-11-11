@@ -5,12 +5,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class IndexController {
+public class TasksController {
 
-    @RequestMapping("/")
+    @RequestMapping("/tasks")
     public String index(Model model) {
-        model.addAttribute("page", "index");
-        return "index";
+        model.addAttribute("page", "tasks");
+        return "tasks";
     }
 
 }

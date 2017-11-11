@@ -38,7 +38,7 @@ function drawChart(data) {
 
 function getNAVPSDataDeferred(code) {
     return $.ajax({
-        url : "/navps/all",
+        url : "/api/navps/all",
         data : {
             fund : code
         }

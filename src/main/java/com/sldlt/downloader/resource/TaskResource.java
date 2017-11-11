@@ -26,7 +26,7 @@ public class TaskResource {
     @Autowired
     private TaskService taskService;
 
-    @RequestMapping(path = "/tasks", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/tasks", method = RequestMethod.GET)
     public Page<TaskDto> getTasks(
         @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         @RequestParam(name = "fund", required = false) String fund, @RequestParam(name = "status", required = false) String status,
@@ -42,7 +42,7 @@ public class TaskResource {
         return taskService.listTasks(date, fund, taskStatus, pageable);
     }
 
-    @RequestMapping(path = "/tasks/running", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/tasks/running", method = RequestMethod.GET)
     public List<TaskDto> getRunningTasks() {
         return taskService.listRunningTasks();
     }

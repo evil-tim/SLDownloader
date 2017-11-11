@@ -24,15 +24,15 @@ public class NAVPSResource {
     @Autowired
     private NAVPSService navpsService;
 
-    @RequestMapping(path = "/navps", method = RequestMethod.GET)
-    public Page<NAVPSEntryDto> getNAVPS(@RequestParam("fund") String fund,
+    @RequestMapping(path = "/api/navps", method = RequestMethod.GET)
+    public Page<NAVPSEntryDto> getNAVPS(@RequestParam(name = "fund", required = false) String fund,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom", required = false) LocalDate dateFrom,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo", required = false) LocalDate dateTo,
         @PageableDefault(sort = { "date" }, direction = Direction.DESC) Pageable page) {
         return navpsService.listNAVPS(fund, dateFrom, dateTo, page);
     }
 
-    @RequestMapping(path = "/navps/all", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/navps/all", method = RequestMethod.GET)
     public List<NAVPSEntryDto> getNAVPS(@RequestParam("fund") String fund) {
         return navpsService.listAllNAVPS(fund);
     }

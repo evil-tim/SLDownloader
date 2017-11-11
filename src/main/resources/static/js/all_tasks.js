@@ -10,12 +10,12 @@ var allTaskTable;
 function initAllTaskTable() {
     allTaskTable = $('#allTasks').dataTable({
         ajax : {
-            url : "/tasks",
+            url : "/api/tasks",
             dataFilter : function(data) {
-                return convertToSpringDataResult(data);
+                return convertToTasksSpringDataResult(data);
             },
             data : function(params) {
-                convertToSpringDataParams(params);
+                convertToTasksSpringDataParams(params);
             }
         },
         processing : false,
@@ -40,6 +40,7 @@ function initAllTaskTable() {
         lengthChange : false,
         pageLength : 20,
         searchCols : [ null, null, null, null, null ],
+        order : [ [ 2, "desc" ] ],
         createdRow : function(row, data, dataIndex) {
             if (data.status === "FAILED" && data.retryable === true) {
                 $(row).addClass('warning');
@@ -57,7 +58,9 @@ function initAllTaskTable() {
     });
 }
 
-function convertToSpringDataParams(params) {
+function convertToTasksSpringDataParams(params) {
+
+    delete params.search;
 
     // page size
     params.size = params.length;
@@ -76,13 +79,19 @@ function convertToSpringDataParams(params) {
 
     // filters
     var dateFilter = $('#dateFilter').datepicker('getDate');
+    if (dateFilter) {
+        var dateFilterAdjusted = new Date(dateFilter);
+        dateFilterAdjusted.setMinutes(dateFilter.getMinutes()
+                - dateFilter.getTimezoneOffset());
+        dateFilter = dateFilterAdjusted;
+    }
 
     params.date = dateFilter ? dateFilter.toISOString().slice(0, 10) : null;
     params.fund = $('#fundFilter').val();
     params.status = $('#statusFilter').val();
 }
 
-function convertToSpringDataResult(data) {
+function convertToTasksSpringDataResult(data) {
     var json = jQuery.parseJSON(data);
 
     // convert totals
@@ -97,7 +106,7 @@ function convertToSpringDataResult(data) {
 
 function initAllTaskFundFilter() {
     $.ajax({
-        url : "/fund/all"
+        url : "/api/funds"
     }).done(updateAllTaskFundFilter);
 }
 
@@ -112,7 +121,7 @@ function updateAllTaskFundFilter(data) {
 
 function initAllTaskDateFilter() {
     $('#dateFilter').datepicker({
-        container : "html",
+        container : "body",
         autoclose : true,
         clearBtn : true,
         format : "yyyy-mm-dd",

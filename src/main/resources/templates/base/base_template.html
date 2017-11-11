@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html layout:fragment="base" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+<title>SLAMCI NAVPS Viewer</title>
+<th:block layout:include="base/base_css :: css"></th:block>
+<th:block layout:fragment="additional_css"></th:block>
+</head>
+<body>
+    <th:block layout:include="base/nav :: nav"></th:block>
+    <div class="container">
+        <th:block layout:fragment="content"></th:block>
+    </div>
+    <th:block layout:include="base/base_js :: js"></th:block>
+    <th:block layout:fragment="additional_js"></th:block>
+</body>
+</html>

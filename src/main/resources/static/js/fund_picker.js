@@ -29,7 +29,7 @@ function enableFundPicker() {
 // load fund list
 $(document).ready(function() {
     $.ajax({
-        url : "/fund/all"
+        url : "/api/funds"
     }).done(updateFundPicker);
 });
 

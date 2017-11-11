@@ -9,6 +9,8 @@ public class NAVPSEntryDto {
 
     private String fund;
 
+    private String fundName;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
@@ -20,6 +22,14 @@ public class NAVPSEntryDto {
 
     public void setFund(String fund) {
         this.fund = fund;
+    }
+
+    public String getFundName() {
+        return fundName;
+    }
+
+    public void setFundName(String fundName) {
+        this.fundName = fundName;
     }
 
     public LocalDate getDate() {

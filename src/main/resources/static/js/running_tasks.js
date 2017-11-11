@@ -8,7 +8,7 @@ var runningTaskTable;
 function initRunningTaskTable() {
     runningTaskTable = $('#runningTasks').dataTable({
         ajax : {
-            url : "/tasks/running",
+            url : "/api/tasks/running",
             dataSrc : "",
         },
         processing : false,
