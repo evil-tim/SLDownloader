@@ -33,9 +33,9 @@ public class TaskManager {
     @Autowired
     private NAVPSDownloaderService navpsDownloader;
 
-    @Scheduled(fixedRate = 7200000)
+    @Scheduled(cron = "${task.updater.cron:0 0 4 * * *}", zone = "${task.updater.zone:GMT+8}")
     public void run() {
-        LOG.info("regenerating task list");
+        LOG.info("Regenerating task list");
         getFunds();
         setupPastTasks();
     }
