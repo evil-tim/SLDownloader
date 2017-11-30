@@ -104,7 +104,7 @@ public class TaskDto implements Comparable<TaskDto> {
 
     @Override
     public String toString() {
-        return "Task - " + fund + " - " + this.id + " " + this.dateTo.toString() + " -> " + this.dateFrom.toString();
+        return "Task - " + fund + " - " + this.id + " " + this.dateFrom.toString() + " -> " + this.dateTo.toString();
     }
 
     @Override

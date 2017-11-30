@@ -78,7 +78,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
         final Document document = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund.getCode())
             .data(FROM_DATE_FIELD_NAME, String.valueOf(limitFrom.format(paramDateFormat)))
-            .data(TO_DATE_FIELD_NAME, String.valueOf(limitFrom.format(paramDateFormat))).timeout(60000).post();
+            .data(TO_DATE_FIELD_NAME, String.valueOf(limitTo.format(paramDateFormat))).timeout(60000).get();
 
         validateFundNameMatches(document, fund);
 

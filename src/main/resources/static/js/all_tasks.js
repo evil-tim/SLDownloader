@@ -35,17 +35,21 @@ function initAllTaskTable() {
         }, {
             name : "status",
             data : "status"
+        }, {
+            name : "actions",
+            orderable: false,
+            defaultContent : "<a class=\"btn btn-default btn-sm retry-btn\" style=\"display:none; padding-top: 1px; padding-bottom: 1px\" href=\"javascript:void(0)\" onclick=\"javascript:requestRetryTask(this)\">Retry</a>"
         } ],
         searching : false,
         lengthChange : false,
         pageLength : 20,
-        searchCols : [ null, null, null, null, null ],
+        searchCols : [ null, null, null, null, null, null ],
         order : [ [ 2, "desc" ] ],
         createdRow : function(row, data, dataIndex) {
             if (data.status === "FAILED" && data.retryable === true) {
                 $(row).addClass('warning');
             } else if (data.status === "FAILED" && data.retryable === false) {
-                $(row).addClass('danger');
+                $(row).addClass('danger force-retry');
             } else if (data.status === "PENDING") {
                 $(row).addClass('info');
             } else if (data.status === "SUCCESS") {
@@ -141,4 +145,16 @@ function initAllTaskFilterUpdateEvents() {
     $('#allTasksRefresh').on('click', function() {
         allTaskTable.api().ajax.reload();
     });
+}
+
+function requestRetryTask(button) {
+    var id = $(button).parent().parent().children("td").get(0).innerText;
+    if(id) {
+        $.ajax({
+            type: "POST",
+            url : "/api/task/" + id + "/retry"
+        }).done(function() {
+            allTaskTable.api().ajax.reload();
+        });
+    }
 }

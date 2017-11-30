@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,5 +46,10 @@ public class TaskResource {
     @RequestMapping(path = "/api/tasks/running", method = RequestMethod.GET)
     public List<TaskDto> getRunningTasks() {
         return taskService.listRunningTasks();
+    }
+
+    @RequestMapping(path = "/api/task/{id}/retry", method = RequestMethod.POST)
+    public TaskDto retryTask(@PathVariable("id") Long id) {
+        return taskService.resetTaskStatus(id);
     }
 }

@@ -26,6 +26,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.sldlt.downloader.TaskStatus;
 import com.sldlt.downloader.dto.TaskDto;
 import com.sldlt.downloader.entity.Task;
+import com.sldlt.downloader.exception.MissingTaskException;
 import com.sldlt.downloader.repository.TaskRepository;
 import com.sldlt.downloader.service.TaskService;
 import com.sldlt.navps.dto.FundDto;
@@ -92,6 +93,16 @@ public class TaskServiceImpl implements TaskService {
             taskRepository.save(task);
         });
 
+    }
+
+    @Override
+    public TaskDto resetTaskStatus(Long id) {
+        return Optional.ofNullable(taskRepository.findOne(id)).map(task -> {
+            task.setStatus(PENDING);
+            task.setAttempts(0);
+            task.setNextAttemptAfter(null);
+            return taskRepository.save(task);
+        }).map(item -> mapper.map(item, TaskDto.class)).orElseThrow(MissingTaskException::new);
     }
 
     @Override

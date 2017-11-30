@@ -19,6 +19,8 @@ public interface TaskService {
 
     void updateTaskFailed(Long id);
 
+    TaskDto resetTaskStatus(Long id);
+
     Page<TaskDto> listTasks(LocalDate date, String fund, TaskStatus status, Pageable pageable);
 
     List<TaskDto> listRunningTasks();
