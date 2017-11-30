@@ -6,11 +6,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,21 +28,15 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
     private static final Logger LOG = Logger.getLogger(NAVPSDownloaderServiceImpl.class);
 
-    private static final String TO_YEAR_FIELD_NAME = "toYear";
+    private static final String TO_DATE_FIELD_NAME = "toDate";
 
-    private static final String TO_DAY_FIELD_NAME = "toDay";
-
-    private static final String TO_MONTH_FIELD_NAME = "toMonth";
-
-    private static final String FROM_DAY_FIELD_NAME = "fromDay";
-
-    private static final String FROM_YEAR_FIELD_NAME = "fromYear";
-
-    private static final String FROM_MONTH_FIELD_NAME = "fromMonth";
+    private static final String FROM_DATE_FIELD_NAME = "fromDate";
 
     private static final String FUND_NAME_FIELD_NAME = "fundCD";
 
-    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private final DateTimeFormatter responseDateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+
+    private final DateTimeFormatter paramDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     @Value("${navps.fundslist.url}")
     private String fundsUrl;
@@ -54,10 +50,11 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
         try {
             result = Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
                 .filter(element -> element.attr("name").equals(FUND_NAME_FIELD_NAME)).findFirst()
-                .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream().map(element -> {
+                .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream()
+                .filter(element -> StringUtils.hasText(element.attr("value"))).map(element -> {
                     final FundDto fund = new FundDto();
                     fund.setCode(element.attr("value"));
-                    fund.setName(element.text().trim());
+                    fund.setName("Sun Life " + element.text().replace("Sun Life ", "").trim());
                     return fund;
                 }).collect(Collectors.toList());
             if (LOG.isDebugEnabled()) {
@@ -80,22 +77,18 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                     throws IOException {
 
         final Document document = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund.getCode())
-            .data(FROM_MONTH_FIELD_NAME, String.valueOf(limitFrom.getMonthValue()))
-            .data(FROM_DAY_FIELD_NAME, String.valueOf(limitFrom.getDayOfMonth()))
-            .data(FROM_YEAR_FIELD_NAME, String.valueOf(limitFrom.getYear()))
-            .data(TO_MONTH_FIELD_NAME, String.valueOf(limitTo.getMonthValue()))
-            .data(TO_DAY_FIELD_NAME, String.valueOf(limitTo.getDayOfMonth()))
-            .data(TO_YEAR_FIELD_NAME, String.valueOf(limitTo.getYear())).timeout(60000).post();
+            .data(FROM_DATE_FIELD_NAME, String.valueOf(limitFrom.format(paramDateFormat)))
+            .data(TO_DATE_FIELD_NAME, String.valueOf(limitFrom.format(paramDateFormat))).timeout(60000).post();
 
         validateFundNameMatches(document, fund);
 
-        final List<NAVPSEntryDto> result = document.getElementsByTag("table").get(2).getElementsByTag("tr").stream().skip(2)
-            .map(row -> {
+        final List<NAVPSEntryDto> result = document.getElementsByTag("table").get(0).getElementsByTag("tbody").get(0)
+            .getElementsByTag("tr").stream().map(row -> {
                 Elements cells = row.getElementsByTag("td");
                 NAVPSEntryDto entry = new NAVPSEntryDto();
                 entry.setFund(fund.getCode());
-                entry.setDate(LocalDate.parse(cells.get(1).text().trim(), format));
-                entry.setValue(new BigDecimal(cells.get(3).text().trim()));
+                entry.setDate(LocalDate.parse(cells.get(0).text().trim(), responseDateFormat));
+                entry.setValue(new BigDecimal(cells.get(1).text().split(" ")[1].trim()));
                 return entry;
             }).collect(Collectors.toList());
 
@@ -111,18 +104,12 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     }
 
     private void validateFundNameMatches(final Document document, final FundDto fund) {
-        String documentFund = null;
-        String documentFundStr = document.getElementsByTag("table").get(1).getElementsByTag("b").html();
-        if (StringUtils.hasText(documentFundStr)) {
-            final String[] documentFundStrParts = documentFundStr.split("<br />");
-            if (documentFundStrParts.length > 1) {
-                documentFund = documentFundStrParts[0].trim();
-            }
-        }
-        if (!StringUtils.hasText(documentFund) || !fund.getName().toUpperCase().contains(documentFund)) {
-            throw new NAVPSDownloadValidationException(
-                "Found mismatched entry - [" + documentFund + "] should be [" + fund.getName().toUpperCase() + "]");
-        }
+        final Optional<String> fundName = Optional.ofNullable(document).map(doc -> doc.getElementsByTag("span"))
+            .map(elements -> elements.get(0)).map(Element::text).map(String::trim);
+
+        fundName.filter(StringUtils::hasText).filter(fundNameStr -> fund.getName().toUpperCase().contains(fundNameStr.toUpperCase()))
+            .orElseThrow(() -> new NAVPSDownloadValidationException(
+                "Found mismatched entry - [" + fundName.orElse("") + "] should be [" + fund.getName().toUpperCase() + "]"));
     }
 
     private void validateResultsNotEmpty(final List<NAVPSEntryDto> result) {
