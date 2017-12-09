@@ -3,6 +3,7 @@ package com.sldlt.downloader.service.impl;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,9 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     @Value("${navps.navpsvalue.url}")
     private String navpsUrl;
 
+    @Value("${task.updater.zone:GMT+8}")
+    private String timeZone;
+
     @Override
     public List<FundDto> findAvailableFunds() {
         List<FundDto> result = Collections.emptyList();
@@ -68,7 +72,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
     @Override
     public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund) throws IOException {
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate = LocalDate.now(ZoneId.of(timeZone));
         return fetchNAVPSFromPage(fund, currentDate, currentDate);
     }
 

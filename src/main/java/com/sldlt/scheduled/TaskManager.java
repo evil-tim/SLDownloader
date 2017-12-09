@@ -2,6 +2,7 @@ package com.sldlt.scheduled;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.WeekFields;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class TaskManager {
     @Value("${navps.mindate}")
     private String minDateStr;
 
+    @Value("${task.updater.zone:GMT+8}")
+    private String timeZone;
+
     @Autowired
     private NAVPSDownloaderService navpsDownloader;
 
@@ -45,10 +49,11 @@ public class TaskManager {
     }
 
     private void setupPastTasks() {
+        final LocalDate currentDate = LocalDate.now(ZoneId.of(timeZone));
         final List<FundDto> fundList = fundService.listAllFunds();
 
-        final LocalDate dateFromSingle = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
-        LocalDate dateToSingle = LocalDate.now().minusDays(1);
+        final LocalDate dateFromSingle = currentDate.with(WeekFields.ISO.dayOfWeek(), 1);
+        LocalDate dateToSingle = currentDate.minusDays(1);
 
         while (!dateToSingle.isBefore(dateFromSingle)) {
             final DayOfWeek singleTaskDay = dateToSingle.getDayOfWeek();
@@ -62,8 +67,8 @@ public class TaskManager {
         }
 
         final LocalDate minDate = LocalDate.parse(minDateStr);
-        LocalDate dateFrom = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 1);
-        LocalDate dateTo = LocalDate.now().with(WeekFields.ISO.dayOfWeek(), 7);
+        LocalDate dateFrom = currentDate.with(WeekFields.ISO.dayOfWeek(), 1);
+        LocalDate dateTo = currentDate.with(WeekFields.ISO.dayOfWeek(), 7);
 
         while (dateFrom.isAfter(minDate)) {
             final LocalDate internalDateFrom = dateFrom = dateFrom.minusDays(7);
