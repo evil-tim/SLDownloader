@@ -5,6 +5,8 @@ files:
     destination: /home/ubuntu/sldownloader-app
 permissions:
   - object: /home/ubuntu/sldownloader-app/code_deploy_scripts
+    owner: ubuntu
+    group: ubuntu
     pattern: "*.sh"
     mode: 755
     type:
