@@ -3,11 +3,13 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/sldownloader-app
+permissions:
+  - object: /home/ubuntu/sldownloader-app/code_deploy_scripts
+    pattern: "*.sh"
+    mode: 755
+    type:
+      - file
 hooks:
-  AfterInstall:
-    - location: code_deploy_scripts/after_install.sh
-      timeout: 300
-      runas: root
   ApplicationStart:
     - location: code_deploy_scripts/start_app.sh
       timeout: 300
