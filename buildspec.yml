@@ -6,6 +6,10 @@ phases:
       - mvn clean package -Ddockerfile.skip -Dmaven.test.skip=true
 artifacts:
   files:
+    - code_deploy_scripts/after_install.sh
+    - code_deploy_scripts/start_app.sh
+    - code_deploy_scripts/stop_app.sh
+    - appspec.yml
     - target/sldownloader.jar
     - Dockerfile
     - docker-compose.yml
