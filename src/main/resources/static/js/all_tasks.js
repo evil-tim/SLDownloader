@@ -38,7 +38,11 @@ function initAllTaskTable() {
         }, {
             name : "actions",
             orderable: false,
-            defaultContent : "<a class=\"btn btn-default btn-sm retry-btn\" style=\"display:none; padding-top: 1px; padding-bottom: 1px\" href=\"javascript:void(0)\" onclick=\"javascript:requestRetryTask(this)\">Retry</a>"
+            render: function (data, type, row, meta) {
+                return "<a class=\"btn btn-default btn-sm retry-btn\" " +
+                    "style=\"display:none; padding-top: 1px; padding-bottom: 1px\" " +
+                    "href=\"javascript:void(0)\" onclick=\"javascript:requestRetryTask(" + row.id + ")\">Retry</a>"
+            }
         } ],
         searching : false,
         lengthChange : false,
@@ -147,8 +151,7 @@ function initAllTaskFilterUpdateEvents() {
     });
 }
 
-function requestRetryTask(button) {
-    var id = $(button).parent().parent().children("td").get(0).innerText;
+function requestRetryTask(id) {
     if(id) {
         $.ajax({
             type: "POST",
