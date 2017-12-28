@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html layout:include="base/base_template :: base"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+<th:block layout:fragment="content">
+    <!-- div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <h1>Orders Graph</h1>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <hr />
+        </div>
+    </div -->
+    <div class="row">
+        <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
+            <h1>All Orders</h1>
+        </div>
+        <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10">
+            <button type="button" class="btn btn-default pull-right"
+                style="margin-top: 20px;"
+                onClick="javascript:clearAllOrders()"
+            >Clear All Orders</button>
+            <a class="btn btn-default pull-right"
+                style="margin-top: 20px; margin-right: 5px" href="#"
+                download="orders.json"
+                onclick="javascript:buildExportOrderFile(this)"
+            >Export Orders</a>
+            <button type="button" class="btn btn-default pull-right"
+                style="margin-top: 20px; margin-right: 5px"
+                data-toggle="modal" data-target="#loadOrdersModal"
+            >Import Orders</button>
+            <div class="modal" id="loadOrdersModal" tabindex="-1"
+                role="dialog" aria-labelledby="loadOrdersModalLabel"
+            >
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"
+                                data-dismiss="modal" aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title"
+                                id="loadOrdersModalLabel"
+                            >Load Orders</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <form action="#" id="loadOrdersForm">
+                                    <div
+                                        class="col-sm-6 col-md-6 col-lg-6 col-xl-6"
+                                    >
+                                        <div class="form-group">
+                                            <label for="orderValue">Orders
+                                                File:</label> <input type='file'
+                                                id='ordersImportFile'
+                                                name='ordersImportFile'
+                                                required="required"
+                                            />
+                                        </div>
+                                    </div>
+                                    <input id="importOrdersFormSubmit"
+                                        type="submit"
+                                        style="display: none"
+                                    />
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn"
+                                data-dismiss="modal"
+                            >Cancel</button>
+                            <button type="button"
+                                class="btn btn-primary"
+                                onclick="javascript:loadOrdersAction()"
+                            >Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-default pull-right"
+                style="margin-top: 20px; margin-right: 5px"
+                data-toggle="modal" data-target="#addOrderModal"
+            >Add Order</button>
+            <div class="modal" id="addOrderModal" tabindex="-1"
+                role="dialog" aria-labelledby="addOrderModalLabel"
+            >
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close"
+                                data-dismiss="modal" aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title"
+                                id="addOrderModalLabel"
+                            >Add Order</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <form action="#" id="addOrderForm">
+                                    <div
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
+                                    >
+                                        <div class="form-group">
+                                            <label for="orderDate">Date:</label>
+                                            <div
+                                                class='input-group date'
+                                                id='orderDate'
+                                            >
+                                                <input type='text'
+                                                    class="form-control"
+                                                    id='orderDateField'
+                                                    required="required"
+                                                /> <span
+                                                    class="input-group-addon"
+                                                > <span
+                                                    class="glyphicon glyphicon-calendar"
+                                                ></span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
+                                    >
+                                        <label for="orderFund">Fund:</label>
+                                        <select id="orderFund"
+                                            class="selectpicker"
+                                            name='orderFund'
+                                            data-width="100%"
+                                            required="required"
+                                        >
+                                            <option value="">All
+                                                Funds</option>
+                                        </select>
+                                    </div>
+                                    <div
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
+                                    >
+                                        <div class="form-group">
+                                            <label for="orderShares">Shares:</label>
+                                            <input type='text'
+                                                class="form-control"
+                                                id='orderShares'
+                                                name='orderShares'
+                                                required="required"
+                                                pattern="\d*"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
+                                    >
+                                        <div class="form-group">
+                                            <label for="orderValue">Value:</label>
+                                            <input type='text'
+                                                class="form-control"
+                                                id='orderValue'
+                                                name='orderValue'
+                                                required="required"
+                                                pattern="\d*"
+                                            />
+                                        </div>
+                                    </div>
+                                    <input id="addOrderFormSubmit"
+                                        type="submit"
+                                        style="display: none"
+                                    />
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn"
+                                data-dismiss="modal"
+                            >Cancel</button>
+                            <button type="button"
+                                class="btn btn-primary"
+                                onclick="javascript:addNewOrderAction()"
+                            >Ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="orderTotalCards"></div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12"
+            style="margin-top: 4px;"
+        >
+            <table id="ordersTable"
+                class="table table-bordered table-condensed"
+            >
+                <thead>
+                    <tr>
+                        <th style="width: 10%">Date</th>
+                        <th style="width: 40%">Fund</th>
+                        <th style="width: 10%">Shares</th>
+                        <th style="width: 15%">Base Value</th>
+                        <th style="width: 15%">Current Value</th>
+                        <th style="width: 10%"></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <hr />
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="additional_css">
+</th:block>
+<th:block layout:fragment="additional_js">
+    <script type="text/javascript" src="/js/datatable_settings.js"></script>
+    <script type="text/javascript" src="/js/orders.js"></script>
+    <script type="text/javascript" src="/js/orders_chart.js"></script>
+    <script type="text/javascript" src="/js/orders_table.js"></script>
+</th:block>
+</html>
