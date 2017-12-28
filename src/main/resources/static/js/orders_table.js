@@ -309,6 +309,7 @@ function buildOrders(rawOrders, callback) {
         callback(processedOrders);
     }
     var currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 1);
     var currentDateStr = currentDate.toISOString().slice(0, 10);
     $.ajax({
         url : "/api/navps",
