@@ -316,6 +316,7 @@ function buildOrders(rawOrders, callback) {
         data : {
             dateFrom : currentDateStr,
             dateTo : currentDateStr,
+            size : 20,
         }
     }).then(function(data) {
         var currentNavps = {};
