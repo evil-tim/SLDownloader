@@ -194,8 +194,13 @@ function refreshAllOrdersCards(rawData) {
     buildOrders(rawData, function(data) {
         var orderSummaries = makeSummaries(data);
         $("#orderTotalCards").empty();
-        orderSummaries.forEach(function(summary) {
+        orderSummaries.forEach(function(summary, index) {
             $("#orderTotalCards").append(buildOrderSummaryCard(summary));
+            if (index % 4 == 3) {
+                $("#orderTotalCards").append($("<div />", {
+                    'class' : 'clearfix'
+                }));
+            }
         });
     });
 }
