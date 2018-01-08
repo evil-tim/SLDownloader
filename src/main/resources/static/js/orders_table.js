@@ -312,26 +312,44 @@ function buildOrders(rawOrders, callback) {
                             });
                 });
         callback(processedOrders);
-    }
-    var currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() - 1);
-    var currentDateStr = currentDate.toISOString().slice(0, 10);
-    $.ajax({
-        url : "/api/navps",
-        data : {
-            dateFrom : currentDateStr,
-            dateTo : currentDateStr,
-            size : 20,
+    };
+
+    var allFundCodes = [];
+    rawOrders.forEach(function(rawOrder) {
+        if ($.inArray(rawOrder.orderFundCode, allFundCodes) == -1) {
+            allFundCodes.push(rawOrder.orderFundCode);
         }
-    }).then(function(data) {
-        var currentNavps = {};
-        if (data.content) {
-            data.content.forEach(function(navps) {
-                currentNavps[navps.fund] = navps.value;
-            })
-        }
-        processOrdersWithCurrentValue(currentNavps);
     });
+
+    var latestNavpsRequests = [];
+    allFundCodes.forEach(function(fundCode) {
+        latestNavpsRequests.push($.ajax({
+            url : "/api/navps",
+            data : {
+                sort : "date,desc",
+                size : 1,
+                fund : fundCode,
+            }
+        }));
+    });
+
+    $.when
+            .apply($, latestNavpsRequests)
+            .then(
+                    function(...navpsLookupResults) {
+                        var currentNavps = {};
+                        navpsLookupResults
+                                .forEach(function(navpsLookupResult) {
+                                    if (navpsLookupResult[0]
+                                            && navpsLookupResult[0].content
+                                            && navpsLookupResult[0].content[0]
+                                            && navpsLookupResult[0].content[0].fund
+                                            && navpsLookupResult[0].content[0].value) {
+                                        currentNavps[navpsLookupResult[0].content[0].fund] = navpsLookupResult[0].content[0].value;
+                                    }
+                                });
+                        processOrdersWithCurrentValue(currentNavps);
+                    });
 }
 
 Number.prototype.formatCurrency = function() {
