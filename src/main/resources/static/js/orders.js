@@ -79,3 +79,69 @@ function clearOrders() {
     saveOrders([]);
     executeCallbacks([]);
 }
+
+function getOrdersWithCurrentValues(callback, existingOrders) {
+    // get or use provided orders
+    var rawOrders = existingOrders ? existingOrders : getOrders();
+
+    // get all unique fund codes in orders
+    var allFundCodes = [];
+    rawOrders.forEach(function(rawOrder) {
+        if ($.inArray(rawOrder.orderFundCode, allFundCodes) == -1) {
+            allFundCodes.push(rawOrder.orderFundCode);
+        }
+    });
+
+    // build fetch latest navps requests
+    var latestNavpsRequests = [];
+    allFundCodes.forEach(function(fundCode) {
+        latestNavpsRequests.push($.ajax({
+            url : "/api/navps",
+            data : {
+                sort : "date,desc",
+                size : 1,
+                fund : fundCode,
+            }
+        }));
+    });
+
+    // fetch latest navps
+    $.when
+            .apply($, latestNavpsRequests)
+            .then(
+                    function(...navpsLookupResults) {
+                        // convert multiple navps lookups to singe lookup
+                        var currentNavps = {};
+                        if (navpsLookupResults) {
+                            navpsLookupResults
+                                    .forEach(function(navpsLookupResult) {
+                                        if (navpsLookupResult
+                                                && navpsLookupResult[0]
+                                                && navpsLookupResult[0].content
+                                                && navpsLookupResult[0].content[0]
+                                                && navpsLookupResult[0].content[0].fund
+                                                && navpsLookupResult[0].content[0].value) {
+                                            currentNavps[navpsLookupResult[0].content[0].fund] = navpsLookupResult[0].content[0].value;
+                                        }
+                                    });
+                        }
+                        // convert raw orders to orders with current values
+                        var processedOrders = [];
+                        rawOrders
+                                .forEach(function(rawOrder) {
+                                    processedOrders
+                                            .push({
+                                                id : rawOrder.id,
+                                                orderDate : rawOrder.orderDate,
+                                                orderFundCode : rawOrder.orderFundCode,
+                                                orderFundName : rawOrder.orderFundName,
+                                                orderShares : rawOrder.orderShares,
+                                                orderValue : rawOrder.orderValue,
+                                                currentValue : currentNavps
+                                                        && currentNavps[rawOrder.orderFundCode] ? (currentNavps[rawOrder.orderFundCode] * rawOrder.orderShares)
+                                                        : 0,
+                                            });
+                                });
+                        callback(processedOrders);
+                    });
+}

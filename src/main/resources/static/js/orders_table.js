@@ -104,86 +104,78 @@ function buildExportOrderFile(link) {
 var allOrdersTable;
 
 function initAllOrdersTable() {
-    buildOrders(
-            getOrders(),
-            function(initialOrders) {
-                allOrdersTable = $('#ordersTable')
-                        .dataTable(
-                                {
-                                    processing : false,
-                                    serverSide : false,
-                                    paging : false,
-                                    info : false,
-                                    data : initialOrders,
-                                    columns : [
-                                            {
-                                                name : "date",
-                                                data : "orderDate",
-                                                orderable : false
-                                            },
-                                            {
-                                                name : "fund",
-                                                data : "orderFundName",
-                                                orderable : false
-                                            },
-                                            {
-                                                name : "shares",
-                                                data : "orderShares",
-                                                orderable : false,
-                                                className : "text-right",
-                                            },
-                                            {
-                                                name : "baseValue",
-                                                data : "orderValue",
-                                                orderable : false,
-                                                className : "text-right",
-                                                render : function(data, type,
-                                                        row, meta) {
-                                                    return data
-                                                            .formatCurrency();
-                                                }
-                                            },
-                                            {
-                                                name : "currentValue",
-                                                data : "currentValue",
-                                                orderable : false,
-                                                className : "text-right",
-                                                render : function(data, type,
-                                                        row, meta) {
-                                                    return data
-                                                            .formatCurrency();
-                                                }
-                                            },
-                                            {
-                                                name : "actions",
-                                                orderable : false,
-                                                render : function(data, type,
-                                                        row, meta) {
-                                                    return "<a class=\"btn btn-default btn-sm delete-order-btn\" "
-                                                            + "style=\"padding-top: 1px; padding-bottom: 1px\" "
-                                                            + "href=\"javascript:void(0)\" onclick=\"javascript:removeOrderEntry("
-                                                            + row.id
-                                                            + ")\">Remove</a>";
-                                                }
-                                            } ],
-                                    searching : false,
-                                    lengthChange : false,
-                                    searchCols : [ null, null, null, null, null ],
-                                    order : [ [ 0, "desc" ], [ 1, "asc" ] ],
-                                    language : {
-                                        zeroRecords : "No Entries"
+    getOrdersWithCurrentValues(function(initialOrders) {
+        allOrdersTable = $('#ordersTable')
+                .dataTable(
+                        {
+                            processing : false,
+                            serverSide : false,
+                            paging : false,
+                            info : false,
+                            data : initialOrders,
+                            columns : [
+                                    {
+                                        name : "date",
+                                        data : "orderDate",
+                                        orderable : false
                                     },
-                                });
-            });
+                                    {
+                                        name : "fund",
+                                        data : "orderFundName",
+                                        orderable : false
+                                    },
+                                    {
+                                        name : "shares",
+                                        data : "orderShares",
+                                        orderable : false,
+                                        className : "text-right",
+                                    },
+                                    {
+                                        name : "baseValue",
+                                        data : "orderValue",
+                                        orderable : false,
+                                        className : "text-right",
+                                        render : function(data, type, row, meta) {
+                                            return data.formatCurrency();
+                                        }
+                                    },
+                                    {
+                                        name : "currentValue",
+                                        data : "currentValue",
+                                        orderable : false,
+                                        className : "text-right",
+                                        render : function(data, type, row, meta) {
+                                            return data.formatCurrency();
+                                        }
+                                    },
+                                    {
+                                        name : "actions",
+                                        orderable : false,
+                                        render : function(data, type, row, meta) {
+                                            return "<a class=\"btn btn-default btn-sm delete-order-btn\" "
+                                                    + "style=\"padding-top: 1px; padding-bottom: 1px\" "
+                                                    + "href=\"javascript:void(0)\" onclick=\"javascript:removeOrderEntry("
+                                                    + row.id + ")\">Remove</a>";
+                                        }
+                                    } ],
+                            searching : false,
+                            lengthChange : false,
+                            searchCols : [ null, null, null, null, null ],
+                            order : [ [ 0, "desc" ], [ 1, "asc" ] ],
+                            language : {
+                                zeroRecords : "No Entries"
+                            },
+                        });
+    });
 }
 
 function refreshAllOrdersTable(rawData) {
-    buildOrders(rawData, function(data) {
+    getOrdersWithCurrentValues(function(data) {
         allOrdersTable.fnClearTable();
         if (data && data.length > 0) {
             allOrdersTable.fnAddData(data);
         }
-    });
+    }, rawData);
 }
 
 function initAllOrdersCards() {
@@ -191,7 +183,7 @@ function initAllOrdersCards() {
 }
 
 function refreshAllOrdersCards(rawData) {
-    buildOrders(rawData, function(data) {
+    getOrdersWithCurrentValues(function(data) {
         var orderSummaries = makeSummaries(data);
         $("#orderTotalCards").empty();
         orderSummaries.forEach(function(summary, index) {
@@ -202,7 +194,7 @@ function refreshAllOrdersCards(rawData) {
                 }));
             }
         });
-    });
+    }, rawData);
 }
 
 function makeSummaries(data) {
@@ -291,65 +283,6 @@ function buildOrderSummaryCard(ordersSummary) {
     });
     baseContainer.append(panel);
     return baseContainer;
-}
-
-function buildOrders(rawOrders, callback) {
-    var processOrdersWithCurrentValue = function(currentValues) {
-        var processedOrders = [];
-        rawOrders
-                .forEach(function(rawOrder) {
-                    processedOrders
-                            .push({
-                                id : rawOrder.id,
-                                orderDate : rawOrder.orderDate,
-                                orderFundCode : rawOrder.orderFundCode,
-                                orderFundName : rawOrder.orderFundName,
-                                orderShares : rawOrder.orderShares,
-                                orderValue : rawOrder.orderValue,
-                                currentValue : currentValues
-                                        && currentValues[rawOrder.orderFundCode] ? (currentValues[rawOrder.orderFundCode] * rawOrder.orderShares)
-                                        : 0,
-                            });
-                });
-        callback(processedOrders);
-    };
-
-    var allFundCodes = [];
-    rawOrders.forEach(function(rawOrder) {
-        if ($.inArray(rawOrder.orderFundCode, allFundCodes) == -1) {
-            allFundCodes.push(rawOrder.orderFundCode);
-        }
-    });
-
-    var latestNavpsRequests = [];
-    allFundCodes.forEach(function(fundCode) {
-        latestNavpsRequests.push($.ajax({
-            url : "/api/navps",
-            data : {
-                sort : "date,desc",
-                size : 1,
-                fund : fundCode,
-            }
-        }));
-    });
-
-    $.when
-            .apply($, latestNavpsRequests)
-            .then(
-                    function(...navpsLookupResults) {
-                        var currentNavps = {};
-                        navpsLookupResults
-                                .forEach(function(navpsLookupResult) {
-                                    if (navpsLookupResult[0]
-                                            && navpsLookupResult[0].content
-                                            && navpsLookupResult[0].content[0]
-                                            && navpsLookupResult[0].content[0].fund
-                                            && navpsLookupResult[0].content[0].value) {
-                                        currentNavps[navpsLookupResult[0].content[0].fund] = navpsLookupResult[0].content[0].value;
-                                    }
-                                });
-                        processOrdersWithCurrentValue(currentNavps);
-                    });
 }
 
 Number.prototype.formatCurrency = function() {
