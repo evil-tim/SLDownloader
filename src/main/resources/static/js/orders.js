@@ -110,6 +110,9 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
             .apply($, latestNavpsRequests)
             .then(
                     function(...navpsLookupResults) {
+                        if (latestNavpsRequests.length == 1) {
+                            navpsLookupResults = [ navpsLookupResults ];
+                        }
                         // convert multiple navps lookups to singe lookup
                         var currentNavps = {};
                         if (navpsLookupResults) {
