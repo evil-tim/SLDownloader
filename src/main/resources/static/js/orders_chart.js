@@ -17,14 +17,17 @@ function updateOrdersValueChart(rawOrderData) {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn('date', 'Date');
     chartData.addColumn('number', 'Base Value');
+    chartData.addColumn('number', 'Actual Value');
 
     getOrdersWithCurrentValues(function(orderData) {
-        var accumulatedOrderData = buildAccmulatedOrders(orderData);
-        for (var i = 0; i < accumulatedOrderData.length; i++) {
-            chartData.addRow([ accumulatedOrderData[i].orderDateObj,
-                    accumulatedOrderData[i].baseValue ]);
-        }
-        drawValuesChart(chartData);
+        getOrdersWithHistoricalValues(function(accumulatedOrderData) {
+            for (var i = 0; i < accumulatedOrderData.length; i++) {
+                chartData.addRow([ accumulatedOrderData[i].orderDateObj,
+                        accumulatedOrderData[i].baseValue,
+                        accumulatedOrderData[i].actualValue ]);
+            }
+            drawValuesChart(chartData);
+        }, buildAccmulatedOrders(orderData));
     }, rawOrderData);
 }
 
@@ -109,6 +112,7 @@ function buildAccmulatedOrders(orders) {
                                     .getTime() !== prevDate.getTime()) {
                         accumulatedOrders
                                 .push({
+                                    hasOrder : false,
                                     orderDateObj : prevDate,
                                     baseValue : accumulatedOrderIndex == -1 ? 0
                                             : accumulatedOrders[accumulatedOrderIndex].baseValue,
@@ -129,6 +133,7 @@ function buildAccmulatedOrders(orders) {
                     // create new entry based on current order
                     accumulatedOrders
                             .push({
+                                hasOrder : true,
                                 orderDateObj : order.orderDateObj,
                                 baseValue : accumulatedOrders[accumulatedOrderIndex].baseValue,
                                 baseValuesPerFund : Object
@@ -180,6 +185,7 @@ function buildAccmulatedOrders(orders) {
                     .getTime()) {
         accumulatedOrders
                 .push({
+                    hasOrder : false,
                     orderDateObj : currentDate,
                     baseValue : accumulatedOrders[accumulatedOrderIndex].baseValue,
                     baseValuesPerFund : accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund,
@@ -188,4 +194,96 @@ function buildAccmulatedOrders(orders) {
     }
 
     return accumulatedOrders;
+}
+
+var navpsCache = {};
+
+function getOrdersWithHistoricalValues(callback, accumulatedOrders) {
+    var navpsRequests = [];
+    accumulatedOrders.forEach(function(order) {
+        if (order.hasOrder) {
+            Object.keys(order.baseValuesPerFund).forEach(
+                    function(fundCode) {
+                        var dateStr = order.orderDateObj.toISOString().slice(0,
+                                10);
+                        if (!navpsCache || !navpsCache[fundCode]
+                                || !navpsCache[fundCode][dateStr]) {
+                            navpsRequests.push($.ajax({
+                                url : "/api/navps",
+                                data : {
+                                    sort : "date,desc",
+                                    size : 1,
+                                    fund : fundCode,
+                                    dateFrom : dateStr,
+                                    dateTo : dateStr,
+                                }
+                            }));
+                        }
+                    });
+        }
+    });
+
+    var buildFunction = function(bfCallback, cache, orders) {
+        orders
+                .forEach(function(order, index) {
+                    order.actualValue = 0;
+                    if (order.hasOrder) {
+                        var dateStr = order.orderDateObj.toISOString().slice(0,
+                                10);
+                        var accumulator = 0;
+                        Object
+                                .keys(order.baseValuesPerFund)
+                                .forEach(
+                                        function(fundCode) {
+                                            if (cache[fundCode]
+                                                    && cache[fundCode][dateStr]) {
+                                                accumulator = accumulator
+                                                        + (cache[fundCode][dateStr] * order.sharesPerFund[fundCode]);
+                                            }
+                                        });
+                        order.actualValue = accumulator;
+                    } else {
+                        if (orders[index - 1]) {
+                            order.actualValue = orders[index - 1].actualValue
+                        }
+                    }
+                });
+        bfCallback(orders);
+    };
+
+    if (navpsRequests.length > 0) {
+        $.when
+                .apply($, navpsRequests)
+                .then(
+                        function(...navpsLookupResults) {
+                            if (navpsLookupResults) {
+                                if (navpsRequests.length == 1) {
+                                    navpsLookupResults = [ navpsLookupResults ];
+                                }
+                                navpsLookupResults
+                                        .forEach(function(navpsLookupResult) {
+                                            if (navpsLookupResult
+                                                    && navpsLookupResult[0]
+                                                    && navpsLookupResult[0].content
+                                                    && navpsLookupResult[0].content[0]
+                                                    && navpsLookupResult[0].content[0].fund
+                                                    && navpsLookupResult[0].content[0].date
+                                                    && navpsLookupResult[0].content[0].value) {
+                                                var lookUpFundCode = navpsLookupResult[0].content[0].fund;
+                                                var lookUpFundDate = navpsLookupResult[0].content[0].date;
+                                                var lookUpFundValue = navpsLookupResult[0].content[0].value;
+                                                if (!navpsCache[lookUpFundCode]) {
+                                                    navpsCache[lookUpFundCode] = [];
+                                                }
+                                                navpsCache[lookUpFundCode][lookUpFundDate] = lookUpFundValue;
+                                            }
+
+                                        });
+                            }
+                            buildFunction(callback, navpsCache,
+                                    accumulatedOrders);
+                        });
+    } else {
+        buildFunction(callback, navpsCache, accumulatedOrders);
+    }
 }
