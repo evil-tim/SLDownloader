@@ -27,7 +27,7 @@ function updateOrdersValueChart(rawOrderData) {
                         accumulatedOrderData[i].actualValue ]);
             }
             drawValuesChart(chartData);
-        }, buildAccmulatedOrders(orderData));
+        }, addFillerEntries(buildAccumulatedOrders(orderData)));
     }, rawOrderData);
 }
 
@@ -58,7 +58,7 @@ function updateOrdersSharesChart(rawOrderData) {
     });
 
     getOrdersWithCurrentValues(function(orderData) {
-        var accumulatedOrderData = buildAccmulatedOrders(orderData);
+        var accumulatedOrderData = buildAccumulatedOrders(orderData);
         accumulatedOrderData.forEach(function(accumulatedOrder) {
             var row = [ accumulatedOrder.orderDateObj ];
             uniqueFundCodes.forEach(function(fundCode) {
@@ -80,7 +80,7 @@ function drawSharesChart(chartData) {
     chart.draw(chartData, options);
 }
 
-function buildAccmulatedOrders(orders) {
+function buildAccumulatedOrders(orders) {
     var accumulatedOrders = [];
     var accumulatedOrderIndex = -1;
 
@@ -113,6 +113,7 @@ function buildAccmulatedOrders(orders) {
                         accumulatedOrders
                                 .push({
                                     hasOrder : false,
+                                    isFiller : false,
                                     orderDateObj : prevDate,
                                     baseValue : accumulatedOrderIndex == -1 ? 0
                                             : accumulatedOrders[accumulatedOrderIndex].baseValue,
@@ -134,6 +135,7 @@ function buildAccmulatedOrders(orders) {
                     accumulatedOrders
                             .push({
                                 hasOrder : true,
+                                isFiller : false,
                                 orderDateObj : order.orderDateObj,
                                 baseValue : accumulatedOrders[accumulatedOrderIndex].baseValue,
                                 baseValuesPerFund : Object
@@ -186,6 +188,7 @@ function buildAccmulatedOrders(orders) {
         accumulatedOrders
                 .push({
                     hasOrder : false,
+                    isFiller : false,
                     orderDateObj : currentDate,
                     baseValue : accumulatedOrders[accumulatedOrderIndex].baseValue,
                     baseValuesPerFund : accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund,
@@ -196,28 +199,101 @@ function buildAccmulatedOrders(orders) {
     return accumulatedOrders;
 }
 
+function addFillerEntries(orders) {
+    var fillerOrders = [];
+    var prevOrder = null;
+    orders.forEach(function(order) {
+        // add filler entries between each order entry
+        if (prevOrder != null) {
+            var diffDays = Math.ceil(Math.abs(order.orderDateObj.getTime()
+                    - prevOrder.orderDateObj.getTime()) / 86400000);
+            // add filler entries only if difference > 1 week
+            if(diffDays >= 7) {
+
+                // compute and add each filler entry
+                var fillerDate = new Date(prevOrder.orderDateObj);
+                fillerDate.setDate(fillerDate.getDate() - fillerDate.getDay());
+
+                while(true) {
+                    var fillerEndWeekDate = new Date(fillerDate);
+                    fillerEndWeekDate.setDate(fillerEndWeekDate.getDate() + 6);
+
+                    if(fillerEndWeekDate.getTime() >= order.orderDateObj.getTime()) {
+                        break;
+                    }
+
+                    fillerOrders.push({
+                        hasOrder : false,
+                        isFiller : true,
+                        orderDateObj : null,
+                        fillerDateFromObj : new Date(fillerDate),
+                        fillerDateToObj : fillerEndWeekDate,
+                        baseValue : prevOrder.baseValue,
+                        baseValuesPerFund : prevOrder.baseValuesPerFund,
+                        sharesPerFund : prevOrder.sharesPerFund,
+                    });
+
+                    fillerDate.setDate(fillerDate.getDate() + 7);
+                }
+            }
+        }
+        fillerOrders.push(order);
+        prevOrder = order;
+    });
+    return fillerOrders;
+}
+
+var navpsCacheAvailable = {};
 var navpsCache = {};
 
 function getOrdersWithHistoricalValues(callback, accumulatedOrders) {
     var navpsRequests = [];
     accumulatedOrders.forEach(function(order) {
-        if (order.hasOrder) {
+        if (order.hasOrder || order.isFiller) {
             Object.keys(order.baseValuesPerFund).forEach(
                     function(fundCode) {
-                        var dateStr = order.orderDateObj.toISOString().slice(0,
-                                10);
-                        if (!navpsCache || !navpsCache[fundCode]
-                                || !navpsCache[fundCode][dateStr]) {
+                        var dateFromStr = null;
+                        var dateToStr = null;
+                        if(order.isFiller) {
+                            dateFromStr = order.fillerDateFromObj.toISOString().slice(0,
+                                    10);
+                            dateToStr = order.fillerDateToObj.toISOString().slice(0,
+                                    10);
+                        } else {
+                            var orderDateObj = new Date(order.orderDateObj);
+
+                            orderDateObj.setDate(orderDateObj.getDate() - orderDateObj.getDay());
+                            dateFromStr = orderDateObj.toISOString().slice(0,
+                                    10);
+
+                            orderDateObj.setDate(orderDateObj.getDate() + 6);
+                            dateToStr = orderDateObj.toISOString().slice(0,
+                                    10);
+                        }
+
+                        var requestRangeKey = dateFromStr + "-" + dateToStr;
+
+                        if (!navpsCacheAvailable || !navpsCacheAvailable[fundCode]
+                                || !navpsCacheAvailable[fundCode][requestRangeKey]) {
                             navpsRequests.push($.ajax({
                                 url : "/api/navps",
                                 data : {
                                     sort : "date,desc",
-                                    size : 1,
+                                    size : 7,
                                     fund : fundCode,
-                                    dateFrom : dateStr,
-                                    dateTo : dateStr,
+                                    dateFrom : dateFromStr,
+                                    dateTo : dateToStr,
                                 }
                             }));
+                            if(!navpsCacheAvailable) {
+                                navpsCacheAvailable = {};
+                            }
+                            if(!navpsCacheAvailable[fundCode]) {
+                                navpsCacheAvailable[fundCode] = [];
+                            }
+                            if(!navpsCacheAvailable[fundCode][requestRangeKey]) {
+                                navpsCacheAvailable[fundCode][requestRangeKey] = true;
+                            }
                         }
                     });
         }
@@ -226,6 +302,7 @@ function getOrdersWithHistoricalValues(callback, accumulatedOrders) {
     var buildFunction = function(bfCallback, cache, orders) {
         orders
                 .forEach(function(order, index) {
+                    var hasActualValue = false;
                     order.actualValue = 0;
                     if (order.hasOrder) {
                         var dateStr = order.orderDateObj.toISOString().slice(0,
@@ -242,9 +319,42 @@ function getOrdersWithHistoricalValues(callback, accumulatedOrders) {
                                             }
                                         });
                         order.actualValue = accumulator;
-                    } else {
+                        hasActualValue = true;
+                    } else if(order.isFiller) {
+                        var fillerDate = new Date(order.fillerDateToObj);
+                        fillerDate.setDate(fillerDate.getDate() - 1);
+                        while(fillerDate.getDay() > 0) {
+                            var dateStr = fillerDate.toISOString().slice(0,
+                                    10);
+                            var accumulator = 0;
+                            Object
+                                    .keys(order.baseValuesPerFund)
+                                    .forEach(
+                                            function(fundCode) {
+                                                if (cache[fundCode]
+                                                        && cache[fundCode][dateStr]) {
+                                                    hasActualValue = true;
+                                                    accumulator = accumulator
+                                                            + (cache[fundCode][dateStr] * order.sharesPerFund[fundCode]);
+                                                }
+                                            });
+                            if(hasActualValue) {
+                                order.orderDateObj = fillerDate;
+                                order.actualValue = accumulator;
+                                break;
+                            }
+                            fillerDate.setDate(fillerDate.getDate() - 1);
+                        }
+                    }
+
+                    if(!hasActualValue) {
                         if (orders[index - 1]) {
                             order.actualValue = orders[index - 1].actualValue
+                        }
+                        if(!order.orderDateObj && order.fillerDateToObj) {
+                            var fallbackDate = new Date(order.fillerDateToObj);
+                            fallbackDate.setDate(fallbackDate.getDate() - 1);
+                            order.orderDateObj = fallbackDate;
                         }
                     }
                 });
@@ -261,23 +371,22 @@ function getOrdersWithHistoricalValues(callback, accumulatedOrders) {
                                     navpsLookupResults = [ navpsLookupResults ];
                                 }
                                 navpsLookupResults
-                                        .forEach(function(navpsLookupResult) {
+                                        .forEach(function(navpsLookupResult, requestIndex) {
                                             if (navpsLookupResult
                                                     && navpsLookupResult[0]
-                                                    && navpsLookupResult[0].content
-                                                    && navpsLookupResult[0].content[0]
-                                                    && navpsLookupResult[0].content[0].fund
-                                                    && navpsLookupResult[0].content[0].date
-                                                    && navpsLookupResult[0].content[0].value) {
-                                                var lookUpFundCode = navpsLookupResult[0].content[0].fund;
-                                                var lookUpFundDate = navpsLookupResult[0].content[0].date;
-                                                var lookUpFundValue = navpsLookupResult[0].content[0].value;
-                                                if (!navpsCache[lookUpFundCode]) {
-                                                    navpsCache[lookUpFundCode] = [];
-                                                }
-                                                navpsCache[lookUpFundCode][lookUpFundDate] = lookUpFundValue;
+                                                    && navpsLookupResult[0].content) {
+                                                navpsLookupResult[0].content.forEach(function(navpsEntry) {
+                                                    if(navpsEntry && navpsEntry.fund && navpsEntry.date && navpsEntry.value) {
+                                                        var lookUpFundCode = navpsEntry.fund;
+                                                        var lookUpFundDate = navpsEntry.date;
+                                                        var lookUpFundValue = navpsEntry.value;
+                                                        if (!navpsCache[lookUpFundCode]) {
+                                                            navpsCache[lookUpFundCode] = [];
+                                                        }
+                                                        navpsCache[lookUpFundCode][lookUpFundDate] = lookUpFundValue;
+                                                    }
+                                                });
                                             }
-
                                         });
                             }
                             buildFunction(callback, navpsCache,
