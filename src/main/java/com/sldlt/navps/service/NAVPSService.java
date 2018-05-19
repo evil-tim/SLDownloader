@@ -14,6 +14,8 @@ public interface NAVPSService {
 
     void saveNAVPS(List<NAVPSEntryDto> entry);
 
+    List<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo);
+
     Page<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo, Pageable page);
 
     List<NAVPSEntryDto> listAllNAVPS(String fund);

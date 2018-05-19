@@ -51,6 +51,29 @@ public class NAVPSServiceImpl implements NAVPSService {
     }
 
     @Override
+    public List<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo) {
+        final BooleanBuilder predicate = new BooleanBuilder();
+        if (StringUtils.hasText(fund)) {
+            predicate.and(nAVPSEntry.fund.eq(fund));
+        }
+        if (dateFrom != null) {
+            predicate.and(nAVPSEntry.date.goe(dateFrom));
+        }
+        if (dateTo != null) {
+            predicate.and(nAVPSEntry.date.loe(dateTo));
+        }
+
+        final List<FundDto> funds = fundService.listAllFunds();
+
+        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
+            .map(entry -> {
+                NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
+                mappedNavps.setFundName(getFundName(funds, mappedNavps.getFund()));
+                return mappedNavps;
+            }).collect(Collectors.toList());
+    }
+
+    @Override
     public Page<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo, final Pageable page) {
         final BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.hasText(fund)) {

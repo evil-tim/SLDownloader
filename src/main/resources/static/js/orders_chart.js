@@ -14,18 +14,41 @@ function initOrdersChart() {
 }
 
 function updateOrdersValueChart(rawOrderData) {
+    rawOrderData = rawOrderData ? rawOrderData : getOrders();
+    var requestOrderData = [];
+
+    rawOrderData.forEach(function(rawOrder) {
+        requestOrderData.push({
+            'date' : rawOrder.orderDate,
+            'code' : rawOrder.orderFundCode,
+            'shares' : rawOrder.orderShares,
+            'baseValue' : rawOrder.orderValue
+        });
+    });
+
     var chartData = new google.visualization.DataTable();
     chartData.addColumn('date', 'Date');
     chartData.addColumn('number', 'Base Value');
+    chartData.addColumn('number', 'Actual Value');
 
-    getOrdersWithCurrentValues(function(orderData) {
-        var accumulatedOrderData = buildAccmulatedOrders(orderData);
-        for (var i = 0; i < accumulatedOrderData.length; i++) {
-            chartData.addRow([ accumulatedOrderData[i].orderDateObj,
-                    accumulatedOrderData[i].baseValue ]);
-        }
-        drawValuesChart(chartData);
-    }, rawOrderData);
+    $.ajax({
+        url : "/api/orders/aggregate-actual-orders",
+        method : "POST",
+        contentType : "application/json; charset=utf-8",
+        data : JSON.stringify({
+            orders : requestOrderData
+        })
+    }).done(
+            function(data) {
+                if (data && Array.isArray(data)) {
+                    data.forEach(function(aggregatedOrder) {
+                        chartData.addRow([ new Date(aggregatedOrder.date),
+                                aggregatedOrder.totalBaseValue,
+                                aggregatedOrder.totalActualValue ])
+                    });
+                }
+                drawValuesChart(chartData);
+            });
 }
 
 function drawValuesChart(chartData) {
