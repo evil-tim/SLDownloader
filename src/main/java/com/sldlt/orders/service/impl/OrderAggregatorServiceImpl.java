@@ -55,6 +55,13 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
                 aggregatedOrders.addAll(fillerOrders.values());
             });
 
+        // sort time aggregated orders
+        Collections.sort(aggregatedOrders);
+        if (!aggregatedOrders.isEmpty()
+                        && aggregatedOrders.get(aggregatedOrders.size() - 1).getTotalActualValue().equals(BigDecimal.ZERO)) {
+            aggregatedOrders.remove(aggregatedOrders.size() - 1);
+        }
+
         return aggregatedOrders;
     }
 
