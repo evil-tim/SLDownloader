@@ -34,9 +34,75 @@
         <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10">
             <h1>Tools</h1>
         </div>
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12"
-            style="margin-top: 4px;"
-        >CONTENT</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Moving Average</b>
+                </div>
+                <div class="panel-body">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="ma_5"
+                        /> <label class="form-check-label" for="ma_5">
+                            5D MA </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="ma_10"
+                        /> <label class="form-check-label" for="ma_10">
+                            10D MA </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="ma_20"
+                        /> <label class="form-check-label" for="ma_20">
+                            20D MA </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="ma_40"
+                        /> <label class="form-check-label" for="ma_40">
+                            40D MA </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="ma_80"
+                        /> <label class="form-check-label" for="ma_80">
+                            80D MA </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Exponential Moving Average</b>
+                </div>
+                <div class="panel-body">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="ema_5"
+                        /> <label class="form-check-label" for="ema_5">
+                            5D EMA </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="ema_10"
+                        /> <label class="form-check-label" for="ema_10">
+                            10D EMA </label>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <hr />
         </div>
@@ -47,5 +113,8 @@
 <th:block layout:fragment="additional_js">
     <script type="text/javascript" src="/js/datatable_settings.js"></script>
     <script type="text/javascript" src="/js/analysis_chart.js"></script>
+    <script type="text/javascript" src="/js/analysis/modules.js"></script>
+    <script type="text/javascript" src="/js/analysis/moving_avg.js"></script>
+    <script type="text/javascript" src="/js/analysis/exp_moving_avg.js"></script>
 </th:block>
 </html>

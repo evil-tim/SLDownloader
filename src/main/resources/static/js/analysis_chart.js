@@ -1,11 +1,18 @@
 $(document).ready(function() {
     initAnalysisFundPicker();
+    initAnalysisModulePicker();
 });
 
 function initAnalysisFundPicker() {
     $.ajax({
         url : "/api/funds"
     }).done(updateAnalysisFundPicker);
+}
+
+function initAnalysisModulePicker() {
+    $(".analysis-selector").change(function() {
+        updateChartFromPicker();
+    });
 }
 
 function updateAnalysisFundPicker(data) {
@@ -25,7 +32,7 @@ function updateAnalysisFundPicker(data) {
 function updateChartFromPicker() {
     var fundCode = $('#fundPicker').val();
     if (fundCode) {
-        disableFundPicker();
+        disableControls();
         updateChart({
             code : fundCode,
             name : $('#fundPicker > option[value="' + fundCode + '"]').text()
@@ -33,11 +40,13 @@ function updateChartFromPicker() {
     }
 }
 
-function disableFundPicker() {
+function disableControls() {
+    $(".analysis-selector").prop('disabled', true);
     $('#fundPicker').prop('disabled', true);
     $('#fundPicker').selectpicker('refresh');
 }
-function enableFundPicker() {
+function enableControls() {
+    $(".analysis-selector").prop('disabled', false);
     $('#fundPicker').prop('disabled', false);
     $('#fundPicker').selectpicker('refresh');
 }
@@ -50,7 +59,20 @@ google.charts.setOnLoadCallback(updateChart);
 function updateChart(fund) {
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Date');
-    data.addColumn('number', 'Value');
+    data.addColumn('number', 'NAVPS');
+
+    var moduleNames = analysisModules.getModules();
+    var selectedModuleNames = getSelectedModules();
+
+    moduleNames.filter(function(moduleName) {
+        return selectedModuleNames.indexOf(moduleName) >= 0;
+    }).forEach(function(moduleName) {
+        var moduleColumns = analysisModules.getColumns(moduleName);
+        moduleColumns.forEach(function(moduleColumn) {
+            data.addColumn(moduleColumn.type, moduleColumn.title);
+        });
+    });
+
     if (fund) {
         $.ajax({
             url : "/api/navps/all",
@@ -60,19 +82,43 @@ function updateChart(fund) {
         }).then(function(result) {
             buildDataRows(result, data)
             drawChart(data);
-            enableFundPicker();
+            enableControls();
         });
     } else {
-        data.addRows([ [ new Date(), 0 ] ]);
+        var tempRow = [ new Date(), 0 ];
+
+        moduleNames.filter(function(moduleName) {
+            return selectedModuleNames.indexOf(moduleName) >= 0;
+        }).forEach(function(moduleName) {
+            tempRow.push(0);
+        });
+        data.addRows([ tempRow ]);
         drawChart(data);
-        enableFundPicker();
+        enableControls();
     }
 }
 
 function buildDataRows(result, data) {
-    var rows = [];
+    var dates = [];
+    var values = [];
     for (var i = 0; i < result.length; i++) {
-        rows.push([ new Date(result[i].date), result[i].value ]);
+        dates.push(new Date(result[i].date));
+        values.push(result[i].value);
+    }
+    var rows = [];
+    var moduleNames = analysisModules.getModules();
+    var selectedModuleNames = getSelectedModules();
+
+    for (var i = 0; i < result.length; i++) {
+        var row = [ dates[i], values[i] ];
+
+        moduleNames.filter(function(moduleName) {
+            return selectedModuleNames.indexOf(moduleName) >= 0;
+        }).forEach(function(moduleName) {
+            row.push(analysisModules.compute(moduleName, i, values));
+        });
+
+        rows.push(row);
     }
     data.addRows(rows);
 }
@@ -80,8 +126,29 @@ function buildDataRows(result, data) {
 function drawChart(data) {
     var chart = new google.visualization.AnnotationChart(document
             .getElementById('chart_div'));
+
+    var moduleNames = analysisModules.getModules();
+    var selectedModuleNames = getSelectedModules();
+
     var options = {
-        displayAnnotations : false
+        displayAnnotations : false,
+        colors : [ '#667788' ]
     };
+
+    moduleNames.filter(function(moduleName) {
+        return selectedModuleNames.indexOf(moduleName) >= 0;
+    }).forEach(function(moduleName) {
+        var moduleColumns = analysisModules.getColumns(moduleName);
+        moduleColumns.forEach(function(moduleColumn) {
+            options.colors.push(moduleColumn.color);
+        });
+    });
+
     chart.draw(data, options);
+}
+
+function getSelectedModules() {
+    return $(".analysis-selector:checked").map(function() {
+        return this.id;
+    }).get();
 }
