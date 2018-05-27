@@ -1,5 +1,9 @@
 (function() {
 
+    function init(settings) {
+
+    }
+
     function movingAvgColumns(settings) {
         return [ {
             'type' : 'number',
@@ -43,15 +47,15 @@
         'color' : '#581845'
     };
 
-    analysisModules.addModule('ma_5', movingAvgColumns, movingAvgCompute,
+    analysisModules.addModule('ma_5', movingAvgColumns, init, movingAvgCompute,
             movingAvg5Settings);
-    analysisModules.addModule('ma_10', movingAvgColumns, movingAvgCompute,
-            movingAvg10Settings);
-    analysisModules.addModule('ma_20', movingAvgColumns, movingAvgCompute,
-            movingAvg20Settings);
-    analysisModules.addModule('ma_40', movingAvgColumns, movingAvgCompute,
-            movingAvg40Settings);
-    analysisModules.addModule('ma_80', movingAvgColumns, movingAvgCompute,
-            movingAvg80Settings);
+    analysisModules.addModule('ma_10', movingAvgColumns, init,
+            movingAvgCompute, movingAvg10Settings);
+    analysisModules.addModule('ma_20', movingAvgColumns, init,
+            movingAvgCompute, movingAvg20Settings);
+    analysisModules.addModule('ma_40', movingAvgColumns, init,
+            movingAvgCompute, movingAvg40Settings);
+    analysisModules.addModule('ma_80', movingAvgColumns, init,
+            movingAvgCompute, movingAvg80Settings);
 
 }());

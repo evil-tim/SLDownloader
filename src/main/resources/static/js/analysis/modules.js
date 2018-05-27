@@ -5,11 +5,12 @@ var analysisModules = (function() {
 
     var analysisModules = {};
 
-    analysisModules.addModule = function(name, columnsFunction,
+    analysisModules.addModule = function(name, columnsFunction, initFunction,
             computeFunction, settings) {
         _analysisModuleNames.push(name);
         _analysisModuleMap[name] = {
             'columnsFunction' : columnsFunction,
+            'initFunction' : initFunction,
             'computeFunction' : computeFunction,
             'settings' : settings
         };
@@ -22,6 +23,11 @@ var analysisModules = (function() {
     analysisModules.getColumns = function(name) {
         return _analysisModuleMap[name]
                 .columnsFunction(_analysisModuleMap[name].settings);
+    }
+
+    analysisModules.init = function(name) {
+        _analysisModuleMap[name]
+                .initFunction(_analysisModuleMap[name].settings);
     }
 
     analysisModules.compute = function(name, index, data) {

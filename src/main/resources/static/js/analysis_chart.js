@@ -109,6 +109,12 @@ function buildDataRows(result, data) {
     var moduleNames = analysisModules.getModules();
     var selectedModuleNames = getSelectedModules();
 
+    moduleNames.filter(function(moduleName) {
+        return selectedModuleNames.indexOf(moduleName) >= 0;
+    }).forEach(function(moduleName) {
+        analysisModules.init(moduleName);
+    });
+
     for (var i = 0; i < result.length; i++) {
         var row = [ dates[i], values[i] ];
 
