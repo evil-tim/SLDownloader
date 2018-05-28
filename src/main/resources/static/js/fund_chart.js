@@ -47,7 +47,7 @@ function getNAVPSDataDeferred(code) {
 
 function buildDataRows(count, arguments, data) {
     // fix arguments if only 1 result
-    if (count == 1) {
+    if (count === 1) {
         arguments = {
             0 : arguments
         };

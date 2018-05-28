@@ -81,7 +81,7 @@ function loadOrdersAction() {
     }
 
     var importFile = $('#ordersImportFile')[0].files[0];
-    reader = new FileReader();
+    var reader = new FileReader();
     reader.onload = function(event) {
         var orders = null;
         try {
@@ -188,7 +188,7 @@ function refreshAllOrdersCards(rawData) {
         $("#orderTotalCards").empty();
         orderSummaries.forEach(function(summary, index) {
             $("#orderTotalCards").append(buildOrderSummaryCard(summary));
-            if (index % 4 == 3) {
+            if (index % 4 === 3) {
                 $("#orderTotalCards").append($("<div />", {
                     'class' : 'clearfix'
                 }));
