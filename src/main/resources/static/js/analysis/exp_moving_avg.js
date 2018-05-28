@@ -15,7 +15,7 @@
     function movingAvgCompute(index, data, settings) {
 
         if (settings.emaCache[index]) {
-            return settings.emaCache[index];
+            return [ settings.emaCache[index] ];
         }
 
         var ema = null;
@@ -33,7 +33,7 @@
         }
 
         settings.emaCache[index] = ema;
-        return ema;
+        return [ ema ];
     }
 
     var movingAvg5Settings = {

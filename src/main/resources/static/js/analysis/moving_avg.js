@@ -23,7 +23,7 @@
                 valid = false;
             }
         }
-        return valid ? accum / settings.period : null;
+        return [ valid ? accum / settings.period : null ];
     }
 
     var movingAvg5Settings = {

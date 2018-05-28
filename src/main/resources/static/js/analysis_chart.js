@@ -90,7 +90,10 @@ function updateChart(fund) {
         moduleNames.filter(function(moduleName) {
             return selectedModuleNames.indexOf(moduleName) >= 0;
         }).forEach(function(moduleName) {
-            tempRow.push(0);
+            var moduleColumns = analysisModules.getColumns(moduleName);
+            moduleColumns.forEach(function(moduleColumn) {
+                tempRow.push(0);
+            });
         });
         data.addRows([ tempRow ]);
         drawChart(data);
@@ -121,7 +124,10 @@ function buildDataRows(result, data) {
         moduleNames.filter(function(moduleName) {
             return selectedModuleNames.indexOf(moduleName) >= 0;
         }).forEach(function(moduleName) {
-            row.push(analysisModules.compute(moduleName, i, values));
+            var results = analysisModules.compute(moduleName, i, values);
+            results.forEach(function(resultVal) {
+                row.push(resultVal);
+            });
         });
 
         rows.push(row);
