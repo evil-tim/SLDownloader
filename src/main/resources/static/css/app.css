@@ -62,12 +62,19 @@
     display: inline-block !important;
 }
 
-.summary-card .panel-heading {
-    min-height: 60px;
+.summary-card .panel-heading, .analysis-card .panel-heading {
+    min-height: 4.5em;
 }
 
 .summary-card .panel-body table {
     width: 100%;
+}
+
+.analysis-card .selector {
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1.8em;
+    cursor: pointer;
 }
 
 footer {

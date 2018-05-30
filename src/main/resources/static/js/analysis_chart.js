@@ -1,6 +1,7 @@
 $(document).ready(function() {
     initAnalysisFundPicker();
     initAnalysisModulePicker();
+    initAnalysisModulePickerExtras();
 });
 
 function initAnalysisFundPicker() {
@@ -10,9 +11,11 @@ function initAnalysisFundPicker() {
 }
 
 function initAnalysisModulePicker() {
-    $(".analysis-selector").change(function() {
-        updateChartFromPicker();
-    });
+    $(".analysis-selector").change(updateChartFromPicker);
+}
+
+function initAnalysisModulePickerExtras() {
+    $(".analysis-card .selector").click(selectAllAnalysisModules);
 }
 
 function updateAnalysisFundPicker(data) {
@@ -32,6 +35,7 @@ function updateAnalysisFundPicker(data) {
 function updateChartFromPicker() {
     var fundCode = $('#fundPicker').val();
     if (fundCode) {
+        console.log("updateChartFromPicker");
         disableControls();
         updateChart({
             code : fundCode,
@@ -40,12 +44,16 @@ function updateChartFromPicker() {
     }
 }
 
+var controlsDisabled = true;
+
 function disableControls() {
+    controlsDisabled = true;
     $(".analysis-selector").prop('disabled', true);
     $('#fundPicker').prop('disabled', true);
     $('#fundPicker').selectpicker('refresh');
 }
 function enableControls() {
+    controlsDisabled = false;
     $(".analysis-selector").prop('disabled', false);
     $('#fundPicker').prop('disabled', false);
     $('#fundPicker').selectpicker('refresh');
@@ -163,4 +171,28 @@ function getSelectedModules() {
     return $(".analysis-selector:checked").map(function() {
         return this.id;
     }).get();
+}
+
+function selectAllAnalysisModules(element) {
+    if (controlsDisabled) {
+        return;
+    }
+
+    var selector = $(element.currentTarget);
+    var checkboxes = selector.parent().parent().parent().parent().find(
+            ".analysis-selector");
+    var checkboxesToChange = null;
+
+    if (selector.hasClass("selector-select")) {
+        checkboxesToChange = checkboxes
+                .filter(".analysis-selector:not(:checked)");
+    } else if (selector.hasClass("selector-deselect")) {
+        checkboxesToChange = checkboxes.filter(".analysis-selector:checked");
+    }
+
+    if (checkboxesToChange && checkboxesToChange.length > 0) {
+        var status = checkboxesToChange.prop("checked");
+        checkboxesToChange.prop("checked", !status);
+        updateChartFromPicker();
+    }
 }
