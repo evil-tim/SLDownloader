@@ -35,7 +35,6 @@ function updateAnalysisFundPicker(data) {
 function updateChartFromPicker() {
     var fundCode = $('#fundPicker').val();
     if (fundCode) {
-        console.log("updateChartFromPicker");
         disableControls();
         updateChart({
             code : fundCode,

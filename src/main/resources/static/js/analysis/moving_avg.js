@@ -46,6 +46,10 @@
         'period' : 80,
         'color' : '#581845'
     };
+    var movingAvg160Settings = {
+        'period' : 160,
+        'color' : '#370f2b'
+    };
 
     analysisModules.addModule('ma_5', movingAvgColumns, init, movingAvgCompute,
             movingAvg5Settings);
@@ -57,5 +61,7 @@
             movingAvgCompute, movingAvg40Settings);
     analysisModules.addModule('ma_80', movingAvgColumns, init,
             movingAvgCompute, movingAvg80Settings);
+    analysisModules.addModule('ma_160', movingAvgColumns, init,
+            movingAvgCompute, movingAvg160Settings);
 
 }());

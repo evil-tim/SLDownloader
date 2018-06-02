@@ -38,12 +38,32 @@
 
     var movingAvg5Settings = {
         'period' : 5,
-        'color' : '#DDC333',
+        'color' : '#E5FCC2',
         'emaCache' : []
     };
     var movingAvg10Settings = {
         'period' : 10,
-        'color' : '#DD5766',
+        'color' : '#9DE0AD',
+        'emaCache' : []
+    };
+    var movingAvg20Settings = {
+        'period' : 20,
+        'color' : '#71C6AA',
+        'emaCache' : []
+    };
+    var movingAvg40Settings = {
+        'period' : 40,
+        'color' : '#45ADA8',
+        'emaCache' : []
+    };
+    var movingAvg80Settings = {
+        'period' : 80,
+        'color' : '#4C9394',
+        'emaCache' : []
+    };
+    var movingAvg160Settings = {
+        'period' : 160,
+        'color' : '#547980',
         'emaCache' : []
     };
 
@@ -51,5 +71,13 @@
             movingAvgCompute, movingAvg5Settings);
     analysisModules.addModule('ema_10', movingAvgColumns, init,
             movingAvgCompute, movingAvg10Settings);
+    analysisModules.addModule('ema_20', movingAvgColumns, init,
+            movingAvgCompute, movingAvg20Settings);
+    analysisModules.addModule('ema_40', movingAvgColumns, init,
+            movingAvgCompute, movingAvg40Settings);
+    analysisModules.addModule('ema_80', movingAvgColumns, init,
+            movingAvgCompute, movingAvg80Settings);
+    analysisModules.addModule('ema_160', movingAvgColumns, init,
+            movingAvgCompute, movingAvg160Settings);
 
 }());
