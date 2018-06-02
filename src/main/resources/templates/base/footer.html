@@ -1,0 +1,42 @@
+<th:block layout:fragment="footer">
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div
+                    class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6"
+                >
+                    <h5>Info</h5>
+                    <ul class="list-unstyled">
+                        <li>Version: <th:block
+                                th:text="${applicationBuildVersion}"
+                            /> - <th:block
+                                th:text="${applicationBuildTime}"
+                            /></li>
+                        <li><a
+                            href="https://github.com/evil-tim/SLDownloader"
+                            target="_blank"
+                        ><i class="fab fa-github"></i> Github</a></li>
+                        <li>This work is licensed under an <a
+                            href="https://unlicense.org/UNLICENSE"
+                            target="_blank"
+                        >Unlicense license</a>
+                        </li>
+                    </ul>
+                </div>
+                <div
+                    class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6"
+                >
+                    <h5>Donate</h5>
+                    <ul class="list-unstyled">
+                        <li><span class="icon"><i
+                                class="fab fa-bitcoin"
+                            ></i></span> <span class="pubkey">1EMpr9W397BRziBC5sHm3Yaz6xwcjLBLQi</span></li>
+                        <li><span class="icon"><i
+                                class="fab fa-ethereum"
+                            ></i></span> <span class="pubkey">0x00e19B5f4b4dcfb258df9Aa8cde5873509985044</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</th:block>

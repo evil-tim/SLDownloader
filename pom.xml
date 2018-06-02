@@ -5,7 +5,7 @@
 
     <groupId>com.sldlt</groupId>
     <artifactId>app</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>SLDownloader</name>
@@ -22,6 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <timestamp>${maven.build.timestamp}</timestamp>
     </properties>
 
     <dependencies>
@@ -102,7 +103,12 @@
             <artifactId>datatables</artifactId>
             <version>1.10.15</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.webjars/font-awesome -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>5.0.13</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
