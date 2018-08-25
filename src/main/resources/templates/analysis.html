@@ -184,6 +184,7 @@
                 </div>
             </div>
         </div>
+        <div class="clearfix"></div>
         <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 analysis-card">
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -208,9 +209,54 @@
                     <div class="form-check">
                         <input
                             class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="bb_80"
+                        /> <label class="form-check-label" for="bb_80">
+                            80D Bollinger Bands </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
                             type="checkbox" value="" id="bb_160"
                         /> <label class="form-check-label" for="bb_160">
                             160D Bollinger Bands </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 analysis-card">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        <b>Donchian Channel</b>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        <span class="selector selector-select">Select
+                            All</span> | <span
+                            class="selector selector-deselect"
+                        >Deselect All</span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="dc_20"
+                        /> <label class="form-check-label" for="dc_20">
+                            20D Donchian Channel </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="dc_80"
+                        /> <label class="form-check-label" for="dc_80">
+                            80D Donchian Channel </label>
+                    </div>
+                    <div class="form-check">
+                        <input
+                            class="form-check-input analysis-selector"
+                            type="checkbox" value="" id="dc_160"
+                        /> <label class="form-check-label" for="dc_160">
+                            160D Donchian Channel </label>
                     </div>
                 </div>
             </div>
@@ -230,5 +276,6 @@
     <script type="text/javascript" src="/js/analysis/exp_moving_avg.js"></script>
     <script type="text/javascript" src="/js/analysis/lin_regression.js"></script>
     <script type="text/javascript" src="/js/analysis/bollinger_band.js"></script>
+    <script type="text/javascript" src="/js/analysis/donchian.js"></script>
 </th:block>
 </html>

@@ -53,6 +53,11 @@
         'color1' : '#d81b60',
         'color2' : '#f06292'
     };
+    var bb80Settings = {
+        'period' : 80,
+        'color1' : '#b32085',
+        'color2' : '#d565ad'
+    };
     var bb160Settings = {
         'period' : 160,
         'color1' : '#8e24aa',
@@ -60,6 +65,7 @@
     };
 
     analysisModules.addModule('bb_20', columns, init, compute, bb20Settings);
+    analysisModules.addModule('bb_80', columns, init, compute, bb80Settings);
     analysisModules.addModule('bb_160', columns, init, compute, bb160Settings);
 
 }());
