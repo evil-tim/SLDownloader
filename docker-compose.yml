@@ -35,7 +35,7 @@ services:
       - /certs:/etc/nginx/certs:rw
 
   sldownloader:
-    image: crabranch/sldownloader:0.0.3-SNAPSHOT
+    image: crabranch/sldownloader:0.0.4-SNAPSHOT
     environment:
       - VIRTUAL_HOST=crabranch.info
       - LETSENCRYPT_HOST=crabranch.info
