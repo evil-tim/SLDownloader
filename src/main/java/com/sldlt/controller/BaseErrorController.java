@@ -15,14 +15,14 @@ public class BaseErrorController implements ErrorController {
 
     @RequestMapping(value = PATH)
     public String handleError(final HttpServletRequest request) {
-        int statusCode = 500;
+        int statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
         if (status != null) {
             try {
                 statusCode = Integer.valueOf(status.toString());
             } catch (NumberFormatException ex) {
-                // nothing to do
+                statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             }
         }
 
