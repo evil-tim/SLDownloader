@@ -106,6 +106,7 @@ server {
     access_log /var/log/nginx/access.log vhost;
     return 503;
 
+    ssl_protocols TLSv1.1 TLSv1.2;
     ssl_session_tickets off;
     ssl_certificate /etc/nginx/certs/default.crt;
     ssl_certificate_key /etc/nginx/certs/default.key;
