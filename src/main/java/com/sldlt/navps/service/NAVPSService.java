@@ -1,7 +1,9 @@
 package com.sldlt.navps.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,5 +21,7 @@ public interface NAVPSService {
     Page<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo, Pageable page);
 
     List<NAVPSEntryDto> listAllNAVPS(String fund);
+
+    Map<String, Map<String, BigDecimal>> listAllCorrelations(LocalDate dateFrom);
 
 }

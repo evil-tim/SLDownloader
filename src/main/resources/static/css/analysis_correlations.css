@@ -1,0 +1,105 @@
+table#correlation_matrix_table>tbody>tr>td {
+    font-size: 9px;
+    min-width: 70px;
+    height: 26px;
+}
+
+table#correlation_matrix_table>tbody>tr>td.top-title {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    min-width: 20px;
+    height: 70px;
+}
+
+table#correlation_matrix_table>tbody>tr>td.side-title {
+    min-width: 60px;
+    max-width: 100px;
+}
+
+table#correlation_matrix_table>tbody>tr>td.empty {
+    background-color: #f5f5f5;
+}
+
+table#correlation_matrix_table>tbody>tr>td.empty-dark {
+    background-color: #999999;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p09 {
+    background-color: #5CB85C;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p08 {
+    background-color: #6CB75A;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p07 {
+    background-color: #7DB659;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p06 {
+    background-color: #8DB457;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p05 {
+    background-color: #9EB356;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p04 {
+    background-color: #AEB254;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p03 {
+    background-color: #BFB153;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p02 {
+    background-color: #CFAF51;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p01 {
+    background-color: #E0AE50;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-p00 {
+    background-color: #F0AD4E;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n01 {
+    background-color: #EEA44E;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n02 {
+    background-color: #EB9B4E;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n03 {
+    background-color: #E9924E;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n04 {
+    background-color: #E7894E;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n05 {
+    background-color: #E5804F;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n06 {
+    background-color: #E2774F;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n07 {
+    background-color: #E06E4F;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n08 {
+    background-color: #DE654F;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n09 {
+    background-color: #DB5C4F;
+}
+
+table#correlation_matrix_table>tbody>tr>td.color-n10 {
+    background-color: #D9534F;
+}

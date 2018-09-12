@@ -1,7 +1,9 @@
 package com.sldlt.navps.resource;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +37,12 @@ public class NAVPSResource {
     @RequestMapping(path = "/api/navps/all", method = RequestMethod.GET)
     public List<NAVPSEntryDto> getNAVPS(@RequestParam("fund") String fund) {
         return navpsService.listAllNAVPS(fund);
+    }
+
+    @RequestMapping(path = "/api/navps/correlations", method = RequestMethod.GET)
+    public Map<String, Map<String, BigDecimal>> getNAVPSCorrelations(
+        @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom", required = false) LocalDate dateFrom) {
+        return navpsService.listAllCorrelations(dateFrom);
     }
 
 }
