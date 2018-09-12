@@ -36,12 +36,83 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 analysis-card">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="row">
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+            <div class="analysis-card">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div
+                                class="col-sm-6 col-md-6 col-lg-6 col-xl-6"
+                            >
+                                <b>Moving Average</b>
+                            </div>
+                            <div
+                                class="col-sm-6 col-md-6 col-lg-6 col-xl-6"
+                            >
+                                <span class="selector selector-select">Select
+                                    All</span> | <span
+                                    class="selector selector-deselect"
+                                >Deselect All</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ma_5"
+                            /> <label class="form-check-label"
+                                for="ma_5"
+                            > 5D MA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ma_10"
+                            /> <label class="form-check-label"
+                                for="ma_10"
+                            > 10D MA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ma_20"
+                            /> <label class="form-check-label"
+                                for="ma_20"
+                            > 20D MA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ma_40"
+                            /> <label class="form-check-label"
+                                for="ma_40"
+                            > 40D MA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ma_80"
+                            /> <label class="form-check-label"
+                                for="ma_80"
+                            > 80D MA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ma_160"
+                            /> <label class="form-check-label"
+                                for="ma_160"
+                            > 160D MA </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="analysis-card">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                            <b>Moving Average</b>
+                            <b>Bollinger Bands</b>
                         </div>
                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                             <span class="selector selector-select">Select
@@ -50,59 +121,112 @@
                             >Deselect All</span>
                         </div>
                     </div>
-                </div>
-                <div class="panel-body">
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ma_5"
-                        /> <label class="form-check-label" for="ma_5">
-                            5D MA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ma_10"
-                        /> <label class="form-check-label" for="ma_10">
-                            10D MA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ma_20"
-                        /> <label class="form-check-label" for="ma_20">
-                            20D MA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ma_40"
-                        /> <label class="form-check-label" for="ma_40">
-                            40D MA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ma_80"
-                        /> <label class="form-check-label" for="ma_80">
-                            80D MA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ma_160"
-                        /> <label class="form-check-label" for="ma_160">
-                            160D MA </label>
+                    <div class="panel-body">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="bb_20"
+                            /> <label class="form-check-label"
+                                for="bb_20"
+                            > 20D Bollinger Bands </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="bb_80"
+                            /> <label class="form-check-label"
+                                for="bb_80"
+                            > 80D Bollinger Bands </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="bb_160"
+                            /> <label class="form-check-label"
+                                for="bb_160"
+                            > 160D Bollinger Bands </label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 analysis-card">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="row">
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+            <div class="analysis-card">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div
+                                class="col-sm-6 col-md-6 col-lg-6 col-xl-6"
+                            >
+                                <b>Exponential Moving Average</b>
+                            </div>
+                            <div
+                                class="col-sm-6 col-md-6 col-lg-6 col-xl-6"
+                            >
+                                <span class="selector selector-select">Select
+                                    All</span> | <span
+                                    class="selector selector-deselect"
+                                >Deselect All</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ema_5"
+                            /> <label class="form-check-label"
+                                for="ema_5"
+                            > 5D EMA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ema_10"
+                            /> <label class="form-check-label"
+                                for="ema_10"
+                            > 10D EMA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ema_20"
+                            /> <label class="form-check-label"
+                                for="ema_20"
+                            > 20D EMA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ema_40"
+                            /> <label class="form-check-label"
+                                for="ema_40"
+                            > 40D EMA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ema_80"
+                            /> <label class="form-check-label"
+                                for="ema_80"
+                            > 80D EMA </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="ema_160"
+                            /> <label class="form-check-label"
+                                for="ema_160"
+                            > 160D EMA </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="analysis-card">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                            <b>Exponential Moving Average</b>
+                            <b>Donchian Channel</b>
                         </div>
                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                             <span class="selector selector-select">Select
@@ -111,152 +235,58 @@
                             >Deselect All</span>
                         </div>
                     </div>
-                </div>
-                <div class="panel-body">
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ema_5"
-                        /> <label class="form-check-label" for="ema_5">
-                            5D EMA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ema_10"
-                        /> <label class="form-check-label" for="ema_10">
-                            10D EMA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ema_20"
-                        /> <label class="form-check-label" for="ema_20">
-                            20D EMA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ema_40"
-                        /> <label class="form-check-label" for="ema_40">
-                            40D EMA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ema_80"
-                        /> <label class="form-check-label" for="ema_80">
-                            80D EMA </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="ema_160"
-                        /> <label class="form-check-label"
-                            for="ema_160"
-                        > 160D EMA </label>
+                    <div class="panel-body">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="dc_20"
+                            /> <label class="form-check-label"
+                                for="dc_20"
+                            > 20D Donchian Channel </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="dc_80"
+                            /> <label class="form-check-label"
+                                for="dc_80"
+                            > 80D Donchian Channel </label>
+                        </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="dc_160"
+                            /> <label class="form-check-label"
+                                for="dc_160"
+                            > 160D Donchian Channel </label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 analysis-card">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <b>Linear Regression</b>
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+            <div class="analysis-card">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                            <b>Linear Regression</b>
+                        </div>
+                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                            <span class="selector selector-select">Select
+                                All</span> | <span
+                                class="selector selector-deselect"
+                            >Deselect All</span>
+                        </div>
                     </div>
-                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <span class="selector selector-select">Select
-                            All</span> | <span
-                            class="selector selector-deselect"
-                        >Deselect All</span>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="lin_reg"
-                        /> <label class="form-check-label"
-                            for="lin_reg"
-                        > Linear Regression </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 analysis-card">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <b>Bollinger Bands</b>
-                    </div>
-                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <span class="selector selector-select">Select
-                            All</span> | <span
-                            class="selector selector-deselect"
-                        >Deselect All</span>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="bb_20"
-                        /> <label class="form-check-label" for="bb_20">
-                            20D Bollinger Bands </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="bb_80"
-                        /> <label class="form-check-label" for="bb_80">
-                            80D Bollinger Bands </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="bb_160"
-                        /> <label class="form-check-label" for="bb_160">
-                            160D Bollinger Bands </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 analysis-card">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <b>Donchian Channel</b>
-                    </div>
-                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                        <span class="selector selector-select">Select
-                            All</span> | <span
-                            class="selector selector-deselect"
-                        >Deselect All</span>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="dc_20"
-                        /> <label class="form-check-label" for="dc_20">
-                            20D Donchian Channel </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="dc_80"
-                        /> <label class="form-check-label" for="dc_80">
-                            80D Donchian Channel </label>
-                    </div>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input analysis-selector"
-                            type="checkbox" value="" id="dc_160"
-                        /> <label class="form-check-label" for="dc_160">
-                            160D Donchian Channel </label>
+                    <div class="panel-body">
+                        <div class="form-check">
+                            <input
+                                class="form-check-input analysis-selector"
+                                type="checkbox" value="" id="lin_reg"
+                            /> <label class="form-check-label"
+                                for="lin_reg"
+                            > Linear Regression </label>
+                        </div>
                     </div>
                 </div>
             </div>
