@@ -40,6 +40,7 @@ services:
       - VIRTUAL_HOST=crabranch.info
       - LETSENCRYPT_HOST=crabranch.info
       - LETSENCRYPT_EMAIL=james.villegas@gmail.com
+      - SPRING_PROFILES_ACTIVE
     expose:
       - "8080"
     volumes:
