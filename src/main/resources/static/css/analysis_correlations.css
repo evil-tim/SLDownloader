@@ -1,7 +1,7 @@
 table#correlation_matrix_table>tbody>tr>td {
     font-size: 9px;
     min-width: 70px;
-    height: 26px;
+    padding: 5px;
 }
 
 table#correlation_matrix_table>tbody>tr>td.top-title {
@@ -29,75 +29,75 @@ table#correlation_matrix_table>tbody>tr>td.color-p09 {
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p08 {
-    background-color: #6CB75A;
+    background-color: #6EBB52;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p07 {
-    background-color: #7DB659;
+    background-color: #80BD48;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p06 {
-    background-color: #8DB457;
+    background-color: #92C03D;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p05 {
-    background-color: #9EB356;
+    background-color: #A4C333;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p04 {
-    background-color: #AEB254;
+    background-color: #B7C529;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p03 {
-    background-color: #BFB153;
+    background-color: #C9C81F;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p02 {
-    background-color: #CFAF51;
+    background-color: #DBCB14;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p01 {
-    background-color: #E0AE50;
+    background-color: #EDCD0A;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-p00 {
-    background-color: #F0AD4E;
+    background-color: #FFD000;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n01 {
-    background-color: #EEA44E;
+    background-color: #FBC408;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n02 {
-    background-color: #EB9B4E;
+    background-color: #F7B710;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n03 {
-    background-color: #E9924E;
+    background-color: #F4AB18;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n04 {
-    background-color: #E7894E;
+    background-color: #F09E20;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n05 {
-    background-color: #E5804F;
+    background-color: #EC9228;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n06 {
-    background-color: #E2774F;
+    background-color: #E8852F;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n07 {
-    background-color: #E06E4F;
+    background-color: #E47937;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n08 {
-    background-color: #DE654F;
+    background-color: #E16C3F;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n09 {
-    background-color: #DB5C4F;
+    background-color: #DD6047;
 }
 
 table#correlation_matrix_table>tbody>tr>td.color-n10 {
