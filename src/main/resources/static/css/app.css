@@ -15,6 +15,10 @@ div#baseContainer {
     font-size: 14px;
 }
 
+.navbar-nav>li>.dropdown-menu>.selected>a {
+    background-color: #f5f5f5;
+}
+
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     padding: 6px 12px;
     margin-bottom: 0;

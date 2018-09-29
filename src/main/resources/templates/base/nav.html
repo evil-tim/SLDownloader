@@ -19,9 +19,20 @@
                     <li th:classappend="${page == 'index'} ? active"><a
                         href="/"
                     >NAVPS</a></li>
-                    <li th:classappend="${page == 'analysis'} ? active"><a
-                        href="/analysis"
-                    >Analysis</a></li>
+                    <li
+                        th:classappend="${page == 'analysis-navps' or page == 'analysis-correlation'} ? active"
+                    ><a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown" role="button"
+                        aria-haspopup="true" aria-expanded="false"
+                    >Analysis <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li
+                                th:classappend="${page == 'analysis-navps'} ? selected"
+                            ><a href="/analysis-navps">NAVPS Graph</a></li>
+                            <li
+                                th:classappend="${page == 'analysis-correlation'} ? selected"
+                            ><a href="/analysis-correlation">Correlations</a></li>
+                        </ul></li>
                     <li th:classappend="${page == 'orders'} ? active"><a
                         href="/orders"
                     >Orders</a></li>

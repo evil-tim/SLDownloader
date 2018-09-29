@@ -7,10 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class AnalysisController {
 
-    @RequestMapping("/analysis")
-    public String index(Model model) {
-        model.addAttribute("page", "analysis");
-        return "analysis";
+    @RequestMapping("/analysis-navps")
+    public String analysisNavps(Model model) {
+        model.addAttribute("page", "analysis-navps");
+        return "analysis-navps";
+    }
+
+    @RequestMapping("/analysis-correlation")
+    public String analysisCorrelation(Model model) {
+        model.addAttribute("page", "analysis-correlation");
+        return "analysis-correlation";
     }
 
 }
