@@ -1,7 +1,12 @@
-// init fund list
 $(document).ready(function() {
-    $('#fundPicker').on('hidden.bs.select', updateChartFromPicker);
+    initFundPicker();
+    initEvents();
 });
+
+function initEvents() {
+    $('#fundPicker').on('hidden.bs.select', updateChartFromPicker);
+    $('#fundChartRefresh').on('click', updateChartFromPicker);
+}
 
 function updateChartFromPicker() {
     disableFundPicker();
@@ -26,12 +31,11 @@ function enableFundPicker() {
     $('#fundPicker').selectpicker('refresh');
 }
 
-// load fund list
-$(document).ready(function() {
+function initFundPicker() {
     $.ajax({
         url : "/api/funds"
     }).done(updateFundPicker);
-});
+}
 
 function updateFundPicker(data) {
     for (var i = 0; i < data.length; i++) {

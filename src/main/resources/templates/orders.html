@@ -44,13 +44,11 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10">
             <button type="button" class="btn btn-default pull-right"
-                style="margin-top: 20px;"
-                onClick="javascript:clearAllOrders()"
+                style="margin-top: 20px;" id="clearAllOrders"
             >Clear All Orders</button>
             <a class="btn btn-default pull-right"
                 style="margin-top: 20px; margin-right: 5px" href="#"
-                download="orders.json"
-                onclick="javascript:buildExportOrderFile(this)"
+                download="orders.json" id="exportOrders"
             >Export Orders</a>
             <button type="button" class="btn btn-default pull-right"
                 style="margin-top: 20px; margin-right: 5px"
@@ -98,8 +96,7 @@
                                 data-dismiss="modal"
                             >Cancel</button>
                             <button type="button"
-                                class="btn btn-primary"
-                                onclick="javascript:loadOrdersAction()"
+                                class="btn btn-primary" id="loadOrders"
                             >Ok</button>
                         </div>
                     </div>
@@ -203,8 +200,7 @@
                                 data-dismiss="modal"
                             >Cancel</button>
                             <button type="button"
-                                class="btn btn-primary"
-                                onclick="javascript:addNewOrderAction()"
+                                class="btn btn-primary" id="addOrder"
                             >Ok</button>
                         </div>
                     </div>

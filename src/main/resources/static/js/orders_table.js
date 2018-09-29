@@ -5,7 +5,16 @@ $(document).ready(function() {
     initAllOrdersCards();
     addOrderUpdateCallback(refreshAllOrdersTable);
     addOrderUpdateCallback(refreshAllOrdersCards);
+    initEvents();
 });
+
+function initEvents() {
+    $('#clearAllOrders').on('click', clearAllOrdersAction);
+    $('#exportOrders').on('click', buildExportOrderFile);
+    $('#loadOrders').on('click', loadOrdersAction);
+    $('#addOrder').on('click', addNewOrderAction);
+    $('#ordersTable').on('click', '.delete-order-btn', removeOrderAction)
+}
 
 function initAddOrderFundField() {
     $.ajax({
@@ -66,11 +75,11 @@ function addNewOrderEntry(orderDate, orderFundCode, orderFundName, orderShares,
             orderFundName, orderShares, orderValue);
 }
 
-function removeOrderEntry(id) {
-    removeOrder(id);
+function removeOrderAction(event) {
+    removeOrder($(event.target).data("orderid"));
 }
 
-function clearAllOrders() {
+function clearAllOrdersAction() {
     confirm("Are you sure you want to clear all orders?") && clearOrders();
 }
 
@@ -94,8 +103,8 @@ function loadOrdersAction() {
     reader.readAsText(importFile);
 }
 
-function buildExportOrderFile(link) {
-    $(link).attr(
+function buildExportOrderFile(event) {
+    $(event.target).attr(
             "href",
             "data:application/json;charset=UTF-8,"
                     + encodeURIComponent(JSON.stringify(getOrders())));
@@ -152,10 +161,9 @@ function initAllOrdersTable() {
                                         name : "actions",
                                         orderable : false,
                                         render : function(data, type, row, meta) {
-                                            return "<a class=\"btn btn-default btn-sm delete-order-btn\" "
+                                            return "<button class=\"btn btn-default btn-sm delete-order-btn\" "
                                                     + "style=\"padding-top: 1px; padding-bottom: 1px\" "
-                                                    + "href=\"javascript:void(0)\" onclick=\"javascript:removeOrderEntry("
-                                                    + row.id + ")\">Remove</a>";
+                                                    + "data-orderid=\"" + row.id + "\">Remove</button>";
                                         }
                                     } ],
                             searching : false,

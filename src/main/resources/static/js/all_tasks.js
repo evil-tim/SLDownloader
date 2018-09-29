@@ -3,7 +3,12 @@ $(document).ready(function() {
     initAllTaskDateFilter();
     initAllTaskTable();
     initAllTaskFilterUpdateEvents();
+    initEvents();
 });
+
+function initEvents() {
+    $("#allTasks").on("click", ".retry-btn", requestRetryTask);
+}
 
 var allTaskTable;
 
@@ -39,9 +44,9 @@ function initAllTaskTable() {
             name : "actions",
             orderable: false,
             render: function (data, type, row, meta) {
-                return "<a class=\"btn btn-default btn-sm retry-btn\" " +
+                return "<button class=\"btn btn-default btn-sm retry-btn\" " +
                     "style=\"display:none; padding-top: 1px; padding-bottom: 1px\" " +
-                    "href=\"javascript:void(0)\" onclick=\"javascript:requestRetryTask(" + row.id + ")\">Retry</a>"
+                    "data-taskid=\"" + row.id + "\">Retry</button>"
             }
         } ],
         searching : false,
@@ -151,7 +156,8 @@ function initAllTaskFilterUpdateEvents() {
     });
 }
 
-function requestRetryTask(id) {
+function requestRetryTask(event) {
+    var id = $(event.target).data("taskid");
     if(id) {
         $.ajax({
             type: "POST",
