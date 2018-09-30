@@ -15,7 +15,7 @@ function updateChart(fundList) {
             deferreds.push(getNAVPSDataDeferred(fundList[i].code));
         }
         $.when.apply($, deferreds).then(function() {
-            buildDataRows(fundList.length, arguments, data)
+            buildDataRows(fundList.length, arguments, data);
             drawChart(data);
             enableFundPicker();
         });

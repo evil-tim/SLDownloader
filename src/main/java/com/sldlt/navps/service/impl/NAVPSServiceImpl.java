@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -244,5 +245,39 @@ public class NAVPSServiceImpl implements NAVPSService {
 
         return values.stream().map(entryPair -> Pair.of(entryPair.getFirst(),
             entryPair.getSecond().subtract(avg).divide(standardDev, 10, RoundingMode.HALF_UP))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Pair<BigDecimal, BigDecimal>> listNAVPSPaired(String fundX, String fundY, LocalDate dateFrom, LocalDate dateTo) {
+
+        List<Pair<BigDecimal, BigDecimal>> result = new LinkedList<>();
+
+        List<NAVPSEntryDto> navpsX = listNAVPS(fundX, dateFrom, dateTo);
+        List<NAVPSEntryDto> navpsY = listNAVPS(fundY, dateFrom, dateTo);
+
+        int navpsXSize = navpsX.size();
+        int navpsYSize = navpsY.size();
+        int navpsXIndex = 0;
+        int navpsYIndex = 0;
+
+        LocalDate currDateX = null;
+        LocalDate currDateY = null;
+
+        while (navpsXIndex < navpsXSize && navpsYIndex < navpsYSize) {
+            currDateX = navpsX.get(navpsXIndex).getDate();
+            currDateY = navpsY.get(navpsYIndex).getDate();
+
+            if (currDateX.isBefore(currDateY)) {
+                navpsYIndex++;
+            } else if (currDateX.isAfter(currDateY)) {
+                navpsXIndex++;
+            } else {
+                result.add(Pair.of(navpsX.get(navpsXIndex).getValue(), navpsY.get(navpsYIndex).getValue()));
+                navpsXIndex++;
+                navpsYIndex++;
+            }
+        }
+
+        return result;
     }
 }

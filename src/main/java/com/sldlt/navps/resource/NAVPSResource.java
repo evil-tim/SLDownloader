@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.util.Pair;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -45,4 +46,10 @@ public class NAVPSResource {
         return navpsService.listAllCorrelations(dateFrom);
     }
 
+    @RequestMapping(path = "/api/navps/scatter", method = RequestMethod.GET)
+    public List<Pair<BigDecimal, BigDecimal>> getScatterNAVPS(@RequestParam("fundX") String fundX, @RequestParam("fundY") String fundY,
+        @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom") LocalDate dateFrom,
+        @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo") LocalDate dateTo) {
+        return navpsService.listNAVPSPaired(fundX, fundY, dateFrom, dateTo);
+    }
 }
