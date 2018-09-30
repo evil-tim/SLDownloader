@@ -36,10 +36,14 @@ public class DataExporter {
 
     @Scheduled(cron = "${dataexporter.cron:0 0 5 * * *}", zone = "${dataexporter.zone:GMT+8}")
     public void run() {
-        LOG.info("Uploading NAVPS to " + bucketName + "/" + path + csvFilename);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Uploading NAVPS to " + bucketName + "/" + path + csvFilename);
+        }
         amazonS3.putObject(bucketName, path + csvFilename, navpsExporterService.buildNavpsCsvContent());
 
-        LOG.info("Uploading NAVPS to " + bucketName + "/" + path + jsonFilename);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Uploading NAVPS to " + bucketName + "/" + path + jsonFilename);
+        }
         amazonS3.putObject(bucketName, path + jsonFilename, navpsExporterService.buildNavpsJsonContent());
     }
 
