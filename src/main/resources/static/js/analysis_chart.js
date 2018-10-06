@@ -92,17 +92,12 @@ function updateChart(fund) {
             enableControls();
         });
     } else {
-        var tempRow = [ new Date(), 0 ];
-
-        moduleNames.filter(function(moduleName) {
-            return selectedModuleNames.indexOf(moduleName) >= 0;
-        }).forEach(function(moduleName) {
-            var moduleColumns = analysisModules.getColumns(moduleName);
-            moduleColumns.forEach(function(moduleColumn) {
-                tempRow.push(0);
-            });
-        });
-        data.addRows([ tempRow ]);
+        var date1 = new Date();
+        var date2 = new Date();
+        date2.setSeconds(date2.getSeconds() + 1);
+        var tempRow1 = [ date1, 0 ];
+        var tempRow2 = [ date2, 0 ];
+        data.addRows([ tempRow1, tempRow2 ]);
         drawChart(data);
         enableControls();
     }

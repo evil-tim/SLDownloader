@@ -20,8 +20,11 @@ function updateChart(fundList) {
             enableFundPicker();
         });
     } else {
+        var date1 = new Date();
+        var date2 = new Date();
+        date2.setSeconds(date2.getSeconds() + 1);
         data.addColumn('number', 'Value');
-        data.addRows([ [ new Date(), 0 ] ]);
+        data.addRows([ [ date1, 0 ], [ date2, 0 ] ]);
         drawChart(data);
         enableFundPicker();
     }
