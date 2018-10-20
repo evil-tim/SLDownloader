@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sldlt.navps.dto.NAVPSEntryDto;
+import com.sldlt.navps.dto.NAVPSPredictionDto;
+import com.sldlt.navps.service.NAVPSPredictionService;
 import com.sldlt.navps.service.NAVPSService;
 
 @RestController
@@ -26,6 +29,9 @@ public class NAVPSResource {
 
     @Autowired
     private NAVPSService navpsService;
+
+    @Autowired
+    private NAVPSPredictionService navpsPredictionService;
 
     @RequestMapping(path = "/api/navps", method = RequestMethod.GET)
     public Page<NAVPSEntryDto> getNAVPS(@RequestParam(name = "fund", required = false) String fund,
@@ -52,4 +58,12 @@ public class NAVPSResource {
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo") LocalDate dateTo) {
         return navpsService.listNAVPSPaired(fundX, fundY, dateFrom, dateTo);
     }
+
+    @RequestMapping(path = "/api/navps/predictions", method = RequestMethod.GET)
+    public Map<LocalDate, Set<NAVPSPredictionDto>> getNAVPSPredictions(@RequestParam(name = "type") String type,
+        @RequestParam(name = "fund") String fund, @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom") LocalDate dateFrom,
+        @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo") LocalDate dateTo) {
+        return navpsPredictionService.getPredictions(fund, type, dateFrom, dateTo);
+    }
+
 }
