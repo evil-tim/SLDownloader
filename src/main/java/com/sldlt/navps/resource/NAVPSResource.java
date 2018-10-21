@@ -66,4 +66,9 @@ public class NAVPSResource {
         return navpsPredictionService.getPredictions(fund, type, dateFrom, dateTo);
     }
 
+    @RequestMapping(path = "/api/navps/predictions/types", method = RequestMethod.GET)
+    public Set<String> getNAVPSPredictionTypes() {
+        return navpsPredictionService.getPredictionsTypes();
+    }
+
 }

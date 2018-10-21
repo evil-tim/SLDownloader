@@ -12,4 +12,6 @@ public interface NAVPSPredictionService {
 
     Map<LocalDate, Set<NAVPSPredictionDto>> getPredictions(String fund, String predictionType, LocalDate dateFrom, LocalDate dateTo);
 
+    Set<String> getPredictionsTypes();
+
 }

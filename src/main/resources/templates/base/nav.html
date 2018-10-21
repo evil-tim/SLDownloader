@@ -32,6 +32,9 @@
                             <li
                                 th:classappend="${page == 'analysis-correlation'} ? selected"
                             ><a href="/analysis-correlation">Correlations</a></li>
+                            <li
+                                th:classappend="${page == 'analysis-prediction'} ? selected"
+                            ><a href="/analysis-prediction">Predictions</a></li>
                         </ul></li>
                     <li th:classappend="${page == 'orders'} ? active"><a
                         href="/orders"

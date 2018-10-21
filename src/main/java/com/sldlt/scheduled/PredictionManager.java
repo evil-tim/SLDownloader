@@ -20,9 +20,9 @@ import com.sldlt.navps.service.NAVPSPredictionService;
 import com.sldlt.navps.service.NAVPSPredictorService;
 
 @Component
-public class PedictionManager {
+public class PredictionManager {
 
-    private static final Logger LOG = Logger.getLogger(PedictionManager.class);
+    private static final Logger LOG = Logger.getLogger(PredictionManager.class);
 
     @Autowired
     private FundService fundService;

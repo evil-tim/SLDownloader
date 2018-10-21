@@ -19,4 +19,10 @@ public class AnalysisController {
         return "analysis-correlation";
     }
 
+    @RequestMapping("/analysis-prediction")
+    public String analysisPrediction(Model model) {
+        model.addAttribute("page", "analysis-prediction");
+        return "analysis-prediction";
+    }
+
 }

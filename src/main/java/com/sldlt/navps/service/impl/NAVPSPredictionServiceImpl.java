@@ -3,6 +3,7 @@ package com.sldlt.navps.service.impl;
 import static com.sldlt.navps.entity.QNAVPSPrediction.nAVPSPrediction;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -19,6 +20,7 @@ import com.sldlt.navps.dto.NAVPSPredictionDto;
 import com.sldlt.navps.entity.NAVPSPrediction;
 import com.sldlt.navps.repository.NAVPSPredictionRepository;
 import com.sldlt.navps.service.NAVPSPredictionService;
+import com.sldlt.navps.service.NAVPSPredictorService;
 
 @Service
 public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
@@ -28,6 +30,9 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
 
     @Autowired
     private NAVPSPredictionRepository navpsPredictionRepository;
+
+    @Autowired
+    private List<NAVPSPredictorService> navpsPredictorServices;
 
     @Override
     public NAVPSPredictionDto savePrediction(NAVPSPredictionDto newPrediction) {
@@ -61,6 +66,12 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
                 .spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSPredictionDto.class)).collect(Collectors.groupingBy(NAVPSPredictionDto::getDate,
                 TreeMap<LocalDate, Set<NAVPSPredictionDto>>::new, Collectors.toCollection(TreeSet<NAVPSPredictionDto>::new)));
+    }
+
+    @Override
+    public Set<String> getPredictionsTypes() {
+        return navpsPredictorServices.stream().map(NAVPSPredictorService::getType)
+            .collect(Collectors.toCollection(TreeSet<String>::new));
     }
 
 }
