@@ -21,8 +21,10 @@ function updateChart(fundList) {
         });
     } else {
         var date1 = new Date();
+        date1.setHours(0, 0, 0, 0);
+        date1.setDate(date1.getDate() - 1);
         var date2 = new Date();
-        date2.setSeconds(date2.getSeconds() + 1);
+        date2.setHours(0, 0, 0, 0);
         data.addColumn('number', 'Value');
         data.addRows([ [ date1, 0 ], [ date2, 0 ] ]);
         drawChart(data);

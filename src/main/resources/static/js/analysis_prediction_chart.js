@@ -113,8 +113,10 @@ function updateChart(selectedData) {
 
     } else {
         var date1 = new Date();
+        date1.setHours(0, 0, 0, 0);
+        date1.setDate(date1.getDate() - 1);
         var date2 = new Date();
-        date2.setSeconds(date2.getSeconds() + 1);
+        date2.setHours(0, 0, 0, 0);
         var tempRow1 = [ date1, 0 ];
         var tempRow2 = [ date2, 0 ];
         data.addRows([ tempRow1, tempRow2 ]);
@@ -167,7 +169,6 @@ function buildDataRows(navpsData, predData, data) {
 
                 predData[predDate[1]]
                         .forEach(function(prediction) {
-                            console.log(prediction);
                             var predValueIndex = startIndex
                                     - prediction.daysInAdvance;
 
