@@ -127,7 +127,6 @@ function updateChart(selectedData) {
 
 function buildDataRows(navpsData, predData, data) {
     var dates = [];
-    var values = [];
     var rows = [];
     var predictionDates = [];
 
@@ -137,11 +136,9 @@ function buildDataRows(navpsData, predData, data) {
     })
 
     for (var i = 0; i < navpsData.length; i++) {
-        var dateObj = new Date(navpsData[i].date);
-        var value = navpsData[i].value;
 
+        var dateObj = new Date(navpsData[i].date);
         dates.push(dateObj);
-        values.push(value);
 
         var row = [ dateObj, value ];
         predictionDates.forEach(function() {
@@ -170,7 +167,7 @@ function buildDataRows(navpsData, predData, data) {
                 predData[predDate[1]]
                         .forEach(function(prediction) {
                             var predValueIndex = startIndex
-                                    - prediction.daysInAdvance;
+                                    - prediction.daysInAdvance + 1;
 
                             if (predValueIndex >= 0) {
                                 data.setCell(predValueIndex,
@@ -179,7 +176,7 @@ function buildDataRows(navpsData, predData, data) {
                             } else {
                                 var predictionDate = new Date(predDate[0]);
                                 predictionDate.setDate(predictionDate.getDate()
-                                        + prediction.daysInAdvance);
+                                        + prediction.daysInAdvance - 1);
 
                                 var additionalPredictionRow = null;
                                 for (var i = 0; i < additionalPredictionRows.length; i++) {
