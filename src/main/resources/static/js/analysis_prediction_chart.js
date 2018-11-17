@@ -136,8 +136,9 @@ function buildDataRows(navpsData, predData, data) {
     })
 
     for (var i = 0; i < navpsData.length; i++) {
-
         var dateObj = new Date(navpsData[i].date);
+        var value = navpsData[i].value;
+
         dates.push(dateObj);
 
         var row = [ dateObj, value ];
