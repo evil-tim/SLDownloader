@@ -39,7 +39,7 @@ public class PredictionManager {
     @Scheduled(cron = "${prediction.cron:0 0 5 * * MON}", zone = "${prediction.zone:GMT+8}")
     public void run() {
         List<FundDto> allFunds = fundService.listAllFunds();
-        List<Integer> offsets = Arrays.asList(1, 2, 5);
+        List<Integer> offsets = Arrays.asList(1, 2, 3, 4, 5);
         LocalDate currentDate = LocalDate.now();
 
         navpsPredictorServices.forEach(predictorService -> {
