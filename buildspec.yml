@@ -6,25 +6,19 @@ phases:
         java: openjdk8
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR
-      - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - REPOSITORY_URI=535425158818.dkr.ecr.ap-southeast-1.amazonaws.com/crabranch/sldownloader
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest .
+      - mvn clean package -Ddockerfile.skip -Dmaven.test.skip=true
+      - docker build --build-arg JAR_FILE=sldownloader.jar -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
       - printf '[{"name":"crabranch/sldownloader","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
