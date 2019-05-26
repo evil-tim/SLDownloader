@@ -1,5 +1,6 @@
 #!/bin/bash
 
 cd /home/ubuntu/sldownloader-app
-/usr/bin/docker image build --build-arg JAR_FILE=sldownloader.jar -t crabranch/sldownloader:0.0.6-SNAPSHOT .
+aws configure set region `curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/[a-z]$//'`
+$(aws ecr get-login --no-include-email)
 /usr/local/bin/docker-compose up -d

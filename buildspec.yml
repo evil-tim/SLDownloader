@@ -1,15 +1,30 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+        java: openjdk8
+  pre_build:
+    commands:
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URI=535425158818.dkr.ecr.ap-southeast-1.amazonaws.com/crabranch/sldownloader
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
       - mvn clean package -Ddockerfile.skip -Dmaven.test.skip=true
+      - docker build --build-arg JAR_FILE=sldownloader.jar -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - printf '[{"name":"crabranch/sldownloader","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
     - code_deploy_scripts/start_app.sh
     - code_deploy_scripts/stop_app.sh
     - appspec.yml
-    - target/sldownloader.jar
-    - Dockerfile
+    - imagedefinitions.json
     - docker-compose.yml
     - nginx.tmpl
