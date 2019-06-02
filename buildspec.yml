@@ -25,4 +25,4 @@ artifacts:
     - code_deploy_scripts/stop_app.sh
     - appspec.yml
     - docker-compose.yml
-    - nginx.tmpl
+ 

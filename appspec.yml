@@ -4,7 +4,7 @@ files:
   - source: /
     destination: /home/ubuntu/sldownloader-app
 permissions:
-  - object: /home/ubuntu/sldownloader-app/code_deploy_scripts
+  - object: /home/ubuntu/sldownloader-app/code-deploy-scripts
     owner: ubuntu
     group: ubuntu
     pattern: "*.sh"
@@ -13,10 +13,10 @@ permissions:
       - file
 hooks:
   ApplicationStart:
-    - location: code_deploy_scripts/start_app.sh
+    - location: code-deploy-scripts/start_app.sh
       timeout: 300
       runas: ubuntu
   ApplicationStop:
-    - location: code_deploy_scripts/stop_app.sh
+    - location: code-deploy-scripts/stop_app.sh
       timeout: 300
       runas: ubuntu
