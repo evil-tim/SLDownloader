@@ -158,6 +158,14 @@ function initAllOrdersTable() {
                                         }
                                     },
                                     {
+                                        name : "percentGain",
+                                        orderable : false,
+                                        className : "text-right",
+                                        render : function(data, type, row, meta) {
+                                            return ((row.currentValue - row.orderValue) / row.orderValue).formatPercent();
+                                        }
+                                    },
+                                    {
                                         name : "actions",
                                         orderable : false,
                                         render : function(data, type, row, meta) {
@@ -268,13 +276,19 @@ function buildOrderSummaryCard(ordersSummary) {
     currentValue
             .append($("<td><b>Current Value :</b></td><td class='pull-right'>"
                     + ordersSummary.currentValue.formatCurrency() + "</td>"));
-    var totalShares = $("<tr />");
-    totalShares.append($("<td><b>Shares :</b></td><td class='pull-right'>"
-            + ordersSummary.shares + "</td>"));
+    var percentGain = $("<tr />");
+    percentGain
+            .append($("<td><b>Percent Gain :</b></td><td class='pull-right'>"
+                    + ((ordersSummary.currentValue - ordersSummary.baseValue) / ordersSummary.baseValue).formatPercent() + "</td>"));
+
     var panelBodyTable = $("<table />")
     panelBodyTable.append(totalBaseValue);
     panelBodyTable.append(currentValue);
+    panelBodyTable.append(percentGain);
     if (ordersSummary.title != "Total") {
+        var totalShares = $("<tr />");
+        totalShares.append($("<td><b>Shares :</b></td><td class='pull-right'>"
+                + ordersSummary.shares + "</td>"));
         panelBodyTable.append(totalShares);
     }
     var panelBody = $("<div />", {
@@ -295,4 +309,8 @@ function buildOrderSummaryCard(ordersSummary) {
 
 Number.prototype.formatCurrency = function() {
     return this.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+};
+
+Number.prototype.formatPercent = function() {
+    return (100 * this).toFixed(2) + "%";
 };
