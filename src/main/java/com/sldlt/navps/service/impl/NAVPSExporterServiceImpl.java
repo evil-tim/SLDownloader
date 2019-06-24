@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,7 +45,7 @@ public class NAVPSExporterServiceImpl implements NAVPSExporterService {
     }
 
     private String convertNavpsListToCsv(List<NAVPSEntryDto> navpsList) {
-        return navpsList.stream().filter(navpsEntry -> navpsEntry != null).map(this::convertNavpsToCsv).collect(Collectors.joining());
+        return navpsList.stream().filter(Objects::nonNull).map(this::convertNavpsToCsv).collect(Collectors.joining());
     }
 
     private String convertNavpsToCsv(NAVPSEntryDto navpsEntry) {

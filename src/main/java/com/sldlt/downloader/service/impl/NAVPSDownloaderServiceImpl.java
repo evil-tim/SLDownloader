@@ -111,9 +111,11 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
         final Optional<String> fundName = Optional.ofNullable(document).map(doc -> doc.getElementsByTag("span"))
             .map(elements -> elements.get(0)).map(Element::text).map(String::trim);
 
-        fundName.filter(StringUtils::hasText).filter(fundNameStr -> fund.getName().toUpperCase().contains(fundNameStr.toUpperCase()))
-            .orElseThrow(() -> new NAVPSDownloadValidationException(
-                "Found mismatched entry - [" + fundName.orElse("") + "] should be [" + fund.getName().toUpperCase() + "]"));
+        if (!fundName.filter(StringUtils::hasText)
+            .filter(fundNameStr -> fund.getName().toUpperCase().contains(fundNameStr.toUpperCase())).isPresent()) {
+            throw new NAVPSDownloadValidationException(
+                "Found mismatched entry - [" + fundName.orElse("") + "] should be [" + fund.getName().toUpperCase() + "]");
+        }
     }
 
     private void validateResultsNotEmpty(final List<NAVPSEntryDto> result) {

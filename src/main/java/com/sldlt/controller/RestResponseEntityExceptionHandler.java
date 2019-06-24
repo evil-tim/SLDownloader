@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleConflict(final Exception ex, final WebRequest request) throws Exception {
+    public ResponseEntity<Object> handleConflict(final Exception ex, final WebRequest request) {
         logger.error(ex.getMessage(), ex);
         return handleExceptionInternal(ex, Collections.singletonMap("error", "Something went wrong."), new HttpHeaders(),
             HttpStatus.INTERNAL_SERVER_ERROR, request);

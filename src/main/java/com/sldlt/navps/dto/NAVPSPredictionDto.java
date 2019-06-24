@@ -2,6 +2,7 @@ package com.sldlt.navps.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -111,6 +112,20 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
         }
 
         return compare;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof NAVPSPredictionDto)) {
+            return false;
+        }
+        NAVPSPredictionDto other = (NAVPSPredictionDto) obj;
+        return compareTo(other) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getDate(), this.getDaysInAdvance(), this.getFund(), this.getType());
     }
 
 }

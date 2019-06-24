@@ -42,32 +42,30 @@ public class PredictionManager {
         List<Integer> offsets = Arrays.asList(1, 2, 3, 4, 5);
         LocalDate currentDate = LocalDate.now();
 
-        navpsPredictorServices.forEach(predictorService -> {
-            allFunds.forEach(fund -> {
-                try {
-                    PredictionResultsDto predictions = predictorService.predict(fund.getCode(), offsets);
-                    IntStream.range(0, offsets.size()).forEach(index -> {
-                        NAVPSPredictionDto prediction = new NAVPSPredictionDto();
-                        prediction.setFund(fund.getCode());
-                        prediction.setType(predictorService.getType());
-                        prediction.setDate(currentDate);
-                        prediction.setDaysInAdvance(offsets.get(index));
-                        prediction.setValue(predictions.getPredictions().get(index));
-                        try {
-                            prediction.setParameters(objectMapper.writeValueAsString(predictions.getParameters()));
-                        } catch (JsonProcessingException ex) {
-                            LOG.error(ex.getMessage(), ex);
-                        }
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug(prediction);
-                        }
-                        navpsPredictionService.savePrediction(prediction);
-                    });
-                } catch (Exception ex) {
-                    LOG.error(ex.getMessage(), ex);
-                }
-            });
-        });
+        navpsPredictorServices.forEach(predictorService -> allFunds.forEach(fund -> {
+            try {
+                PredictionResultsDto predictions = predictorService.predict(fund.getCode(), offsets);
+                IntStream.range(0, offsets.size()).forEach(index -> {
+                    NAVPSPredictionDto prediction = new NAVPSPredictionDto();
+                    prediction.setFund(fund.getCode());
+                    prediction.setType(predictorService.getType());
+                    prediction.setDate(currentDate);
+                    prediction.setDaysInAdvance(offsets.get(index));
+                    prediction.setValue(predictions.getPredictions().get(index));
+                    try {
+                        prediction.setParameters(objectMapper.writeValueAsString(predictions.getParameters()));
+                    } catch (JsonProcessingException ex) {
+                        LOG.error(ex.getMessage(), ex);
+                    }
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug(prediction);
+                    }
+                    navpsPredictionService.savePrediction(prediction);
+                });
+            } catch (Exception ex) {
+                LOG.error(ex.getMessage(), ex);
+            }
+        }));
 
     }
 }

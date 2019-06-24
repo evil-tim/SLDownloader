@@ -25,9 +25,8 @@ public class AggregatedOrder implements Comparable<AggregatedOrder> {
     public AggregatedOrder(AggregatedOrder aggregatedOrder, LocalDate date) {
         this.date = date;
         this.totalBaseValue = aggregatedOrder.getTotalBaseValue();
-        aggregatedOrder.getAggregatedFundOrders().forEach((code, aggFundOrder) -> {
-            aggregatedFundOrders.put(code, new AggregatedFundOrder(aggFundOrder));
-        });
+        aggregatedOrder.getAggregatedFundOrders()
+            .forEach((code, aggFundOrder) -> aggregatedFundOrders.put(code, new AggregatedFundOrder(aggFundOrder)));
     }
 
     public LocalDate getDate() {

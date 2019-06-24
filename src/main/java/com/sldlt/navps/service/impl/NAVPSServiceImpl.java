@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,14 +124,7 @@ public class NAVPSServiceImpl implements NAVPSService {
             return Collections.emptyMap();
         }
 
-        funds.sort(new Comparator<FundDto>() {
-
-            @Override
-            public int compare(final FundDto arg0, final FundDto arg1) {
-                return arg0.getCode().compareTo(arg1.getCode());
-            }
-
-        });
+        funds.sort((fund1, fund2) -> fund1.getCode().compareTo(fund2.getCode()));
 
         final Map<String, List<NAVPSEntryDto>> allNavps = new TreeMap<>();
         for (final FundDto fund : funds) {

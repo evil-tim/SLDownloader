@@ -85,7 +85,7 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
 
             // compute total base value
             aggregatedOrders.get(i).setTotalBaseValue(aggregatedOrders.get(i).getAggregatedFundOrders().values().stream()
-                .map(fundValue -> fundValue.getBaseValue()).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
+                .map(AggregatedFundOrder::getBaseValue).reduce(BigDecimal::add).orElse(BigDecimal.ZERO));
         }
 
         if (!aggregatedOrders.isEmpty()) {

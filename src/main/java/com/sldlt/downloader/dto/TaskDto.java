@@ -122,4 +122,22 @@ public class TaskDto implements Comparable<TaskDto> {
         }
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof TaskDto)) {
+            return false;
+        }
+
+        final TaskDto task = (TaskDto) object;
+        long ownId = Optional.ofNullable(id).map(Long::longValue).orElse(0L);
+        long otherId = Optional.ofNullable(task).map(TaskDto::getId).map(Long::longValue).orElse(0L);
+
+        return ownId == otherId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(Optional.ofNullable(id).orElse(0L));
+    }
+
 }

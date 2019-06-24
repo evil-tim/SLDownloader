@@ -59,9 +59,7 @@ public class TaskManager {
             final DayOfWeek singleTaskDay = dateToSingle.getDayOfWeek();
             if (!singleTaskDay.equals(DayOfWeek.SATURDAY) && !singleTaskDay.equals(DayOfWeek.SUNDAY)) {
                 final LocalDate internalDateTo = dateToSingle;
-                fundList.forEach(fund -> {
-                    taskService.createTask(fund.getCode(), internalDateTo, internalDateTo);
-                });
+                fundList.forEach(fund -> taskService.createTask(fund.getCode(), internalDateTo, internalDateTo));
             }
             dateToSingle = dateToSingle.minusDays(1);
         }
@@ -73,9 +71,7 @@ public class TaskManager {
         while (dateFrom.isAfter(minDate)) {
             final LocalDate internalDateFrom = dateFrom = dateFrom.minusDays(7);
             final LocalDate internalDateTo = dateTo = dateTo.minusDays(7);
-            fundList.forEach(fund -> {
-                taskService.createTask(fund.getCode(), internalDateFrom, internalDateTo);
-            });
+            fundList.forEach(fund -> taskService.createTask(fund.getCode(), internalDateFrom, internalDateTo));
         }
 
     }
