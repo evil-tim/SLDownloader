@@ -23,7 +23,7 @@ import com.sldlt.navps.service.helper.SinRegressionFunction;
 
 public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl extends AbstractNAVPSPredictorServiceImpl {
 
-    private final List<RegressionFunction> functions;
+    protected final List<RegressionFunction> functions;
 
     public AbstractNonlinearRegressionNAVPSPredictorServiceImpl() {
         functions = new LinkedList<>();
@@ -141,7 +141,7 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
 
     protected abstract LocalDate getMaxRange();
 
-    private RealMatrix makeParameters(List<Pair<BigDecimal, BigDecimal>> navpsData) {
+    protected RealMatrix makeParameters(final List<Pair<BigDecimal, BigDecimal>> navpsData) {
         final int size = navpsData.size();
 
         final double[][] xMatrixData = new double[size][functions.size()];
@@ -149,7 +149,7 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
 
         for (int i = 0; i < size; i++) {
             final double xvalue = navpsData.get(i).getFirst().doubleValue();
-            List<Double> xmatrixRow = functions.stream().map(function -> function.compute(xvalue)).collect(Collectors.toList());
+            final List<Double> xmatrixRow = functions.stream().map(function -> function.compute(xvalue)).collect(Collectors.toList());
             for (int j = 0; j < functions.size(); j++) {
                 xMatrixData[i][j] = xmatrixRow.get(j);
             }
@@ -168,12 +168,12 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
         return mul2.multiply(ymatrix);
     }
 
-    private BigDecimal makePrediction(final RealMatrix parameters, final int daysAdvance) {
+    protected BigDecimal makePrediction(final RealMatrix parameters, final int daysAdvance) {
         return BigDecimal.valueOf(IntStream.range(0, functions.size())
             .mapToDouble(i -> parameters.getRow(i)[0] * functions.get(i).compute(daysAdvance)).sum());
     }
 
-    private Map<String, String> convertParameters(final RealMatrix parameters) {
+    protected Map<String, String> convertParameters(final RealMatrix parameters) {
         final Map<String, String> exportedParams = new LinkedHashMap<>();
 
         IntStream.range(0, functions.size())
