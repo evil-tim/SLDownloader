@@ -14,8 +14,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +32,7 @@ public class NAVPSResource {
     @Autowired
     private NAVPSPredictionService navpsPredictionService;
 
-    @RequestMapping(path = "/api/navps", method = RequestMethod.GET)
+    @GetMapping("/api/navps")
     public Page<NAVPSEntryDto> getNAVPS(@RequestParam(name = "fund", required = false) String fund,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom", required = false) LocalDate dateFrom,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo", required = false) LocalDate dateTo,
@@ -41,32 +40,32 @@ public class NAVPSResource {
         return navpsService.listNAVPS(fund, dateFrom, dateTo, page);
     }
 
-    @RequestMapping(path = "/api/navps/all", method = RequestMethod.GET)
+    @GetMapping("/api/navps/all")
     public List<NAVPSEntryDto> getNAVPS(@RequestParam("fund") String fund) {
         return navpsService.listAllNAVPS(fund);
     }
 
-    @RequestMapping(path = "/api/navps/correlations", method = RequestMethod.GET)
+    @GetMapping("/api/navps/correlations")
     public Map<String, Map<String, BigDecimal>> getNAVPSCorrelations(
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom", required = false) LocalDate dateFrom) {
         return navpsService.listAllCorrelations(dateFrom);
     }
 
-    @RequestMapping(path = "/api/navps/scatter", method = RequestMethod.GET)
+    @GetMapping("/api/navps/scatter")
     public List<Pair<BigDecimal, BigDecimal>> getScatterNAVPS(@RequestParam("fundX") String fundX, @RequestParam("fundY") String fundY,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom") LocalDate dateFrom,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo") LocalDate dateTo) {
         return navpsService.listNAVPSPaired(fundX, fundY, dateFrom, dateTo);
     }
 
-    @RequestMapping(path = "/api/navps/predictions", method = RequestMethod.GET)
+    @GetMapping("/api/navps/predictions")
     public Map<LocalDate, Set<NAVPSPredictionDto>> getNAVPSPredictions(@RequestParam(name = "type") String type,
         @RequestParam(name = "fund") String fund, @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom") LocalDate dateFrom,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo") LocalDate dateTo) {
         return navpsPredictionService.getPredictions(fund, type, dateFrom, dateTo);
     }
 
-    @RequestMapping(path = "/api/navps/predictions/types", method = RequestMethod.GET)
+    @GetMapping("/api/navps/predictions/types")
     public Set<String> getNAVPSPredictionTypes() {
         return navpsPredictionService.getPredictionsTypes();
     }

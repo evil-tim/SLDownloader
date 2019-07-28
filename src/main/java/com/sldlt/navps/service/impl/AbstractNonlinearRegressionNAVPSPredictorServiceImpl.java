@@ -164,8 +164,8 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
         final RealMatrix mul = xmatrixTrans.multiply(xmatrix);
         final RealMatrix inv = MatrixUtils.inverse(mul);
         final RealMatrix mul2 = inv.multiply(xmatrixTrans);
-        final RealMatrix res = mul2.multiply(ymatrix);
-        return res;
+
+        return mul2.multiply(ymatrix);
     }
 
     private BigDecimal makePrediction(final RealMatrix parameters, final int daysAdvance) {
@@ -176,9 +176,8 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
     private Map<String, String> convertParameters(final RealMatrix parameters) {
         final Map<String, String> exportedParams = new LinkedHashMap<>();
 
-        IntStream.range(0, functions.size()).forEach(index -> {
-            exportedParams.put(functions.get(index).getName(), Double.toString(parameters.getRow(index)[0]));
-        });
+        IntStream.range(0, functions.size())
+            .forEach(index -> exportedParams.put(functions.get(index).getName(), Double.toString(parameters.getRow(index)[0])));
 
         return exportedParams;
     }

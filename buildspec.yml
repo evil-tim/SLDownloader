@@ -19,12 +19,10 @@ phases:
     commands:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - printf '[{"name":"crabranch/sldownloader","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files:
     - code_deploy_scripts/start_app.sh
     - code_deploy_scripts/stop_app.sh
     - appspec.yml
-    - imagedefinitions.json
     - docker-compose.yml
     - nginx.tmpl

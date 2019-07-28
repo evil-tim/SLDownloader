@@ -66,4 +66,18 @@ public class AggregatedOrder implements Comparable<AggregatedOrder> {
         return this.date.compareTo(o.getDate());
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof AggregatedOrder)) {
+            return false;
+        }
+        AggregatedOrder o = (AggregatedOrder) obj;
+        return this.date.equals(o.getDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.date.hashCode();
+    }
+
 }

@@ -9,9 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +27,7 @@ public class TaskResource {
     @Autowired
     private TaskService taskService;
 
-    @RequestMapping(path = "/api/tasks", method = RequestMethod.GET)
+    @GetMapping("/api/tasks")
     public Page<TaskDto> getTasks(
         @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         @RequestParam(name = "fund", required = false) String fund, @RequestParam(name = "status", required = false) String status,
@@ -43,12 +43,12 @@ public class TaskResource {
         return taskService.listTasks(date, fund, taskStatus, pageable);
     }
 
-    @RequestMapping(path = "/api/tasks/running", method = RequestMethod.GET)
+    @GetMapping("/api/tasks/running")
     public List<TaskDto> getRunningTasks() {
         return taskService.listRunningTasks();
     }
 
-    @RequestMapping(path = "/api/task/{id}/retry", method = RequestMethod.POST)
+    @PostMapping("/api/task/{id}/retry")
     public TaskDto retryTask(@PathVariable("id") Long id) {
         return taskService.resetTaskStatus(id);
     }

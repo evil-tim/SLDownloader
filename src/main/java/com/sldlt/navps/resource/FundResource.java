@@ -3,8 +3,7 @@ package com.sldlt.navps.resource;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sldlt.navps.dto.FundDto;
@@ -16,7 +15,7 @@ public class FundResource {
     @Autowired
     private FundService fundService;
 
-    @RequestMapping(path = "/api/funds", method = RequestMethod.GET)
+    @GetMapping("/api/funds")
     public List<FundDto> getFunds() {
         return fundService.listAllFunds();
     }

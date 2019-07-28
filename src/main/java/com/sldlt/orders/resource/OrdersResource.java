@@ -5,9 +5,8 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sldlt.orders.dto.AggregatedOrder;
@@ -20,7 +19,7 @@ public class OrdersResource {
     @Autowired
     private OrderAggregatorService orderAggregatorService;
 
-    @RequestMapping(path = "/api/orders/aggregate-actual-orders", method = RequestMethod.POST)
+    @PostMapping("/api/orders/aggregate-actual-orders")
     public List<AggregatedOrder> generateAggregatedOrders(@RequestBody @Valid OrderRequestDto orders) {
         return orderAggregatorService.aggregateOrders(orders.getOrders());
     }

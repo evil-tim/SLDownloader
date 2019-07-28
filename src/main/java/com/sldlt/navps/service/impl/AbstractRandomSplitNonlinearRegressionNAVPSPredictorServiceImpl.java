@@ -146,9 +146,8 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
             for (int j = 0; j < daysAdvance.size(); j++) {
                 finalResults.getPredictions().set(j, finalResults.getPredictions().get(j).add(splitPredictions.get(j)));
             }
-            splitResults.get(i).getParameters().entrySet().stream().forEach(entry -> {
-                finalResults.getParameters().put(entry.getKey() + "_" + currentIndex, entry.getValue());
-            });
+            splitResults.get(i).getParameters().entrySet().stream()
+                .forEach(entry -> finalResults.getParameters().put(entry.getKey() + "_" + currentIndex, entry.getValue()));
         }
         for (int i = 0; i < daysAdvance.size(); i++) {
             finalResults.getPredictions().set(i, finalResults.getPredictions().get(i).divide(BigDecimal.valueOf(splitResults.size())));
@@ -162,9 +161,7 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
         final int numSplit, final double includeChance) {
         List<List<Pair<BigDecimal, BigDecimal>>> splitNavps = new LinkedList<>();
         for (int i = 0; i < numSplit; i++) {
-            splitNavps.add(navpsData.stream().filter(value -> {
-                return Math.random() < includeChance;
-            }).collect(Collectors.toList()));
+            splitNavps.add(navpsData.stream().filter(value -> Math.random() < includeChance).collect(Collectors.toList()));
         }
         return splitNavps;
     }
@@ -196,8 +193,8 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
         final RealMatrix mul = xmatrixTrans.multiply(xmatrix);
         final RealMatrix inv = MatrixUtils.inverse(mul);
         final RealMatrix mul2 = inv.multiply(xmatrixTrans);
-        final RealMatrix res = mul2.multiply(ymatrix);
-        return res;
+
+        return mul2.multiply(ymatrix);
     }
 
     private BigDecimal makePrediction(final RealMatrix parameters, final int daysAdvance) {
@@ -208,9 +205,8 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
     private Map<String, String> convertParameters(final RealMatrix parameters) {
         final Map<String, String> exportedParams = new LinkedHashMap<>();
 
-        IntStream.range(0, functions.size()).forEach(index -> {
-            exportedParams.put(functions.get(index).getName(), Double.toString(parameters.getRow(index)[0]));
-        });
+        IntStream.range(0, functions.size())
+            .forEach(index -> exportedParams.put(functions.get(index).getName(), Double.toString(parameters.getRow(index)[0])));
 
         return exportedParams;
     }
