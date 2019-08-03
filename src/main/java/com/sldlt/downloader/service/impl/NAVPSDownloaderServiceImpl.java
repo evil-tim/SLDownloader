@@ -72,7 +72,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
     @Override
     public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund) throws IOException {
-        LocalDate currentDate = LocalDate.now(ZoneId.of(timeZone));
+        final LocalDate currentDate = LocalDate.now(ZoneId.of(timeZone));
         return fetchNAVPSFromPage(fund, currentDate, currentDate);
     }
 
@@ -109,12 +109,20 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
     private void validateFundNameMatches(final Document document, final FundDto fund) {
         final Optional<String> fundName = Optional.ofNullable(document).map(doc -> doc.getElementsByTag("span"))
-            .map(elements -> elements.get(0)).map(Element::text).map(String::trim);
+            .map(elements -> elements.get(0)).map(Element::text).map(String::trim).map(String::toUpperCase);
 
         if (!fundName.filter(StringUtils::hasText)
-            .filter(fundNameStr -> fund.getName().toUpperCase().contains(fundNameStr.toUpperCase())).isPresent()) {
+            .filter(fundNameStr -> matchFundNames(fund.getCode(), fund.getName().toUpperCase(), fundNameStr)).isPresent()) {
             throw new NAVPSDownloadValidationException(
                 "Found mismatched entry - [" + fundName.orElse("") + "] should be [" + fund.getName().toUpperCase() + "]");
+        }
+    }
+
+    private boolean matchFundNames(final String fundCode, final String expectedFundName, final String actualFundName) {
+        if ("CF0006".equals(fundCode)) {
+            return expectedFundName.contains(actualFundName) || "DOLLAR ABUNDANCE FUND".equals(actualFundName);
+        } else {
+            return expectedFundName.contains(actualFundName);
         }
     }
 
