@@ -5,4 +5,4 @@ aws configure set region `curl -s http://169.254.169.254/latest/meta-data/placem
 $(aws ecr get-login --no-include-email)
 docker pull 535425158818.dkr.ecr.ap-southeast-1.amazonaws.com/crabranch/sldownloader:latest
 docker rmi $(docker images -f "dangling=true" -q)
-/usr/local/bin/docker-compose up -d
+/usr/local/bin/docker-compose -p crabranch up -d
