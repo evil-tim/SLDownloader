@@ -16,3 +16,8 @@ services:
 volumes:
   sldownloader-database:
     driver: local
+
+networks:
+  default:
+    external:
+      name: crabranch_network
