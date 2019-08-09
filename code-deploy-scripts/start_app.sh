@@ -1,8 +1,15 @@
 #!/bin/bash
 
-cd /home/ubuntu/sldownloader-app
+# start network if needed
+if [[ -z $(docker network ls | grep crabranch_network) ]]; then
+    docker network create crabranch_network
+fi
+
+# configure ecr login
 aws configure set region `curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/[a-z]$//'`
 $(aws ecr get-login --no-include-email)
-docker pull 535425158818.dkr.ecr.ap-southeast-1.amazonaws.com/crabranch/sldownloader:latest
-docker rmi $(docker images -f "dangling=true" -q)
-/usr/local/bin/docker-compose -p crabranch up -d
+
+# start
+cd /home/ubuntu/sldownloader-app
+/usr/local/bin/docker-compose pull
+/usr/local/bin/docker-compose up -d
