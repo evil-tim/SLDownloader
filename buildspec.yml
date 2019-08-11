@@ -21,8 +21,8 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
 artifacts:
   files:
-    - code_deploy_scripts/start_app.sh
-    - code_deploy_scripts/stop_app.sh
+    - code-deploy-scripts/start_app.sh
+    - code-deploy-scripts/stop_app.sh
     - appspec.yml
     - docker-compose.yml
  
