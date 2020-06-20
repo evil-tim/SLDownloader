@@ -6,11 +6,13 @@ google.charts.setOnLoadCallback(initOrdersChart);
 $(document).ready(function() {
     addOrderUpdateCallback(updateOrdersValueChart);
     addOrderUpdateCallback(updateOrdersSharesChart);
+    addOrderUpdateCallback(updateOrdersSplitChart);
 });
 
 function initOrdersChart() {
     updateOrdersValueChart(getOrders());
     updateOrdersSharesChart(getOrders());
+    updateOrdersSplitChart(getOrders());
 }
 
 function updateOrdersValueChart(rawOrderData) {
@@ -61,6 +63,8 @@ function drawValuesChart(chartData) {
 }
 
 function updateOrdersSharesChart(rawOrderData) {
+    rawOrderData = rawOrderData ? rawOrderData : getOrders();
+
     var chartData = new google.visualization.DataTable();
     chartData.addColumn('date', 'Date');
 
@@ -95,7 +99,50 @@ function drawSharesChart(chartData) {
     var chart = new google.visualization.AreaChart(document
             .getElementById('ordersSharesChart'));
     var options = {
-        isStacked : true
+        isStacked : true,
+        legend : {
+            position : 'bottom',
+        },
+        chartArea : {
+            left : 50,
+            width: '100%',
+        }
+    };
+    chart.draw(chartData, options);
+}
+
+function updateOrdersSplitChart(rawOrderData) {
+    rawOrderData = rawOrderData ? rawOrderData : getOrders();
+
+    var chartData = new google.visualization.DataTable();
+    chartData.addColumn('string', 'Fund');
+    chartData.addColumn('number', 'Value');    
+
+    getOrdersWithCurrentValues(function(orderData) {
+        var orderAccumulator = {};
+        orderData.forEach(function(order) {
+            if (!orderAccumulator[order.orderFundCode]) {
+                orderAccumulator[order.orderFundCode] = [order.orderFundName, 0];
+            }
+            orderAccumulator[order.orderFundCode][1] += order.currentValue;
+        });
+
+        Object.keys(orderAccumulator).sort().forEach(function(key) {
+            chartData.addRow(orderAccumulator[key]);
+        });
+
+        drawSplitChart(chartData);
+    }, rawOrderData);
+}
+
+function drawSplitChart(chartData) {
+    var chart = new google.visualization.PieChart(document
+            .getElementById('ordersSplitChart'));
+    var options = {
+        chartArea : {
+            left : 10,
+            width: '100%',
+        }
     };
     chart.draw(chartData, options);
 }
