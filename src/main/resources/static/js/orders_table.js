@@ -290,6 +290,8 @@ function buildOrderSummaryCard(ordersSummary) {
         totalShares.append($("<td><b>Shares :</b></td><td class='pull-right'>"
                 + ordersSummary.shares + "</td>"));
         panelBodyTable.append(totalShares);
+    } else {
+        panelBodyTable.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
     }
     var panelBody = $("<div />", {
         "class" : "panel-body"
