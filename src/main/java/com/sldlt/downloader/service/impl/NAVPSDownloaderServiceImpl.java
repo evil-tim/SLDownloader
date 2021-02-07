@@ -5,20 +5,25 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
+import com.sldlt.downloader.entity.request.NAVPSRequest;
+import com.sldlt.downloader.entity.response.NAVPSResponse;
 import com.sldlt.downloader.exception.NAVPSDownloadValidationException;
 import com.sldlt.downloader.service.NAVPSDownloaderService;
 import com.sldlt.navps.dto.FundDto;
@@ -29,15 +34,11 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
     private static final Logger LOG = Logger.getLogger(NAVPSDownloaderServiceImpl.class);
 
-    private static final String TO_DATE_FIELD_NAME = "toDate";
-
-    private static final String FROM_DATE_FIELD_NAME = "fromDate";
-
     private static final String FUND_NAME_FIELD_NAME = "fundCD";
 
-    private final DateTimeFormatter responseDateFormat = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+    private final DateTimeFormatter responseDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    private final DateTimeFormatter paramDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private final DateTimeFormatter paramDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Value("${navps.fundslist.url}")
     private String fundsUrl;
@@ -80,21 +81,31 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund, final LocalDate limitFrom, final LocalDate limitTo)
                     throws IOException {
 
-        final Document document = Jsoup.connect(navpsUrl).data(FUND_NAME_FIELD_NAME, fund.getCode())
-            .data(FROM_DATE_FIELD_NAME, String.valueOf(limitFrom.format(paramDateFormat)))
-            .data(TO_DATE_FIELD_NAME, String.valueOf(limitTo.format(paramDateFormat))).timeout(60000).get();
+        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        clientHttpRequestFactory.setConnectTimeout(60000);
+        clientHttpRequestFactory.setReadTimeout(60000);
 
-        validateFundNameMatches(document, fund);
+        final RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
 
-        final List<NAVPSEntryDto> result = document.getElementsByTag("table").get(0).getElementsByTag("tbody").get(0)
-            .getElementsByTag("tr").stream().map(row -> {
-                Elements cells = row.getElementsByTag("td");
-                NAVPSEntryDto entry = new NAVPSEntryDto();
-                entry.setFund(fund.getCode());
-                entry.setDate(LocalDate.parse(cells.get(0).text().trim(), responseDateFormat));
-                entry.setValue(new BigDecimal(cells.get(1).text().split(" ")[1].trim()));
-                return entry;
-            }).collect(Collectors.toList());
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        final NAVPSRequest request = new NAVPSRequest();
+        request.setFundCode(fund.getCode());
+        request.setDateFrom(limitFrom.format(paramDateFormat));
+        request.setDateTo(limitTo.format(paramDateFormat));
+
+        final HttpEntity<NAVPSRequest> requestEntity = new HttpEntity<>(request, headers);
+
+        final NAVPSResponse[] response = restTemplate.postForObject(navpsUrl, requestEntity, NAVPSResponse[].class);
+
+        final List<NAVPSEntryDto> result = Arrays.stream(response).map(navpsResponse -> {
+            NAVPSEntryDto entry = new NAVPSEntryDto();
+            entry.setFund(navpsResponse.getFundCode());
+            entry.setDate(LocalDate.parse(navpsResponse.getFundValDate(), responseDateFormat));
+            entry.setValue(new BigDecimal(navpsResponse.getFundNetVal()));
+            return entry;
+        }).collect(Collectors.toList());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(result);
@@ -105,25 +116,6 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
         validateResultsInRange(result, limitFrom, limitTo);
 
         return result;
-    }
-
-    private void validateFundNameMatches(final Document document, final FundDto fund) {
-        final Optional<String> fundName = Optional.ofNullable(document).map(doc -> doc.getElementsByTag("span"))
-            .map(elements -> elements.get(0)).map(Element::text).map(String::trim).map(String::toUpperCase);
-
-        if (!fundName.filter(StringUtils::hasText)
-            .filter(fundNameStr -> matchFundNames(fund.getCode(), fund.getName().toUpperCase(), fundNameStr)).isPresent()) {
-            throw new NAVPSDownloadValidationException(
-                "Found mismatched entry - [" + fundName.orElse("") + "] should be [" + fund.getName().toUpperCase() + "]");
-        }
-    }
-
-    private boolean matchFundNames(final String fundCode, final String expectedFundName, final String actualFundName) {
-        if ("CF0006".equals(fundCode)) {
-            return expectedFundName.contains(actualFundName) || "DOLLAR ABUNDANCE FUND".equals(actualFundName);
-        } else {
-            return expectedFundName.contains(actualFundName);
-        }
     }
 
     private void validateResultsNotEmpty(final List<NAVPSEntryDto> result) {
