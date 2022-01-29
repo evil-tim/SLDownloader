@@ -58,6 +58,14 @@ function fetchCorrelationData(dates, ajaxCalls) {
         $.ajax({
             url : "/api/funds"
         }).done(function(funds) {
+            funds.sort(function(a, b) {
+                if (a.code < b.code) {
+                    return -1;
+                } else if (a.code > b.code) {
+                    return 1;
+                }
+                return 0;
+            });
             buildCorrelationMatrixTable(funds, dates, results);
         });
 
