@@ -5,7 +5,7 @@
 
     <groupId>com.sldlt</groupId>
     <artifactId>app</artifactId>
-    <version>0.0.8-SNAPSHOT</version>
+    <version>0.0.9-SNAPSHOT</version>
     <packaging>jar</packaging>
     <url>https://crabranch.info/</url>
     <scm>
@@ -126,6 +126,12 @@
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
             <version>5.0.13</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.webjars.bowergithub.mikemcl/big.js -->
+        <dependency>
+            <groupId>org.webjars.bowergithub.mikemcl</groupId>
+            <artifactId>big.js</artifactId>
+            <version>5.2.2</version>
         </dependency>
 
         <dependency>

@@ -138,6 +138,9 @@ function initAllOrdersTable() {
                                         data : "orderShares",
                                         orderable : false,
                                         className : "text-right",
+                                        render : function(data, type, row, meta) {
+                                            return formatBigToNumber(data);
+                                        }
                                     },
                                     {
                                         name : "baseValue",
@@ -145,7 +148,7 @@ function initAllOrdersTable() {
                                         orderable : false,
                                         className : "text-right",
                                         render : function(data, type, row, meta) {
-                                            return data.formatCurrency();
+                                            return formatBigToCurrency(data);
                                         }
                                     },
                                     {
@@ -154,7 +157,7 @@ function initAllOrdersTable() {
                                         orderable : false,
                                         className : "text-right",
                                         render : function(data, type, row, meta) {
-                                            return data.formatCurrency();
+                                            return formatBigToCurrency(data);
                                         }
                                     },
                                     {
@@ -162,7 +165,10 @@ function initAllOrdersTable() {
                                         orderable : false,
                                         className : "text-right",
                                         render : function(data, type, row, meta) {
-                                            return ((row.currentValue - row.orderValue) / row.orderValue).formatPercent();
+                                            return formatBigToPercent(
+                                                        row.currentValue
+                                                        .minus(row.orderValue)
+                                                        .div(row.orderValue));
                                         }
                                     },
                                     {
@@ -218,25 +224,25 @@ function makeSummaries(data) {
     var summaries = {};
     var totalSummary = {
         title : "Total",
-        shares : 0,
-        baseValue : 0,
-        currentValue : 0,
+        shares : new Big(0),
+        baseValue : new Big(0),
+        currentValue : new Big(0),
     };
 
     data
             .forEach(function(order) {
                 totalSummary.baseValue = totalSummary.baseValue
-                        + order.orderValue;
+                        .plus(order.orderValue);
                 totalSummary.currentValue = totalSummary.currentValue
-                        + order.currentValue;
+                        .plus(order.currentValue);
 
                 if (summaries[order.orderFundCode]) {
                     summaries[order.orderFundCode].shares = summaries[order.orderFundCode].shares
-                            + order.orderShares;
+                            .plus(order.orderShares);
                     summaries[order.orderFundCode].baseValue = summaries[order.orderFundCode].baseValue
-                            + order.orderValue;
+                            .plus(order.orderValue);
                     summaries[order.orderFundCode].currentValue = summaries[order.orderFundCode].currentValue
-                            + order.currentValue;
+                            .plus(order.currentValue);
                 } else {
                     funds.push(order.orderFundCode);
                     summaries[order.orderFundCode] = {
@@ -257,8 +263,7 @@ function makeSummaries(data) {
     funds.sort();
     funds.forEach(function(fundCode) {
         summaryList.push(summaries[fundCode]);
-    })
-
+    });
     return summaryList;
 }
 
@@ -271,15 +276,19 @@ function buildOrderSummaryCard(ordersSummary) {
     var totalBaseValue = $("<tr />");
     totalBaseValue
             .append($("<td><b>Base Value :</b></td><td class='pull-right'>"
-                    + ordersSummary.baseValue.formatCurrency() + "</td>"));
+                    + formatBigToCurrency(ordersSummary.baseValue) + "</td>"));
     var currentValue = $("<tr />");
     currentValue
             .append($("<td><b>Current Value :</b></td><td class='pull-right'>"
-                    + ordersSummary.currentValue.formatCurrency() + "</td>"));
+                    + formatBigToCurrency(ordersSummary.currentValue) + "</td>"));
     var percentGain = $("<tr />");
+
     percentGain
             .append($("<td><b>Percent Gain :</b></td><td class='pull-right'>"
-                    + ((ordersSummary.currentValue - ordersSummary.baseValue) / ordersSummary.baseValue).formatPercent() + "</td>"));
+                    + formatBigToPercent(
+                            ordersSummary.currentValue
+                            .minus(ordersSummary.baseValue)
+                            .div(ordersSummary.baseValue)) + "</td>"));
 
     var panelBodyTable = $("<table />")
     panelBodyTable.append(totalBaseValue);
@@ -288,7 +297,7 @@ function buildOrderSummaryCard(ordersSummary) {
     if (ordersSummary.title != "Total") {
         var totalShares = $("<tr />");
         totalShares.append($("<td><b>Shares :</b></td><td class='pull-right'>"
-                + ordersSummary.shares + "</td>"));
+                + formatBigToNumber(ordersSummary.shares) + "</td>"));
         panelBodyTable.append(totalShares);
     } else {
         panelBodyTable.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
@@ -309,10 +318,23 @@ function buildOrderSummaryCard(ordersSummary) {
     return baseContainer;
 }
 
-Number.prototype.formatCurrency = function() {
-    return this.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
-};
+function formatBigToNumber(value) {
+    if (value) {
+        return value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+    }
+    return "";
+}
 
-Number.prototype.formatPercent = function() {
-    return (100 * this).toFixed(2) + "%";
-};
+function formatBigToCurrency(value) {
+    if (value) {
+        return value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+    }
+    return "";
+}
+
+function formatBigToPercent(value) {
+    if (value) {
+        return value.times(100).toFixed(2) + "%";
+    }
+    return "";
+}

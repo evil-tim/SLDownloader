@@ -12,7 +12,15 @@ function executeCallbacks(data) {
 
 function getOrders() {
     initOrders();
-    return JSON.parse(localStorage.getItem("orders"));
+    var orders = JSON.parse(localStorage.getItem("orders"));
+
+    // convert fixed point string to number
+    orders.forEach(function(rawOrder) {
+        rawOrder.orderShares = new Big(rawOrder.orderShares);
+        rawOrder.orderValue = new Big(rawOrder.orderValue);
+    });
+
+    return orders;
 }
 
 function saveOrders(orders) {
@@ -34,8 +42,8 @@ function addOrder(orderDate, orderFundCode, orderFundName, orderShares,
         orderDate : orderDate,
         orderFundCode : orderFundCode,
         orderFundName : orderFundName,
-        orderShares : parseInt(orderShares),
-        orderValue : parseInt(orderValue),
+        orderShares : new Big(orderShares),
+        orderValue : new Big(orderValue),
     });
     saveOrders(allOrders);
     executeCallbacks(allOrders);
@@ -48,12 +56,18 @@ function importOrders(orders) {
     for (var i = 0; i < orders.length; i++) {
         if (!orders[i].id || !orders[i].orderDate || !orders[i].orderFundCode
                 || !orders[i].orderFundName || !orders[i].orderShares
-                || !Number.isInteger(orders[i].orderShares)
-                || !orders[i].orderValue
-                || !Number.isInteger(orders[i].orderValue)) {
+                || !orders[i].orderValue) {
             return false;
         }
     }
+    
+
+    // convert fixed point string to number
+    orders.forEach(function(order) {
+        order.orderShares = new Big(order.orderShares);
+        order.orderValue = new Big(order.orderValue);
+    });
+
     saveOrders(orders);
     executeCallbacks(orders);
     return true;
@@ -132,6 +146,9 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
                         var processedOrders = [];
                         rawOrders
                                 .forEach(function(rawOrder) {
+                                    var currentValue = currentNavps && currentNavps[rawOrder.orderFundCode] 
+                                            ? rawOrder.orderShares.times(currentNavps[rawOrder.orderFundCode])
+                                            : 0;
                                     processedOrders
                                             .push({
                                                 id : rawOrder.id,
@@ -140,9 +157,7 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
                                                 orderFundName : rawOrder.orderFundName,
                                                 orderShares : rawOrder.orderShares,
                                                 orderValue : rawOrder.orderValue,
-                                                currentValue : currentNavps
-                                                        && currentNavps[rawOrder.orderFundCode] ? (currentNavps[rawOrder.orderFundCode] * rawOrder.orderShares)
-                                                        : 0,
+                                                currentValue : currentValue,
                                             });
                                 });
                         callback(processedOrders);

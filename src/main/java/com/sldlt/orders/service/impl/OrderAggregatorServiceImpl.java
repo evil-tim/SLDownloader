@@ -67,7 +67,7 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
 
     private void aggregateActualValueForNavps(final AggregatedOrder aggregatedOrder, final String fund, final BigDecimal navps) {
         final AggregatedFundOrder aggregatedFundOrder = aggregatedOrder.getAggregatedFundOrders().get(fund);
-        final BigDecimal fundActualValue = navps.multiply(BigDecimal.valueOf(aggregatedFundOrder.getShares()));
+        final BigDecimal fundActualValue = navps.multiply(aggregatedFundOrder.getShares());
         aggregatedFundOrder.setActualValue(fundActualValue);
         aggregatedOrder.setTotalActualValue(aggregatedOrder.getTotalActualValue().add(fundActualValue));
     }
@@ -112,7 +112,7 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
                 aggregatedOrder.getAggregatedFundOrders().put(code, currentAggFundOrder);
             } else {
                 // add to current
-                currentAggFundOrder.setShares(currentAggFundOrder.getShares() + prevFundAggOrder.getShares());
+                currentAggFundOrder.setShares(currentAggFundOrder.getShares().add(prevFundAggOrder.getShares()));
                 currentAggFundOrder.setBaseValue(currentAggFundOrder.getBaseValue().add(prevFundAggOrder.getBaseValue()));
             }
         });
@@ -149,7 +149,7 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
                 }
 
                 matchingAggregatedFundOrder.setBaseValue(matchingAggregatedFundOrder.getBaseValue().add(order.getBaseValue()));
-                matchingAggregatedFundOrder.setShares(matchingAggregatedFundOrder.getShares() + order.getShares());
+                matchingAggregatedFundOrder.setShares(matchingAggregatedFundOrder.getShares().add(order.getShares()));
             });
         });
 

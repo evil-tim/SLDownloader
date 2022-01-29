@@ -17,7 +17,7 @@ public class OrderDto {
     private String code;
 
     @NotNull
-    private Long shares;
+    private BigDecimal shares;
 
     @NotNull
     private BigDecimal baseValue;
@@ -30,11 +30,11 @@ public class OrderDto {
         this.code = code;
     }
 
-    public Long getShares() {
+    public BigDecimal getShares() {
         return shares;
     }
 
-    public void setShares(Long shares) {
+    public void setShares(BigDecimal shares) {
         this.shares = shares;
     }
 

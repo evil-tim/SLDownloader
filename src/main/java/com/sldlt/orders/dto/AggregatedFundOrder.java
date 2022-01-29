@@ -6,7 +6,7 @@ public class AggregatedFundOrder {
 
     private String code;
 
-    private Long shares = 0L;
+    private BigDecimal shares = BigDecimal.ZERO;
 
     private BigDecimal baseValue = BigDecimal.ZERO;
 
@@ -30,11 +30,11 @@ public class AggregatedFundOrder {
         this.code = code;
     }
 
-    public Long getShares() {
+    public BigDecimal getShares() {
         return shares;
     }
 
-    public void setShares(Long shares) {
+    public void setShares(BigDecimal shares) {
         this.shares = shares;
     }
 

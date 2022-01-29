@@ -122,12 +122,14 @@ function updateOrdersSplitChart(rawOrderData) {
         var orderAccumulator = {};
         orderData.forEach(function(order) {
             if (!orderAccumulator[order.orderFundCode]) {
-                orderAccumulator[order.orderFundCode] = [order.orderFundName, 0];
+                orderAccumulator[order.orderFundCode] = [order.orderFundName, new Big(0)];
             }
-            orderAccumulator[order.orderFundCode][1] += order.currentValue;
+            orderAccumulator[order.orderFundCode][1] = orderAccumulator[order.orderFundCode][1]
+                .plus(order.currentValue);
         });
 
         Object.keys(orderAccumulator).sort().forEach(function(key) {
+            orderAccumulator[key][1] = Number.parseFloat(orderAccumulator[key][1].toFixed(2));
             chartData.addRow(orderAccumulator[key]);
         });
 
@@ -180,7 +182,7 @@ function buildAccmulatedOrders(orders) {
                         accumulatedOrders
                                 .push({
                                     orderDateObj : prevDate,
-                                    baseValue : accumulatedOrderIndex == -1 ? 0
+                                    baseValue : accumulatedOrderIndex == -1 ? new Big(0)
                                             : accumulatedOrders[accumulatedOrderIndex].baseValue,
                                     baseValuesPerFund : accumulatedOrderIndex == -1 ? {}
                                             : Object
@@ -216,25 +218,25 @@ function buildAccmulatedOrders(orders) {
                 // accumulate values to current entry
                 // accumulate base value
                 accumulatedOrders[accumulatedOrderIndex].baseValue = accumulatedOrders[accumulatedOrderIndex].baseValue
-                        + order.orderValue;
+                        .plus(order.orderValue);
                 // accumulate base value per fund
                 if (accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode]) {
                     // add base value if existing
                     accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode] = accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode]
-                            + order.orderValue;
+                            .plus(order.orderValue);
                 } else {
                     // create new entry
-                    accumulatedOrders[accumulatedOrderIndex - 1].baseValuesPerFund[order.orderFundCode] = 0;
+                    accumulatedOrders[accumulatedOrderIndex - 1].baseValuesPerFund[order.orderFundCode] = new Big(0);
                     accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode] = order.orderValue;
                 }
                 // accumulate shares per fund
                 if (accumulatedOrders[accumulatedOrderIndex].sharesPerFund[order.orderFundCode]) {
                     // add shares if existing
                     accumulatedOrders[accumulatedOrderIndex].sharesPerFund[order.orderFundCode] = accumulatedOrders[accumulatedOrderIndex].sharesPerFund[order.orderFundCode]
-                            + order.orderShares;
+                            .plus(order.orderShares);
                 } else {
                     // create new entry
-                    accumulatedOrders[accumulatedOrderIndex - 1].sharesPerFund[order.orderFundCode] = 0;
+                    accumulatedOrders[accumulatedOrderIndex - 1].sharesPerFund[order.orderFundCode] = new Big(0);
                     accumulatedOrders[accumulatedOrderIndex].sharesPerFund[order.orderFundCode] = order.orderShares;
                 }
 
@@ -256,6 +258,20 @@ function buildAccmulatedOrders(orders) {
                     sharesPerFund : accumulatedOrders[accumulatedOrderIndex].sharesPerFund,
                 });
     }
+
+    // convert to numbers
+    accumulatedOrders
+            .forEach(function(accumulatedOrder) {
+                accumulatedOrder.baseValue = Number.parseFloat(accumulatedOrder.baseValue.toFixed(2));
+                Object.keys(accumulatedOrder.baseValuesPerFund)
+                        .forEach(function(key) {
+                            accumulatedOrder.baseValuesPerFund[key] = Number.parseFloat(accumulatedOrder.baseValuesPerFund[key].toFixed(20));
+                        });
+                Object.keys(accumulatedOrder.sharesPerFund)
+                        .forEach(function(key) {
+                            accumulatedOrder.sharesPerFund[key] = Number.parseFloat(accumulatedOrder.sharesPerFund[key].toFixed(20));
+                        });
+            });
 
     return accumulatedOrders;
 }
