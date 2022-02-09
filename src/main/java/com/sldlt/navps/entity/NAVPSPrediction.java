@@ -33,9 +33,6 @@ public class NAVPSPrediction implements Serializable {
     @Column(nullable = false, precision = 10, scale = 6)
     private BigDecimal value;
 
-    @Column(columnDefinition = "TEXT")
-    private String parameters;
-
     public Long getId() {
         return id;
     }
@@ -82,14 +79,6 @@ public class NAVPSPrediction implements Serializable {
 
     public void setValue(BigDecimal value) {
         this.value = value;
-    }
-
-    public String getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
     }
 
 }

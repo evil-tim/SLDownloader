@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sldlt.navps.dto.FundDto;
 import com.sldlt.navps.dto.NAVPSPredictionDto;
 import com.sldlt.navps.dto.PredictionResultsDto;
@@ -33,9 +31,6 @@ public class PredictionManager {
     @Autowired
     private List<NAVPSPredictorService> navpsPredictorServices;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Scheduled(cron = "${prediction.cron:0 0 5 * * MON}", zone = "${prediction.zone:GMT+8}")
     public void run() {
         List<FundDto> allFunds = fundService.listAllFunds();
@@ -52,11 +47,6 @@ public class PredictionManager {
                     prediction.setDate(currentDate);
                     prediction.setDaysInAdvance(offsets.get(index));
                     prediction.setValue(predictions.getPredictions().get(index));
-                    try {
-                        prediction.setParameters(objectMapper.writeValueAsString(predictions.getParameters()));
-                    } catch (JsonProcessingException ex) {
-                        LOG.error(ex.getMessage(), ex);
-                    }
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(prediction);
                     }

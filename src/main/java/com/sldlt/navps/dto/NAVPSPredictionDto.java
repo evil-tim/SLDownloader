@@ -21,8 +21,6 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
 
     private BigDecimal value;
 
-    private String parameters;
-
     public Long getId() {
         return id;
     }
@@ -71,17 +69,10 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
         this.value = value;
     }
 
-    public String getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
-    }
-
     @Override
     public String toString() {
-        return type + "\n" + fund + " " + date + " +" + daysInAdvance + "\n" + value + "\n" + parameters;
+        return new StringBuilder().append(type).append("\n").append(fund).append(" ").append(date).append(" +").append(daysInAdvance)
+            .append("\n").append(value).toString();
     }
 
     @Override
