@@ -6,6 +6,7 @@ phases:
         java: openjdk8
   pre_build:
     commands:
+      - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - REPOSITORY_URI=535425158818.dkr.ecr.ap-southeast-1.amazonaws.com/crabranch/sldownloader
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
