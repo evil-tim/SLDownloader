@@ -29,7 +29,7 @@ public class TaskExecutor {
     @Autowired
     private NAVPSTaskExecutorService navpsTaskExecutorService;
 
-    @Scheduled(initialDelay = 120000, fixedRateString = "${task.executor.rate:1500}")
+    @Scheduled(initialDelay = 120000, fixedRateString = "${task.executor.rate:30000}")
     public void run() {
         LOG.info("Running executor");
         if (runningTaskHolder.size() >= maxRunningTasks) {

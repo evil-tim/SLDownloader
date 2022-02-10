@@ -31,7 +31,7 @@ public class PredictionManager {
     @Autowired
     private List<NAVPSPredictorService> navpsPredictorServices;
 
-    @Scheduled(cron = "${prediction.cron:0 0 5 * * MON}", zone = "${prediction.zone:GMT+8}")
+    @Scheduled(cron = "${prediction.cron:0 0 6 * * MON}", zone = "${prediction.zone:GMT+8}")
     public void run() {
         List<FundDto> allFunds = fundService.listAllFunds();
         List<Integer> offsets = Arrays.asList(1, 2, 3, 4, 5);
