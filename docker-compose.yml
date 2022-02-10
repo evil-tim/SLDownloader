@@ -12,7 +12,7 @@ services:
       - "8080"
     volumes:
       - sldownloader-database:/var/lib/apps/sldownloader/database
-    mem_limit: 320m
+    mem_limit: 400m
 
 volumes:
   sldownloader-database:
