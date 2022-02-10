@@ -5,14 +5,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.sldlt.downloader.entity.request.NAVPSRequest;
+import com.sldlt.downloader.entity.response.FundsResponse;
 import com.sldlt.downloader.entity.response.NAVPSResponse;
 import com.sldlt.downloader.exception.NAVPSDownloadValidationException;
 import com.sldlt.downloader.service.NAVPSDownloaderService;
@@ -33,8 +33,6 @@ import com.sldlt.navps.dto.NAVPSEntryDto;
 public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
     private static final Logger LOG = Logger.getLogger(NAVPSDownloaderServiceImpl.class);
-
-    private static final String FUND_NAME_FIELD_NAME = "fundCD";
 
     private final DateTimeFormatter responseDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -51,24 +49,59 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
     @Override
     public List<FundDto> findAvailableFunds() {
-        List<FundDto> result = Collections.emptyList();
-        try {
-            result = Jsoup.connect(fundsUrl).timeout(60000).get().getElementsByTag("select").stream()
-                .filter(element -> element.attr("name").equals(FUND_NAME_FIELD_NAME)).findFirst()
-                .map(element -> element.getElementsByTag("option")).orElse(new Elements()).stream()
-                .filter(element -> StringUtils.hasText(element.attr("value"))).map(element -> {
-                    final FundDto fund = new FundDto();
-                    fund.setCode(element.attr("value"));
-                    fund.setName("Sun Life " + element.text().replace("Sun Life ", "").trim());
-                    return fund;
-                }).collect(Collectors.toList());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(result);
-            }
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+
+        clientHttpRequestFactory.setConnectionRequestTimeout(60000);
+        clientHttpRequestFactory.setConnectTimeout(60000);
+        clientHttpRequestFactory.setReadTimeout(60000);
+
+        final RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        final HttpEntity<NAVPSRequest> requestEntity = new HttpEntity<>(headers);
+
+        final FundsResponse response = restTemplate.postForObject(fundsUrl, requestEntity, FundsResponse.class);
+
+        if (response == null) {
+            return Collections.emptyList();
         }
+
+        final List<FundDto> result = new ArrayList<>();
+        if (response.getPesoList() != null && !response.getPesoList().isEmpty()) {
+            result.addAll(response.getPesoList().stream().filter(fundResponse -> StringUtils.hasText(fundResponse.getFundCode()))
+                .map(fundResponse -> {
+                    final FundDto fund = new FundDto();
+                    fund.setCode(fundResponse.getFundCode().trim());
+                    fund.setName(cleanFundName(fundResponse.getFundName()));
+                    return fund;
+                }).collect(Collectors.toList()));
+        }
+
+        if (response.getDollarList() != null && !response.getDollarList().isEmpty()) {
+            result.addAll(response.getDollarList().stream().filter(fundResponse -> StringUtils.hasText(fundResponse.getFundCode()))
+                .map(fundResponse -> {
+                    final FundDto fund = new FundDto();
+                    fund.setCode(fundResponse.getFundCode().trim());
+                    fund.setName(cleanFundName(fundResponse.getFundName()));
+                    return fund;
+                }).collect(Collectors.toList()));
+        }
+
         return result;
+    }
+
+    private String cleanFundName(String fundName) {
+        if (!StringUtils.hasText(fundName)) {
+            return "";
+        }
+        return "Sun Life " + Arrays.stream(fundName.split(" ")).filter(StringUtils::hasText).map(String::toLowerCase)
+            .map(this::capitalizeWord).collect(Collectors.joining(" ")).replace("Sun Life ", "");
+    }
+
+    private String capitalizeWord(String word) {
+        return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
 
     @Override
@@ -80,8 +113,9 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     @Override
     public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund, final LocalDate limitFrom, final LocalDate limitTo)
                     throws IOException {
-
         final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+
+        clientHttpRequestFactory.setConnectionRequestTimeout(60000);
         clientHttpRequestFactory.setConnectTimeout(60000);
         clientHttpRequestFactory.setReadTimeout(60000);
 
