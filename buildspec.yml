@@ -7,10 +7,12 @@ phases:
   pre_build:
     commands:
       - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=535425158818.dkr.ecr.ap-southeast-1.amazonaws.com/crabranch/sldownloader
+      - ECR_URI=535425158818.dkr.ecr.ap-southeast-1.amazonaws.com
+      - REPOSITORY_URI=$ECR_URI/crabranch/sldownloader 
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_URI
+      - docker pull $REPOSITORY_URI:latest || true
   build:
     commands:
       - mvn clean package -Ddockerfile.skip -Dmaven.test.skip=true
