@@ -33,8 +33,8 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
     }
 
     private List<AggregatedOrder> computeActualValues(final List<AggregatedOrder> aggregatedOrders) {
-        IntStream.range(1, aggregatedOrders.size())
-            .mapToObj(index -> Pair.of(aggregatedOrders.get(index - 1), aggregatedOrders.get(index))).forEach(intervalPair -> {
+        IntStream.range(1, aggregatedOrders.size()).mapToObj(index -> Pair.of(aggregatedOrders.get(index - 1), aggregatedOrders.get(index)))
+            .forEach(intervalPair -> {
                 final AggregatedOrder intervalStartOrder = intervalPair.getFirst();
                 final AggregatedOrder intervalEndOrder = intervalPair.getSecond();
                 final Map<LocalDate, AggregatedOrder> fillerOrders = new HashMap<>();
@@ -58,7 +58,7 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
         // sort time aggregated orders
         Collections.sort(aggregatedOrders);
         if (!aggregatedOrders.isEmpty()
-                        && aggregatedOrders.get(aggregatedOrders.size() - 1).getTotalActualValue().equals(BigDecimal.ZERO)) {
+            && aggregatedOrders.get(aggregatedOrders.size() - 1).getTotalActualValue().equals(BigDecimal.ZERO)) {
             aggregatedOrders.remove(aggregatedOrders.size() - 1);
         }
 

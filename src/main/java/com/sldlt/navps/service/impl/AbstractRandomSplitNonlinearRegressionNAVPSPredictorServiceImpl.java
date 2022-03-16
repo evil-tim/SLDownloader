@@ -12,7 +12,7 @@ import org.springframework.data.util.Pair;
 import com.sldlt.navps.dto.PredictionResultsDto;
 
 public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServiceImpl
-                extends AbstractNonlinearRegressionNAVPSPredictorServiceImpl {
+    extends AbstractNonlinearRegressionNAVPSPredictorServiceImpl {
 
     public AbstractRandomSplitNonlinearRegressionNAVPSPredictorServiceImpl() {
         super();
@@ -55,8 +55,8 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
 
     }
 
-    private List<List<Pair<BigDecimal, BigDecimal>>> splitNavpsData(final List<Pair<BigDecimal, BigDecimal>> navpsData,
-        final int numSplit, final double includeChance) {
+    private List<List<Pair<BigDecimal, BigDecimal>>> splitNavpsData(final List<Pair<BigDecimal, BigDecimal>> navpsData, final int numSplit,
+        final double includeChance) {
         final List<List<Pair<BigDecimal, BigDecimal>>> splitNavps = new LinkedList<>();
         for (int i = 0; i < numSplit; i++) {
             splitNavps.add(navpsData.stream().filter(value -> Math.random() < includeChance).collect(Collectors.toList()));

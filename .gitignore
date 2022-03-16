@@ -25,3 +25,5 @@ nbdist/
 /database.mv.db
 /database.trace.db
 /.pmd
+/bin/
+/.checkstyle

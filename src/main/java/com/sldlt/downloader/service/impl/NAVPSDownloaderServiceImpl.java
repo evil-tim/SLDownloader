@@ -111,8 +111,8 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     }
 
     @Override
-    public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund, final LocalDate limitFrom, final LocalDate limitTo)
-                    throws IOException {
+    public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund, final LocalDate limitFrom,
+        final LocalDate limitTo) throws IOException {
         final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 
         clientHttpRequestFactory.setConnectionRequestTimeout(60000);

@@ -70,8 +70,7 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
 
     @Override
     public Set<String> getPredictionsTypes() {
-        return navpsPredictorServices.stream().map(NAVPSPredictorService::getType)
-            .collect(Collectors.toCollection(TreeSet<String>::new));
+        return navpsPredictorServices.stream().map(NAVPSPredictorService::getType).collect(Collectors.toCollection(TreeSet<String>::new));
     }
 
 }

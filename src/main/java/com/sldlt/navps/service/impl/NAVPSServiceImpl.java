@@ -54,8 +54,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     @Override
     public void saveNAVPS(final List<NAVPSEntryDto> entries) {
         navpsEntryRepository.save(entries.stream()
-            .filter(
-                entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
+            .filter(entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
             .map(entry -> mapper.map(entry, NAVPSEntry.class)).collect(Collectors.toList()));
     }
 
@@ -74,12 +73,11 @@ public class NAVPSServiceImpl implements NAVPSService {
 
         final List<FundDto> funds = fundService.listAllFunds();
 
-        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
-            .map(entry -> {
-                final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
-                mappedNavps.setFundName(getFundName(funds, mappedNavps.getFund()));
-                return mappedNavps;
-            }).collect(Collectors.toList());
+        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false).map(entry -> {
+            final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
+            mappedNavps.setFundName(getFundName(funds, mappedNavps.getFund()));
+            return mappedNavps;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -235,8 +233,9 @@ public class NAVPSServiceImpl implements NAVPSService {
             RoundingMode.HALF_UP);
         final BigDecimal standardDev = BigDecimal.valueOf(Math.sqrt(variance.doubleValue()));
 
-        return values.stream().map(entryPair -> Pair.of(entryPair.getFirst(),
-            entryPair.getSecond().subtract(avg).divide(standardDev, 10, RoundingMode.HALF_UP))).collect(Collectors.toList());
+        return values.stream().map(
+            entryPair -> Pair.of(entryPair.getFirst(), entryPair.getSecond().subtract(avg).divide(standardDev, 10, RoundingMode.HALF_UP)))
+            .collect(Collectors.toList());
     }
 
     @Override

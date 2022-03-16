@@ -169,8 +169,8 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
     }
 
     protected BigDecimal makePrediction(final RealMatrix parameters, final int daysAdvance) {
-        return BigDecimal.valueOf(IntStream.range(0, functions.size())
-            .mapToDouble(i -> parameters.getRow(i)[0] * functions.get(i).compute(daysAdvance)).sum());
+        return BigDecimal.valueOf(
+            IntStream.range(0, functions.size()).mapToDouble(i -> parameters.getRow(i)[0] * functions.get(i).compute(daysAdvance)).sum());
     }
 
     protected Map<String, String> convertParameters(final RealMatrix parameters) {

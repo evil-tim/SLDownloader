@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RandomSplitNonlinearRegressionAllNAVPSPredictorServiceImpl
-                extends AbstractRandomSplitNonlinearRegressionNAVPSPredictorServiceImpl {
+    extends AbstractRandomSplitNonlinearRegressionNAVPSPredictorServiceImpl {
 
     @Override
     protected String getRangeType() {
