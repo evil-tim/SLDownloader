@@ -89,7 +89,8 @@ public class TaskServiceImpl implements TaskService {
         Optional.ofNullable(taskRepository.findOne(id)).ifPresent(task -> {
             task.setStatus(FAILED);
             task.setAttempts(task.getAttempts() + 1);
-            long cooldownFactor = task.getAttempts() * task.getAttempts() * task.getAttempts();
+            long cooldownFactor = task.getAttempts();
+            cooldownFactor = cooldownFactor * cooldownFactor * cooldownFactor;
             task.setNextAttemptAfter(LocalDateTime.now().plusSeconds(taskRetryCooldown * cooldownFactor));
             taskRepository.save(task);
         });

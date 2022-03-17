@@ -44,12 +44,13 @@ public abstract class AbstractLinearRegressionNAVPSPredictorServiceImpl extends 
         final BigDecimal avgX = totals.getFirst().divide(BigDecimal.valueOf(size), 10, RoundingMode.HALF_UP);
         final BigDecimal avgY = totals.getSecond().divide(BigDecimal.valueOf(size), 10, RoundingMode.HALF_UP);
 
-        final BigDecimal cov = navpsData.stream().map(data -> data.getFirst().subtract(avgX).multiply(data.getSecond().subtract(avgY)))
+        final BigDecimal covariance = navpsData.stream()
+            .map(data -> data.getFirst().subtract(avgX).multiply(data.getSecond().subtract(avgY)))
             .reduce(BigDecimal.ZERO, (value1, value2) -> value1.add(value2));
-        final BigDecimal var = navpsData.stream().map(data -> data.getFirst().subtract(avgX)).map(value -> value.pow(2))
+        final BigDecimal variance = navpsData.stream().map(data -> data.getFirst().subtract(avgX)).map(value -> value.pow(2))
             .reduce(BigDecimal.ZERO, (value1, value2) -> value1.add(value2));
 
-        final BigDecimal beta = cov.divide(var, 10, RoundingMode.HALF_UP);
+        final BigDecimal beta = covariance.divide(variance, 10, RoundingMode.HALF_UP);
 
         return Pair.of(beta, avgY.subtract(beta.multiply(avgX)));
     }

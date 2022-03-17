@@ -25,7 +25,7 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
 
     protected final List<RegressionFunction> functions;
 
-    public AbstractNonlinearRegressionNAVPSPredictorServiceImpl() {
+    protected AbstractNonlinearRegressionNAVPSPredictorServiceImpl() {
         functions = new LinkedList<>();
         functions.add(new ConstantRegressionFunction());
         functions.add(new LinearRegressionFunction());

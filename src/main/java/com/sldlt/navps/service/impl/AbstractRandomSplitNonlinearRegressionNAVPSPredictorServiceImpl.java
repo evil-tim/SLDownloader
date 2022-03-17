@@ -14,7 +14,7 @@ import com.sldlt.navps.dto.PredictionResultsDto;
 public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServiceImpl
     extends AbstractNonlinearRegressionNAVPSPredictorServiceImpl {
 
-    public AbstractRandomSplitNonlinearRegressionNAVPSPredictorServiceImpl() {
+    protected AbstractRandomSplitNonlinearRegressionNAVPSPredictorServiceImpl() {
         super();
     }
 
@@ -64,8 +64,10 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
         return splitNavps;
     }
 
+    @Override
     protected abstract String getRangeType();
 
+    @Override
     protected abstract LocalDate getMaxRange();
 
 }
