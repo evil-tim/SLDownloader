@@ -42,12 +42,8 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
         predicate.and(nAVPSPrediction.date.eq(newPrediction.getDate()));
         predicate.and(nAVPSPrediction.daysInAdvance.eq(newPrediction.getDaysInAdvance()));
 
-        NAVPSPrediction predictionObj = navpsPredictionRepository.findOne(predicate);
-        if (predictionObj == null) {
-            predictionObj = mapper.map(newPrediction, NAVPSPrediction.class);
-        } else {
-            mapper.map(newPrediction, predictionObj);
-        }
+        NAVPSPrediction predictionObj = navpsPredictionRepository.findOne(predicate).orElseGet(NAVPSPrediction::new);
+        mapper.map(newPrediction, predictionObj);
 
         return mapper.map(navpsPredictionRepository.save(predictionObj), NAVPSPredictionDto.class);
     }

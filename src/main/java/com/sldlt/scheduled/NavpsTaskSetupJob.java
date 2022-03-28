@@ -6,7 +6,8 @@ import java.time.ZoneId;
 import java.time.temporal.WeekFields;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,9 +19,9 @@ import com.sldlt.navps.dto.FundDto;
 import com.sldlt.navps.service.FundService;
 
 @Component
-public class TaskManager {
+public class NavpsTaskSetupJob {
 
-    private static final Logger LOG = Logger.getLogger(TaskManager.class);
+    private static final Logger LOG = LogManager.getLogger(NavpsTaskSetupJob.class);
 
     @Autowired
     private TaskService taskService;

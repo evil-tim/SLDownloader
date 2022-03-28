@@ -3,7 +3,8 @@ package com.sldlt.downloader.resource;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ import com.sldlt.downloader.service.TaskService;
 @RestController
 public class TaskResource {
 
-    private static final Logger LOG = Logger.getLogger(TaskResource.class);
+    private static final Logger LOG = LogManager.getLogger(TaskResource.class);
 
     @Autowired
     private TaskService taskService;

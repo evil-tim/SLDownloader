@@ -11,7 +11,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +33,7 @@ import com.sldlt.navps.dto.NAVPSEntryDto;
 @Service
 public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
 
-    private static final Logger LOG = Logger.getLogger(NAVPSDownloaderServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(NAVPSDownloaderServiceImpl.class);
 
     private final DateTimeFormatter responseDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

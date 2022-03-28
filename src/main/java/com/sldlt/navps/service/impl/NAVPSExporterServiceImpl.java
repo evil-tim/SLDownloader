@@ -9,7 +9,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ import com.sldlt.navps.service.NAVPSService;
 @Service
 public class NAVPSExporterServiceImpl implements NAVPSExporterService {
 
-    private static final Logger LOG = Logger.getLogger(NAVPSExporterServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(NAVPSExporterServiceImpl.class);
 
     @Autowired
     private FundService fundService;

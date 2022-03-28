@@ -53,7 +53,7 @@ public class NAVPSServiceImpl implements NAVPSService {
 
     @Override
     public void saveNAVPS(final List<NAVPSEntryDto> entries) {
-        navpsEntryRepository.save(entries.stream()
+        navpsEntryRepository.saveAll(entries.stream()
             .filter(entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
             .map(entry -> mapper.map(entry, NAVPSEntry.class)).collect(Collectors.toList()));
     }

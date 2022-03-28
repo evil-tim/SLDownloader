@@ -1,6 +1,7 @@
 package com.sldlt.scheduled;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -12,9 +13,9 @@ import com.sldlt.navps.service.NAVPSExporterService;
 
 @Component
 @Profile("aws")
-public class DataExporter {
+public class NavpsDataExporterJob {
 
-    private static final Logger LOG = Logger.getLogger(DataExporter.class);
+    private static final Logger LOG = LogManager.getLogger(NavpsDataExporterJob.class);
 
     @Value("${dataexporter.s3.bucket.name}")
     private String bucketName;

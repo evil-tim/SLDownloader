@@ -5,7 +5,8 @@ import static com.sldlt.downloader.TaskStatus.SUCCESS;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import com.sldlt.navps.service.NAVPSService;
 @Transactional
 public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
 
-    private static final Logger LOG = Logger.getLogger(NAVPSTaskExecutorServiceImpl.class);
+    private static final Logger LOG = LogManager.getLogger(NAVPSTaskExecutorServiceImpl.class);
 
     @Autowired
     private NAVPSDownloaderService navpsDownloader;

@@ -8,7 +8,6 @@ import static com.sldlt.downloader.entity.QTask.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -67,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> getExecutableTasks(int count) {
-        final PageRequest pageable = new PageRequest(0, count, new Sort(new Order(Sort.Direction.DESC, "dateTo")));
+        final PageRequest pageable = PageRequest.of(0, count, Sort.by(new Order(Sort.Direction.DESC, "dateTo")));
         return taskRepository
             .findAll(task.status.in(PENDING, FAILED).and(task.attempts.lt(taskMaxRetries))
                 .and(task.nextAttemptAfter.isNull().or(task.nextAttemptAfter.before(LocalDateTime.now()))), pageable)
@@ -76,7 +75,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void updateTaskSucceeded(Long id) {
-        Optional.ofNullable(taskRepository.findOne(id)).ifPresent(task -> {
+        taskRepository.findOne(task.id.eq(id)).ifPresent(task -> {
             task.setStatus(SUCCESS);
             task.setAttempts(task.getAttempts() + 1);
             taskRepository.save(task);
@@ -86,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void updateTaskFailed(Long id) {
-        Optional.ofNullable(taskRepository.findOne(id)).ifPresent(task -> {
+        taskRepository.findOne(task.id.eq(id)).ifPresent(task -> {
             task.setStatus(FAILED);
             task.setAttempts(task.getAttempts() + 1);
             long cooldownFactor = task.getAttempts();
@@ -99,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDto resetTaskStatus(Long id) {
-        return Optional.ofNullable(taskRepository.findOne(id)).map(task -> {
+        return taskRepository.findOne(task.id.eq(id)).map(task -> {
             task.setStatus(PENDING);
             task.setAttempts(0);
             task.setNextAttemptAfter(null);
@@ -136,7 +135,7 @@ public class TaskServiceImpl implements TaskService {
     public List<TaskDto> listRunningTasks() {
         final List<FundDto> funds = fundService.listAllFunds();
 
-        return runningTaskHolder.stream().map(id -> mapper.map(taskRepository.findOne(id), TaskDto.class)).map(task -> {
+        return runningTaskHolder.stream().map(id -> mapper.map(taskRepository.findOne(task.id.eq(id)), TaskDto.class)).map(task -> {
             task.setRetryable(task.getAttempts() < taskMaxRetries);
             task.setFundName(getFundName(funds, task.getFund()));
             return task;

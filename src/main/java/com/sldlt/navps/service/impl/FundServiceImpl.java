@@ -28,12 +28,9 @@ public class FundServiceImpl implements FundService {
 
     @Override
     public FundDto saveFund(final FundDto newFund) {
-        Fund fundObj = fundRepository.findOne(new BooleanBuilder().and(fund.code.eq(newFund.getCode())));
-        if (fundObj == null) {
-            fundObj = mapper.map(newFund, Fund.class);
-        } else {
-            mapper.map(newFund, fundObj);
-        }
+        Fund fundObj = fundRepository.findOne(new BooleanBuilder().and(fund.code.eq(newFund.getCode()))).orElseGet(Fund::new);
+        mapper.map(newFund, fundObj);
+
         return mapper.map(fundRepository.save(fundObj), FundDto.class);
     }
 

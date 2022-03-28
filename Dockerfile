@@ -1,4 +1,4 @@
-FROM amazoncorretto:8-alpine-jre
+FROM amazoncorretto:17-alpine
 
 ENTRYPOINT [    "/usr/bin/java", \
                 "-server", \

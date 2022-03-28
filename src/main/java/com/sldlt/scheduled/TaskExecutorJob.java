@@ -2,7 +2,8 @@ package com.sldlt.scheduled;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,9 +14,9 @@ import com.sldlt.downloader.service.NAVPSTaskExecutorService;
 import com.sldlt.downloader.service.TaskService;
 
 @Component
-public class TaskExecutor {
+public class TaskExecutorJob {
 
-    private static final Logger LOG = Logger.getLogger(TaskExecutor.class);
+    private static final Logger LOG = LogManager.getLogger(TaskExecutorJob.class);
 
     @Value("${task.maxRunning}")
     private Integer maxRunningTasks;

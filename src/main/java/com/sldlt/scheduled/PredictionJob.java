@@ -5,7 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,9 @@ import com.sldlt.navps.service.NAVPSPredictionService;
 import com.sldlt.navps.service.NAVPSPredictorService;
 
 @Component
-public class PredictionManager {
+public class PredictionJob {
 
-    private static final Logger LOG = Logger.getLogger(PredictionManager.class);
+    private static final Logger LOG = LogManager.getLogger(PredictionJob.class);
 
     @Autowired
     private FundService fundService;
