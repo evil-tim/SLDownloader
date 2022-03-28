@@ -27,3 +27,4 @@ nbdist/
 /.pmd
 /bin/
 /.checkstyle
+/.pmdruleset.xml
