@@ -40,7 +40,7 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
                 final Map<LocalDate, AggregatedOrder> fillerOrders = new HashMap<>();
                 intervalStartOrder.getAggregatedFundOrders().forEach((fund, aggregatedFundOrder) -> {
                     final List<NAVPSEntryDto> navpsList = navpsService.listNAVPS(fund, intervalStartOrder.getDate(),
-                        intervalEndOrder.getDate().minusDays(1));
+                        intervalEndOrder.getDate().minusDays(1), false);
                     navpsList.forEach(navpsEntry -> {
                         if (intervalStartOrder.getDate().equals(navpsEntry.getDate())) {
                             aggregateActualValueForNavps(intervalStartOrder, fund, navpsEntry.getValue());

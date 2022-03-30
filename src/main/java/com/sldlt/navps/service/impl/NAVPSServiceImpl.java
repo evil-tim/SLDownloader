@@ -59,6 +59,12 @@ public class NAVPSServiceImpl implements NAVPSService {
 
     @Override
     public List<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo) {
+        return listNAVPS(fund, dateFrom, dateTo, true);
+    }
+
+    @Override
+    public List<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo,
+        final boolean withFundDetail) {
         final BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.hasText(fund)) {
             predicate.and(nAVPSEntry.fund.eq(fund));
@@ -70,11 +76,16 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.date.loe(dateTo));
         }
 
-        final List<FundDto> funds = fundService.listAllFunds();
+        final String fundName = null;
+        if (withFundDetail) {
+            fundService.getFundByCode(fund).getName();
+        }
 
         return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false).map(entry -> {
             final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
-            mappedNavps.setFundName(getFundName(funds, mappedNavps.getFund()));
+            if (withFundDetail) {
+                mappedNavps.setFundName(fundName);
+            }
             return mappedNavps;
         }).toList();
     }
