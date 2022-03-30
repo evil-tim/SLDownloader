@@ -3,7 +3,6 @@ package com.sldlt.navps.service.impl;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public abstract class AbstractNAVPSPredictorServiceImpl implements NAVPSPredicto
     protected List<Pair<BigDecimal, BigDecimal>> fetchNavpsData(final String fund, final LocalDate maxRange) {
         final List<NAVPSEntryDto> navpsEntries = navpsService.listNAVPS(fund, maxRange, null);
         return IntStream.range(0, navpsEntries.size()).mapToObj(i -> Pair.of(BigDecimal.valueOf(-i), navpsEntries.get(i).getValue()))
-            .collect(Collectors.toList());
+            .toList();
     }
 
 }

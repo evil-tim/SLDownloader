@@ -57,7 +57,7 @@ public class NAVPSExporterServiceImpl implements NAVPSExporterService {
     @Override
     public String buildNavpsJsonContent() {
         List<List<NAVPSEntryDto>> allFundsLists = fundService.listAllFunds().stream().map(FundDto::getCode).filter(StringUtils::hasText)
-            .map(navpsService::listAllNAVPS).filter(navpsList -> navpsList != null && !navpsList.isEmpty()).collect(Collectors.toList());
+            .map(navpsService::listAllNAVPS).filter(navpsList -> navpsList != null && !navpsList.isEmpty()).toList();
 
         return IntStream.range(0, allFundsLists.size() - 1).mapToObj(i -> Pair.of(i, allFundsLists.get(i))).map(this::convertNavpsListToObj)
             .map(this::convertObjToJsonString).filter(StringUtils::hasText).collect(Collectors.joining("\n"));

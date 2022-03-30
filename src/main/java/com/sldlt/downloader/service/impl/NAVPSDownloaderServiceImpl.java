@@ -77,7 +77,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                     fund.setCode(fundResponse.getFundCode().trim());
                     fund.setName(cleanFundName(fundResponse.getFundName()));
                     return fund;
-                }).collect(Collectors.toList()));
+                }).toList());
         }
 
         if (response.getDollarList() != null && !response.getDollarList().isEmpty()) {
@@ -87,7 +87,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
                     fund.setCode(fundResponse.getFundCode().trim());
                     fund.setName(cleanFundName(fundResponse.getFundName()));
                     return fund;
-                }).collect(Collectors.toList()));
+                }).toList());
         }
 
         return result;
@@ -140,7 +140,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
             entry.setDate(LocalDate.parse(navpsResponse.getFundValDate(), responseDateFormat));
             entry.setValue(new BigDecimal(navpsResponse.getFundNetVal()));
             return entry;
-        }).collect(Collectors.toList());
+        }).toList();
 
         if (LOG.isDebugEnabled()) {
             LOG.debug(result);

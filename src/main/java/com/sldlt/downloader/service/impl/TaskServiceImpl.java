@@ -8,7 +8,6 @@ import static com.sldlt.downloader.entity.QTask.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,7 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository
             .findAll(task.status.in(PENDING, FAILED).and(task.attempts.lt(taskMaxRetries))
                 .and(task.nextAttemptAfter.isNull().or(task.nextAttemptAfter.before(LocalDateTime.now()))), pageable)
-            .getContent().stream().map(item -> mapper.map(item, TaskDto.class)).collect(Collectors.toList());
+            .getContent().stream().map(item -> mapper.map(item, TaskDto.class)).toList();
     }
 
     @Override
@@ -139,7 +138,7 @@ public class TaskServiceImpl implements TaskService {
             task.setRetryable(task.getAttempts() < taskMaxRetries);
             task.setFundName(getFundName(funds, task.getFund()));
             return task;
-        }).sorted().collect(Collectors.toList());
+        }).sorted().toList();
     }
 
     private String getFundName(List<FundDto> funds, String fundCode) {

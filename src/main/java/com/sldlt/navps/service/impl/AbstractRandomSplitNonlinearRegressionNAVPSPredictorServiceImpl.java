@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.util.Pair;
 
@@ -30,13 +29,13 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
 
         final List<PredictionResultsDto> splitResults = splitNavpsData.stream().map(this::makeParameters).map(parameters -> {
             final PredictionResultsDto results = new PredictionResultsDto();
-            results.setPredictions(daysAdvance.stream().map(days -> makePrediction(parameters, days)).collect(Collectors.toList()));
+            results.setPredictions(daysAdvance.stream().map(days -> makePrediction(parameters, days)).toList());
             results.setParameters(convertParameters(parameters));
             return results;
-        }).collect(Collectors.toList());
+        }).toList();
 
         final PredictionResultsDto finalResults = new PredictionResultsDto();
-        finalResults.setPredictions(daysAdvance.stream().map(day -> BigDecimal.ZERO).collect(Collectors.toList()));
+        finalResults.setPredictions(daysAdvance.stream().map(day -> BigDecimal.ZERO).toList());
         finalResults.setParameters(new HashMap<>());
         for (int i = 0; i < splitResults.size(); i++) {
             final int currentIndex = i;
@@ -59,7 +58,7 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
         final double includeChance) {
         final List<List<Pair<BigDecimal, BigDecimal>>> splitNavps = new LinkedList<>();
         for (int i = 0; i < numSplit; i++) {
-            splitNavps.add(navpsData.stream().filter(value -> Math.random() < includeChance).collect(Collectors.toList()));
+            splitNavps.add(navpsData.stream().filter(value -> Math.random() < includeChance).toList());
         }
         return splitNavps;
     }

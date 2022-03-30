@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -130,7 +129,7 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
         final RealMatrix parameters = makeParameters(navpsData);
 
         final PredictionResultsDto results = new PredictionResultsDto();
-        results.setPredictions(daysAdvance.stream().map(days -> makePrediction(parameters, days)).collect(Collectors.toList()));
+        results.setPredictions(daysAdvance.stream().map(days -> makePrediction(parameters, days)).toList());
         results.setParameters(convertParameters(parameters));
 
         return results;
@@ -149,7 +148,7 @@ public abstract class AbstractNonlinearRegressionNAVPSPredictorServiceImpl exten
 
         for (int i = 0; i < size; i++) {
             final double xvalue = navpsData.get(i).getFirst().doubleValue();
-            final List<Double> xmatrixRow = functions.stream().map(function -> function.compute(xvalue)).collect(Collectors.toList());
+            final List<Double> xmatrixRow = functions.stream().map(function -> function.compute(xvalue)).toList();
             for (int j = 0; j < functions.size(); j++) {
                 xMatrixData[i][j] = xmatrixRow.get(j);
             }

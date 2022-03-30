@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.data.util.Pair;
 
@@ -25,7 +24,7 @@ public abstract class AbstractLinearRegressionNAVPSPredictorServiceImpl extends 
         final Pair<BigDecimal, BigDecimal> parameters = calculateLinearRegressionParameters(navpsData);
 
         final PredictionResultsDto results = new PredictionResultsDto();
-        results.setPredictions(daysAdvance.stream().map(days -> makePrediction(parameters, days)).collect(Collectors.toList()));
+        results.setPredictions(daysAdvance.stream().map(days -> makePrediction(parameters, days)).toList());
         results.setParameters(convertParameters(parameters));
 
         return results;

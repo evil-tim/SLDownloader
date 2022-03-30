@@ -3,7 +3,6 @@ package com.sldlt.navps.service.impl;
 import static com.sldlt.navps.entity.QFund.fund;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class FundServiceImpl implements FundService {
 
     @Override
     public List<FundDto> listAllFunds() {
-        return fundRepository.findAll().stream().map(fund -> mapper.map(fund, FundDto.class)).collect(Collectors.toList());
+        return fundRepository.findAll().stream().map(fund -> mapper.map(fund, FundDto.class)).toList();
     }
 
     @Override

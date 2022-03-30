@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.modelmapper.ModelMapper;
@@ -55,7 +54,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     public void saveNAVPS(final List<NAVPSEntryDto> entries) {
         navpsEntryRepository.saveAll(entries.stream()
             .filter(entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
-            .map(entry -> mapper.map(entry, NAVPSEntry.class)).collect(Collectors.toList()));
+            .map(entry -> mapper.map(entry, NAVPSEntry.class)).toList());
     }
 
     @Override
@@ -77,7 +76,7 @@ public class NAVPSServiceImpl implements NAVPSService {
             final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
             mappedNavps.setFundName(getFundName(funds, mappedNavps.getFund()));
             return mappedNavps;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     @Override
@@ -107,7 +106,7 @@ public class NAVPSServiceImpl implements NAVPSService {
         final BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSEntry.fund.eq(fund));
         return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
-            .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.toList());
+            .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
     }
 
     private String getFundName(final List<FundDto> funds, final String fundCode) {
@@ -122,18 +121,18 @@ public class NAVPSServiceImpl implements NAVPSService {
             return Collections.emptyMap();
         }
 
-        funds.sort((fund1, fund2) -> fund1.getCode().compareTo(fund2.getCode()));
+        final List<FundDto> sortedFunds = funds.stream().sorted((fund1, fund2) -> fund1.getCode().compareTo(fund2.getCode())).toList();
 
         final Map<String, List<NAVPSEntryDto>> allNavps = new TreeMap<>();
-        for (final FundDto fund : funds) {
+        for (final FundDto fund : sortedFunds) {
             allNavps.put(fund.getCode(), getNavpsFromDate(fund.getCode(), dateFrom));
         }
 
         final Map<String, Map<String, BigDecimal>> correlations = new TreeMap<>();
         final Set<FundDto> completed = new HashSet<>();
 
-        for (final FundDto fund : funds) {
-            correlations.put(fund.getCode(), calculateCorrelations(fund, funds, completed, allNavps));
+        for (final FundDto fund : sortedFunds) {
+            correlations.put(fund.getCode(), calculateCorrelations(fund, sortedFunds, completed, allNavps));
             completed.add(fund);
         }
 
@@ -151,7 +150,7 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.date.goe(dateFrom));
         }
         return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
-            .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.toList());
+            .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
     }
 
     private Map<String, BigDecimal> calculateCorrelations(final FundDto fund, final List<FundDto> funds, final Set<FundDto> completed,
@@ -221,7 +220,7 @@ public class NAVPSServiceImpl implements NAVPSService {
         }
 
         final List<Pair<LocalDate, BigDecimal>> values = navpsList.stream().filter(entry -> !entry.getDate().isBefore(minDate))
-            .map(entry -> Pair.of(entry.getDate(), entry.getValue())).collect(Collectors.toList());
+            .map(entry -> Pair.of(entry.getDate(), entry.getValue())).toList();
 
         final BigDecimal size = BigDecimal.valueOf(values.size());
         final BigDecimal sum = values.stream().map(Pair::getSecond).reduce(BigDecimal.ZERO, (value1, value2) -> value1.add(value2));
@@ -235,7 +234,7 @@ public class NAVPSServiceImpl implements NAVPSService {
 
         return values.stream().map(
             entryPair -> Pair.of(entryPair.getFirst(), entryPair.getSecond().subtract(avg).divide(standardDev, 10, RoundingMode.HALF_UP)))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override

@@ -73,7 +73,6 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
     }
 
     private List<AggregatedOrder> aggregateNavpsAndBaseValues(final List<AggregatedOrder> aggregatedOrders) {
-
         // sort time aggregated orders
         Collections.sort(aggregatedOrders);
 
@@ -120,7 +119,6 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
     }
 
     private List<AggregatedOrder> createTimeAggregatedOrders(final List<OrderDto> orders) {
-
         // build initial aggregated orders from individual orders
         final List<AggregatedOrder> aggregatedOrders = new LinkedList<>();
 
