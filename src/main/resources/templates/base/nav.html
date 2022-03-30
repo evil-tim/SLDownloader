@@ -1,49 +1,48 @@
-<th:block layout:fragment="nav">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="nav">
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed"
                     data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar"
-                >
+                    aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span> <span
-                        class="icon-bar"
-                    ></span> <span class="icon-bar"></span> <span
-                        class="icon-bar"
-                    ></span>
+                        class="icon-bar"></span> <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">SLAMCI NAVPS Viewer</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li th:classappend="${page == 'index'} ? active"><a
-                        href="/"
-                    >NAVPS</a></li>
+                        href="/">NAVPS</a></li>
                     <li
-                        th:classappend="${page == 'analysis-navps' or page == 'analysis-correlation'} ? active"
-                    ><a href="#" class="dropdown-toggle"
+                        th:classappend="${page == 'analysis-navps' or page == 'analysis-correlation'} ? active"><a
+                        href="#" class="dropdown-toggle"
                         data-toggle="dropdown" role="button"
-                        aria-haspopup="true" aria-expanded="false"
-                    >Analysis <span class="caret"></span></a>
+                        aria-haspopup="true" aria-expanded="false">Analysis
+                            <span class="caret"></span>
+                    </a>
                         <ul class="dropdown-menu">
                             <li
-                                th:classappend="${page == 'analysis-navps'} ? selected"
-                            ><a href="/analysis-navps">NAVPS Chart</a></li>
+                                th:classappend="${page == 'analysis-navps'} ? selected"><a
+                                href="/analysis-navps">NAVPS Chart</a></li>
                             <li
-                                th:classappend="${page == 'analysis-correlation'} ? selected"
-                            ><a href="/analysis-correlation">Correlations</a></li>
+                                th:classappend="${page == 'analysis-correlation'} ? selected"><a
+                                href="/analysis-correlation">Correlations</a></li>
                             <li
-                                th:classappend="${page == 'analysis-prediction'} ? selected"
-                            ><a href="/analysis-prediction">Predictions</a></li>
+                                th:classappend="${page == 'analysis-prediction'} ? selected"><a
+                                href="/analysis-prediction">Predictions</a></li>
                         </ul></li>
                     <li th:classappend="${page == 'orders'} ? active"><a
-                        href="/orders"
-                    >Orders</a></li>
+                        href="/orders">Orders</a></li>
                     <li th:classappend="${page == 'tasks'} ? active"><a
-                        href="/tasks"
-                    >Tasks</a></li>
+                        href="/tasks">Tasks</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 </th:block>
+</html>

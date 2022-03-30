@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html layout:fragment="base" xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:th="http://www.thymeleaf.org"
->
+<html th:fragment="base(content, additional_css, additional_js)"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>SLAMCI NAVPS Viewer</title>
-<th:block layout:include="base/base_css :: css"></th:block>
-<th:block layout:fragment="additional_css"></th:block>
+<th:block th:replace="base/base_css :: css"></th:block>
+<th:block th:replace="${additional_css}"></th:block>
 </head>
 <body>
-    <th:block layout:include="base/nav :: nav"></th:block>
+    <th:block th:replace="base/nav :: nav"></th:block>
     <div class="container" id="baseContainer">
-        <th:block layout:fragment="content"></th:block>
+        <th:block th:replace="${content}"></th:block>
     </div>
-    <th:block layout:include="base/footer :: footer"></th:block>
-    <th:block layout:include="base/base_js :: js"></th:block>
-    <th:block layout:fragment="additional_js"></th:block>
+    <th:block th:replace="base/footer :: footer"></th:block>
+    <th:block th:replace="base/base_js :: js"></th:block>
+    <th:block th:replace="${additional_js}"></th:block>
 </body>
 </html>

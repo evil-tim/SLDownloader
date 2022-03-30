@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html layout:include="base/base_template :: base"
+<html
+    th:replace="base/base_template :: base(~{ :: content}, ~{ :: additional_css}, ~{ :: additional_js})"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:th="http://www.thymeleaf.org"
->
-<th:block layout:fragment="content">
+    xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="content">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <h1>Running Tasks</h1>
         </div>
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12"
-            style="margin-top: 4px;"
-        >
+            style="margin-top: 4px;">
             <table id="runningTasks"
-                class="table table-bordered table-condensed"
-            >
+                class="table table-bordered table-condensed">
                 <thead>
                     <tr>
                         <th style="width: 10%">ID</th>
@@ -35,31 +33,28 @@
         </div>
         <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
             <div id="allTasksRefresh" class="btn btn-default pull-right"
-                style="margin-top: 20px;"
-            >Refresh</div>
+                style="margin-top: 20px;">Refresh</div>
         </div>
         <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
             <div class="form-group">
                 <label for="dateFilter">Date:</label>
                 <div class='input-group date' id='dateFilter'>
                     <input type='text' class="form-control" /> <span
-                        class="input-group-addon"
-                    > <span class="glyphicon glyphicon-calendar"></span>
+                        class="input-group-addon"> <span
+                        class="glyphicon glyphicon-calendar"></span>
                     </span>
                 </div>
             </div>
         </div>
         <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
             <label for="fundFilter">Fund:</label> <select
-                id="fundFilter" class="selectpicker" data-width="100%"
-            >
+                id="fundFilter" class="selectpicker" data-width="100%">
                 <option value="">All Funds</option>
             </select>
         </div>
         <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
             <label for="statusFilter">Status:</label> <select
-                id="statusFilter" class="selectpicker" data-width="100%"
-            >
+                id="statusFilter" class="selectpicker" data-width="100%">
                 <option value="">All Statuses</option>
                 <option value="SUCCESS">SUCCESS</option>
                 <option value="FAILED">FAILED</option>
@@ -67,11 +62,9 @@
             </select>
         </div>
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12"
-            style="margin-top: 4px;"
-        >
+            style="margin-top: 4px;">
             <table id="allTasks"
-                class="table table-bordered table-condensed"
-            >
+                class="table table-bordered table-condensed">
                 <thead>
                     <tr>
                         <th style="width: 10%">ID</th>
@@ -90,9 +83,9 @@
         </div>
     </div>
 </th:block>
-<th:block layout:fragment="additional_css">
+<th:block th:fragment="additional_css">
 </th:block>
-<th:block layout:fragment="additional_js">
+<th:block th:fragment="additional_js">
     <script type="text/javascript" src="/js/datatable_settings.js"></script>
     <script type="text/javascript" src="/js/running_tasks.js"></script>
     <script type="text/javascript" src="/js/all_tasks.js"></script>

@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html layout:include="base/base_template :: base"
+<html
+    th:replace="base/base_template :: base(~{ :: content}, ~{ :: additional_css}, ~{ :: additional_js})"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:th="http://www.thymeleaf.org"
->
-<th:block layout:fragment="content">
+    xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="content">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <p>
-                <h1>Page Not Found</h1>
+            <h1>Page Not Found</h1>
             </p>
         </div>
     </div>
 </th:block>
-<th:block layout:fragment="additional_css">
+<th:block th:fragment="additional_css">
 </th:block>
-<th:block layout:fragment="additional_js">
+<th:block th:fragment="additional_js">
 </th:block>
 </html>

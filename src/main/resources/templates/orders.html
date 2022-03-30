@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html layout:include="base/base_template :: base"
+<html
+    th:replace="base/base_template :: base(~{ :: content}, ~{ :: additional_css}, ~{ :: additional_js})"
     xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:th="http://www.thymeleaf.org"
->
-<th:block layout:fragment="content">
+    xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="content">
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <h1>Orders Value Chart</h1>
@@ -12,8 +12,7 @@
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div id='ordersChart'
-                style="width: 100%; min-height: 300px; padding: 0px;"
-            ></div>
+                style="width: 100%; min-height: 300px; padding: 0px;"></div>
         </div>
     </div>
     <div class="row">
@@ -27,13 +26,11 @@
     <div class="row">
         <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <div id='ordersSplitChart'
-                style="width: 100%; min-height: 300px; padding: 0px;"
-            ></div>
+                style="width: 100%; min-height: 300px; padding: 0px;"></div>
         </div>
         <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
             <div id='ordersSharesChart'
-                style="width: 100%; min-height: 300px; padding: 0px;"
-            ></div>
+                style="width: 100%; min-height: 300px; padding: 0px;"></div>
         </div>
     </div>
     <div class="row">
@@ -47,125 +44,110 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10">
             <button type="button" class="btn btn-default pull-right"
-                style="margin-top: 20px;" id="clearAllOrders"
-            >Clear All Orders</button>
+                style="margin-top: 20px;" id="clearAllOrders">Clear
+                All Orders</button>
             <a class="btn btn-default pull-right"
                 style="margin-top: 20px; margin-right: 5px" href="#"
-                download="orders.json" id="exportOrders"
-            >Export Orders</a>
+                download="orders.json" id="exportOrders">Export
+                Orders</a>
             <button type="button" class="btn btn-default pull-right"
                 style="margin-top: 20px; margin-right: 5px"
-                data-toggle="modal" data-target="#loadOrdersModal"
-            >Import Orders</button>
+                data-toggle="modal" data-target="#loadOrdersModal">Import
+                Orders</button>
             <div class="modal" id="loadOrdersModal" tabindex="-1"
-                role="dialog" aria-labelledby="loadOrdersModalLabel"
-            >
+                role="dialog" aria-labelledby="loadOrdersModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close"
-                                data-dismiss="modal" aria-label="Close"
-                            >
+                                data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                             <h4 class="modal-title"
-                                id="loadOrdersModalLabel"
-                            >Load Orders</h4>
+                                id="loadOrdersModalLabel">Load
+                                Orders</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
                                 <form action="#" id="loadOrdersForm">
                                     <div
-                                        class="col-sm-6 col-md-6 col-lg-6 col-xl-6"
-                                    >
+                                        class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                         <div class="form-group">
                                             <label for="orderValue">Orders
                                                 File:</label> <input type='file'
                                                 id='ordersImportFile'
                                                 name='ordersImportFile'
-                                                required="required"
-                                            />
+                                                required="required" />
                                         </div>
                                     </div>
                                     <input id="importOrdersFormSubmit"
                                         type="submit"
-                                        style="display: none"
-                                    />
+                                        style="display: none" />
                                 </form>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn"
-                                data-dismiss="modal"
-                            >Cancel</button>
+                                data-dismiss="modal">Cancel</button>
                             <button type="button"
-                                class="btn btn-primary" id="loadOrders"
-                            >Ok</button>
+                                class="btn btn-primary" id="loadOrders">Ok</button>
                         </div>
                     </div>
                 </div>
             </div>
             <button type="button" class="btn btn-default pull-right"
                 style="margin-top: 20px; margin-right: 5px"
-                data-toggle="modal" data-target="#addOrderModal"
-            >Add Order</button>
+                data-toggle="modal" data-target="#addOrderModal">Add
+                Order</button>
             <div class="modal" id="addOrderModal" tabindex="-1"
-                role="dialog" aria-labelledby="addOrderModalLabel"
-            >
+                role="dialog" aria-labelledby="addOrderModalLabel">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close"
-                                data-dismiss="modal" aria-label="Close"
-                            >
+                                data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                             <h4 class="modal-title"
-                                id="addOrderModalLabel"
-                            >Add Order</h4>
+                                id="addOrderModalLabel">Add
+                                Order</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
                                 <form action="#" id="addOrderForm">
                                     <div
-                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
-                                    >
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
                                         <div class="form-group">
                                             <label for="orderDate">Date:</label>
                                             <div
                                                 class='input-group date'
-                                                id='orderDate'
-                                            >
+                                                id='orderDate'>
                                                 <input type='text'
                                                     class="form-control"
                                                     id='orderDateField'
-                                                    required="required"
-                                                /> <span
-                                                    class="input-group-addon"
-                                                > <span
-                                                    class="glyphicon glyphicon-calendar"
-                                                ></span>
+                                                    required="required" />
+                                                <span
+                                                    class="input-group-addon">
+                                                    <span
+                                                    class="glyphicon glyphicon-calendar"></span>
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div
-                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
-                                    >
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
                                         <label for="orderFund">Fund:</label>
                                         <select id="orderFund"
                                             class="selectpicker"
                                             name='orderFund'
                                             data-width="100%"
-                                            required="required"
-                                        >
+                                            required="required">
                                             <option value="">All
                                                 Funds</option>
                                         </select>
                                     </div>
                                     <div
-                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
-                                    >
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
                                         <div class="form-group">
                                             <label for="orderShares">Shares:</label>
                                             <input type='text'
@@ -173,13 +155,11 @@
                                                 id='orderShares'
                                                 name='orderShares'
                                                 required="required"
-                                                pattern="(^\d*$)|(^\d+\.\d{1,2}$)"
-                                            />
+                                                pattern="(^\d*$)|(^\d+\.\d{1,2}$)" />
                                         </div>
                                     </div>
                                     <div
-                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3"
-                                    >
+                                        class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
                                         <div class="form-group">
                                             <label for="orderValue">Value:</label>
                                             <input type='text'
@@ -187,24 +167,20 @@
                                                 id='orderValue'
                                                 name='orderValue'
                                                 required="required"
-                                                pattern="(^\d*$)|(^\d+\.\d{1,2}$)"
-                                            />
+                                                pattern="(^\d*$)|(^\d+\.\d{1,2}$)" />
                                         </div>
                                     </div>
                                     <input id="addOrderFormSubmit"
                                         type="submit"
-                                        style="display: none"
-                                    />
+                                        style="display: none" />
                                 </form>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn"
-                                data-dismiss="modal"
-                            >Cancel</button>
+                                data-dismiss="modal">Cancel</button>
                             <button type="button"
-                                class="btn btn-primary" id="addOrder"
-                            >Ok</button>
+                                class="btn btn-primary" id="addOrder">Ok</button>
                         </div>
                     </div>
                 </div>
@@ -214,11 +190,9 @@
     <div class="row" id="orderTotalCards"></div>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12"
-            style="margin-top: 4px;"
-        >
+            style="margin-top: 4px;">
             <table id="ordersTable"
-                class="table table-bordered table-condensed"
-            >
+                class="table table-bordered table-condensed">
                 <thead>
                     <tr>
                         <th style="width: 10%">Date</th>
@@ -238,9 +212,9 @@
         </div>
     </div>
 </th:block>
-<th:block layout:fragment="additional_css">
+<th:block th:fragment="additional_css">
 </th:block>
-<th:block layout:fragment="additional_js">
+<th:block th:fragment="additional_js">
     <script type="text/javascript" src="/js/datatable_settings.js"></script>
     <script type="text/javascript" src="/js/orders.js"></script>
     <script type="text/javascript" src="/js/orders_chart.js"></script>
