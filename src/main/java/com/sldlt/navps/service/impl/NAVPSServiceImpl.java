@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.modelmapper.ModelMapper;
@@ -59,12 +60,6 @@ public class NAVPSServiceImpl implements NAVPSService {
 
     @Override
     public List<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo) {
-        return listNAVPS(fund, dateFrom, dateTo, true);
-    }
-
-    @Override
-    public List<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo,
-        final boolean withFundDetail) {
         final BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.hasText(fund)) {
             predicate.and(nAVPSEntry.fund.eq(fund));
@@ -76,16 +71,11 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.date.loe(dateTo));
         }
 
-        final String fundName = null;
-        if (withFundDetail) {
-            fundService.getFundByCode(fund).getName();
-        }
+        final String fundName = fundService.getFundByCode(fund).getName();
 
         return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false).map(entry -> {
             final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
-            if (withFundDetail) {
-                mappedNavps.setFundName(fundName);
-            }
+            mappedNavps.setFundName(fundName);
             return mappedNavps;
         }).toList();
     }
@@ -103,13 +93,31 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.date.loe(dateTo));
         }
 
-        final List<FundDto> funds = fundService.listAllFunds();
+        final String fundName = fundService.getFundByCode(fund).getName();
 
         return navpsEntryRepository.findAll(predicate, page).map(entry -> {
             final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
-            mappedNavps.setFundName(getFundName(funds, mappedNavps.getFund()));
+            mappedNavps.setFundName(fundName);
             return mappedNavps;
         });
+    }
+
+    @Override
+    public Map<String, List<NAVPSEntryDto>> listNAVPS(final Set<String> funds, final LocalDate dateFrom, final LocalDate dateTo) {
+        final BooleanBuilder predicate = new BooleanBuilder();
+        if (funds != null && !funds.isEmpty()) {
+            predicate.and(nAVPSEntry.fund.in(funds));
+        }
+        if (dateFrom != null) {
+            predicate.and(nAVPSEntry.date.goe(dateFrom));
+        }
+        if (dateTo != null) {
+            predicate.and(nAVPSEntry.date.loe(dateTo));
+        }
+
+        return StreamSupport
+            .stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.fund.desc(), nAVPSEntry.date.desc()).spliterator(), false)
+            .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.groupingBy(NAVPSEntryDto::getFund));
     }
 
     @Override
@@ -118,10 +126,6 @@ public class NAVPSServiceImpl implements NAVPSService {
         predicate.and(nAVPSEntry.fund.eq(fund));
         return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
-    }
-
-    private String getFundName(final List<FundDto> funds, final String fundCode) {
-        return funds.stream().filter(fund -> fund.getCode().equals(fundCode)).findFirst().map(FundDto::getName).orElse("");
     }
 
     @Override

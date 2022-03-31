@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,9 @@ public interface NAVPSService {
 
     List<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo);
 
-    List<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo, boolean withFundDetail);
-
     Page<NAVPSEntryDto> listNAVPS(String fund, LocalDate dateFrom, LocalDate dateTo, Pageable page);
+
+    Map<String, List<NAVPSEntryDto>> listNAVPS(Set<String> funds, LocalDate dateFrom, LocalDate dateTo);
 
     List<NAVPSEntryDto> listAllNAVPS(String fund);
 
