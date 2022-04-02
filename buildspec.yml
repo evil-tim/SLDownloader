@@ -1,9 +1,14 @@
 version: 0.2
 
+env:
+  variables:
+    JAVA_HOME: "/usr/lib/jvm/java-17-amazon-corretto/"
 phases:
   install:
-    runtime-versions:
-        java: openjdk8
+    commands:
+      - apt-get update; apt-get install -y java-17-amazon-corretto-jdk
+      - update-alternatives --auto javac
+      - update-alternatives --auto java
   pre_build:
     commands:
       - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
@@ -15,7 +20,7 @@ phases:
       - docker pull $REPOSITORY_URI:latest || true
   build:
     commands:
-      - mvn clean package -Ddockerfile.skip -Dmaven.test.skip=true
+      - mvn clean package -Ddependency-check.skip=true -Ddockerfile.skip=true -Dmaven.test.skip=true
       - docker build --build-arg JAR_FILE=sldownloader.jar -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
