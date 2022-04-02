@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,20 +72,19 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.date.loe(dateTo));
         }
 
-        final String fundName = fundService.getFundByCode(fund).getName();
-
-        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false).map(entry -> {
-            final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
-            mappedNavps.setFundName(fundName);
-            return mappedNavps;
-        }).toList();
+        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
+            .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
     }
 
     @Override
     public Page<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo, final Pageable page) {
+        final Map<String, String> fundNames = new HashMap<>();
         final BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.hasText(fund)) {
             predicate.and(nAVPSEntry.fund.eq(fund));
+            fundNames.put(fund, fundService.getFundByCode(fund).getName());
+        } else {
+            fundNames.putAll(fundService.listAllFunds().stream().collect(Collectors.toMap(FundDto::getCode, FundDto::getName)));
         }
         if (dateFrom != null) {
             predicate.and(nAVPSEntry.date.goe(dateFrom));
@@ -93,13 +93,8 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.date.loe(dateTo));
         }
 
-        final String fundName = fundService.getFundByCode(fund).getName();
-
-        return navpsEntryRepository.findAll(predicate, page).map(entry -> {
-            final NAVPSEntryDto mappedNavps = mapper.map(entry, NAVPSEntryDto.class);
-            mappedNavps.setFundName(fundName);
-            return mappedNavps;
-        });
+        return navpsEntryRepository.findAll(predicate, page).map(entry -> mapper.map(entry, NAVPSEntryDto.class))
+            .map(entry -> setNavpsEntryFundName(entry, fundNames));
     }
 
     @Override
@@ -118,6 +113,11 @@ public class NAVPSServiceImpl implements NAVPSService {
         return StreamSupport
             .stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.fund.desc(), nAVPSEntry.date.desc()).spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.groupingBy(NAVPSEntryDto::getFund));
+    }
+
+    private NAVPSEntryDto setNavpsEntryFundName(final NAVPSEntryDto entry, final Map<String, String> fundNames) {
+        entry.setFundName(fundNames.getOrDefault(entry.getFund(), ""));
+        return entry;
     }
 
     @Override
