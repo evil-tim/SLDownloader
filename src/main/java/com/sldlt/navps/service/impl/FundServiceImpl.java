@@ -16,7 +16,6 @@ import com.sldlt.navps.repository.FundRepository;
 import com.sldlt.navps.service.FundService;
 
 @Service
-@Transactional
 public class FundServiceImpl implements FundService {
 
     @Autowired
@@ -26,6 +25,7 @@ public class FundServiceImpl implements FundService {
     private FundRepository fundRepository;
 
     @Override
+    @Transactional
     public FundDto saveFund(final FundDto newFund) {
         Fund fundObj = fundRepository.findOne(new BooleanBuilder().and(fund.code.eq(newFund.getCode()))).orElseGet(Fund::new);
         mapper.map(newFund, fundObj);
@@ -34,11 +34,13 @@ public class FundServiceImpl implements FundService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<FundDto> listAllFunds() {
         return fundRepository.findAll().stream().map(fund -> mapper.map(fund, FundDto.class)).toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FundDto getFundByCode(final String code) {
         return mapper.map(fundRepository.findOneByCode(code), FundDto.class);
     }

@@ -35,7 +35,6 @@ import com.sldlt.navps.service.FundService;
 import com.sldlt.navps.service.NAVPSService;
 
 @Service
-@Transactional
 public class NAVPSServiceImpl implements NAVPSService {
 
     @Autowired
@@ -48,11 +47,13 @@ public class NAVPSServiceImpl implements NAVPSService {
     private FundService fundService;
 
     @Override
+    @Transactional
     public void saveNAVPS(final NAVPSEntryDto entry) {
         saveNAVPS(Collections.singletonList(entry));
     }
 
     @Override
+    @Transactional
     public void saveNAVPS(final List<NAVPSEntryDto> entries) {
         navpsEntryRepository.saveAll(entries.stream()
             .filter(entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
@@ -60,6 +61,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo) {
         final BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.hasText(fund)) {
@@ -77,6 +79,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<NAVPSEntryDto> listNAVPS(final String fund, final LocalDate dateFrom, final LocalDate dateTo, final Pageable page) {
         final Map<String, String> fundNames = new HashMap<>();
         final BooleanBuilder predicate = new BooleanBuilder();
@@ -98,6 +101,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, List<NAVPSEntryDto>> listNAVPS(final Set<String> funds, final LocalDate dateFrom, final LocalDate dateTo) {
         final BooleanBuilder predicate = new BooleanBuilder();
         if (funds != null && !funds.isEmpty()) {
@@ -121,6 +125,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NAVPSEntryDto> listAllNAVPS(final String fund) {
         final BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSEntry.fund.eq(fund));
@@ -129,6 +134,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, Map<String, BigDecimal>> listAllCorrelations(final LocalDate dateFrom) {
         final List<FundDto> funds = fundService.listAllFunds();
 
@@ -253,8 +259,8 @@ public class NAVPSServiceImpl implements NAVPSService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Pair<BigDecimal, BigDecimal>> listNAVPSPaired(String fundX, String fundY, LocalDate dateFrom, LocalDate dateTo) {
-
         List<Pair<BigDecimal, BigDecimal>> result = new LinkedList<>();
 
         List<NAVPSEntryDto> navpsX = listNAVPS(fundX, dateFrom, dateTo);

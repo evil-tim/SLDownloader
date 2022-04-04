@@ -21,7 +21,6 @@ import com.sldlt.navps.service.FundService;
 import com.sldlt.navps.service.NAVPSService;
 
 @Service
-@Transactional
 public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
 
     private static final Logger LOG = LogManager.getLogger(NAVPSTaskExecutorServiceImpl.class);
@@ -39,6 +38,7 @@ public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
     private FundService fundService;
 
     @Override
+    @Transactional
     public TaskStatus executeTask(final TaskDto task) {
         TaskStatus finalStatus = null;
         try {

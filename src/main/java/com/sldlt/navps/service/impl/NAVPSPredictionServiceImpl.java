@@ -14,6 +14,7 @@ import java.util.stream.StreamSupport;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.BooleanBuilder;
 import com.sldlt.navps.dto.NAVPSPredictionDto;
@@ -35,6 +36,7 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
     private List<NAVPSPredictorService> navpsPredictorServices;
 
     @Override
+    @Transactional
     public NAVPSPredictionDto savePrediction(NAVPSPredictionDto newPrediction) {
         BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSPrediction.fund.eq(newPrediction.getFund()));
@@ -49,6 +51,7 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<LocalDate, Set<NAVPSPredictionDto>> getPredictions(String fund, String predictionType, LocalDate dateFrom,
         LocalDate dateTo) {
         BooleanBuilder predicate = new BooleanBuilder();

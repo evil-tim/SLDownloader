@@ -8,6 +8,7 @@ import static com.sldlt.downloader.entity.QTask.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.querydsl.core.BooleanBuilder;
@@ -53,6 +55,7 @@ public class TaskServiceImpl implements TaskService {
     private long taskRetryCooldown;
 
     @Override
+    @Transactional
     public void createTask(String fund, LocalDate dateFrom, LocalDate dateTo) {
         if (taskRepository.count(task.fund.eq(fund).and(task.dateFrom.eq(dateFrom)).and(task.dateTo.eq(dateTo))) <= 0) {
             Task newTask = new Task();
@@ -64,6 +67,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TaskDto> getExecutableTasks(int count) {
         final PageRequest pageable = PageRequest.of(0, count, Sort.by(new Order(Sort.Direction.DESC, "dateTo")));
         return taskRepository
@@ -73,29 +77,31 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public void updateTaskSucceeded(Long id) {
         taskRepository.findOne(task.id.eq(id)).ifPresent(task -> {
             task.setStatus(SUCCESS);
             task.setAttempts(task.getAttempts() + 1);
-            taskRepository.save(task);
         });
 
     }
 
     @Override
+    @Transactional
     public void updateTaskFailed(Long id) {
         taskRepository.findOne(task.id.eq(id)).ifPresent(task -> {
+            int currentAttempts = task.getAttempts();
+            long jitterFactor = ThreadLocalRandom.current().nextInt(5);
+            long cooldownFactor = currentAttempts * currentAttempts * currentAttempts;
+            long taskRetryOffset = taskRetryCooldown * (1 + cooldownFactor + jitterFactor);
             task.setStatus(FAILED);
-            task.setAttempts(task.getAttempts() + 1);
-            long cooldownFactor = task.getAttempts();
-            cooldownFactor = cooldownFactor * cooldownFactor * cooldownFactor;
-            task.setNextAttemptAfter(LocalDateTime.now().plusSeconds(taskRetryCooldown * cooldownFactor));
-            taskRepository.save(task);
+            task.setAttempts(currentAttempts + 1);
+            task.setNextAttemptAfter(LocalDateTime.now().plusSeconds(taskRetryOffset));
         });
-
     }
 
     @Override
+    @Transactional
     public TaskDto resetTaskStatus(Long id) {
         return taskRepository.findOne(task.id.eq(id)).map(task -> {
             task.setStatus(PENDING);
@@ -106,6 +112,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<TaskDto> listTasks(LocalDate date, String fund, TaskStatus status, Pageable pageable) {
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -131,6 +138,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<TaskDto> listRunningTasks() {
         final List<FundDto> funds = fundService.listAllFunds();
 
