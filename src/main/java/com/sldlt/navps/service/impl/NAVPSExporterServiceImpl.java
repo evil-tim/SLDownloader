@@ -2,6 +2,7 @@ package com.sldlt.navps.service.impl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -64,7 +65,7 @@ public class NAVPSExporterServiceImpl implements NAVPSExporterService {
     }
 
     private NAVPSListJsonDto convertNavpsListToObj(Pair<Integer, List<NAVPSEntryDto>> navpsListData) {
-        List<NAVPSEntryDto> navpsList = navpsListData.getSecond();
+        List<NAVPSEntryDto> navpsList = new ArrayList<>(navpsListData.getSecond());
         Collections.reverse(navpsList);
         NAVPSEntryDto navpsEntry = navpsList.get(0);
 
