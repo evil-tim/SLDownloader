@@ -12,10 +12,13 @@ services:
       - "8080"
     volumes:
       - sldownloader-database:/var/lib/apps/sldownloader/database
+      - sldownloader-logs:/var/logs/sldownloader
     mem_limit: 400m
 
 volumes:
   sldownloader-database:
+    driver: local
+  sldownloader-logs:
     driver: local
 
 networks:
