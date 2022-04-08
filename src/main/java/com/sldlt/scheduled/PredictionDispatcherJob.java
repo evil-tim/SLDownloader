@@ -19,9 +19,9 @@ import com.sldlt.navps.service.NAVPSPredictionService;
 import com.sldlt.navps.service.NAVPSPredictorService;
 
 @Component
-public class PredictionJob {
+public class PredictionDispatcherJob extends BaseDispatcherJob {
 
-    private static final Logger LOG = LogManager.getLogger(PredictionJob.class);
+    private static final Logger LOG = LogManager.getLogger(PredictionDispatcherJob.class);
 
     @Autowired
     private FundService fundService;
@@ -34,6 +34,18 @@ public class PredictionJob {
 
     @Scheduled(cron = "${prediction.cron:0 0 6 * * MON}", zone = "${prediction.zone:GMT+8}")
     public void run() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Running NAVPS prediction dispatcher");
+        }
+
+        dispatchJob("generate predictions", this::generatePredictions);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Completed NAVPS prediction dispatcher");
+        }
+    }
+
+    private void generatePredictions() {
         List<FundDto> allFunds = fundService.listAllFunds();
         List<Integer> offsets = Arrays.asList(1, 2, 3, 4, 5);
         LocalDate currentDate = LocalDate.now();
@@ -57,6 +69,5 @@ public class PredictionJob {
                 LOG.error(ex.getMessage(), ex);
             }
         }));
-
     }
 }

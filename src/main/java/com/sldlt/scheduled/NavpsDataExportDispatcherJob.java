@@ -13,9 +13,9 @@ import com.sldlt.navps.service.NAVPSExporterService;
 
 @Component
 @Profile("aws")
-public class NavpsDataExporterJob {
+public class NavpsDataExportDispatcherJob extends BaseDispatcherJob {
 
-    private static final Logger LOG = LogManager.getLogger(NavpsDataExporterJob.class);
+    private static final Logger LOG = LogManager.getLogger(NavpsDataExportDispatcherJob.class);
 
     @Value("${dataexporter.s3.bucket.name}")
     private String bucketName;
@@ -37,13 +37,25 @@ public class NavpsDataExporterJob {
 
     @Scheduled(cron = "${dataexporter.cron:0 0 5 * * *}", zone = "${dataexporter.zone:GMT+8}")
     public void run() {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Running NAVPS export dispatcher");
+        }
+
+        dispatchJob("NAVPS export", this::exportData);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Completed NAVPS export dispatcher");
+        }
+    }
+
+    private void exportData() {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Uploading NAVPS to " + bucketName + "/" + path + csvFilename);
+            LOG.info("Export NAVPS to " + bucketName + "/" + path + csvFilename);
         }
         amazonS3.putObject(bucketName, path + csvFilename, navpsExporterService.buildNavpsCsvContent());
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Uploading NAVPS to " + bucketName + "/" + path + jsonFilename);
+            LOG.info("Export NAVPS to " + bucketName + "/" + path + jsonFilename);
         }
         amazonS3.putObject(bucketName, path + jsonFilename, navpsExporterService.buildNavpsJsonContent());
     }

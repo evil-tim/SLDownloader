@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import com.sldlt.downloader.service.NAVPSDownloaderService;
 import com.sldlt.downloader.service.TaskService;
@@ -19,9 +20,9 @@ import com.sldlt.navps.dto.FundDto;
 import com.sldlt.navps.service.FundService;
 
 @Component
-public class NavpsTaskSetupJob {
+public class NavpsTaskSetupDispatcherJob extends BaseDispatcherJob {
 
-    private static final Logger LOG = LogManager.getLogger(NavpsTaskSetupJob.class);
+    private static final Logger LOG = LogManager.getLogger(NavpsTaskSetupDispatcherJob.class);
 
     @Autowired
     private TaskService taskService;
@@ -40,16 +41,46 @@ public class NavpsTaskSetupJob {
 
     @Scheduled(cron = "${task.updater.cron:0 0 4 * * *}", zone = "${task.updater.zone:GMT+8}")
     public void run() {
-        LOG.info("Regenerating task list");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Running NAVPS task setup dispatcher");
+        }
+
+        dispatchJob("NAVPS task setup", this::runTask);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Completed NAVPS task setup dispatcher");
+        }
+    }
+
+    private void runTask() {
         getFunds();
         setupPastTasks();
     }
 
     private void getFunds() {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Updating funds");
+        }
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+
         navpsDownloader.findAvailableFunds().stream().forEach(fund -> fundService.saveFund(fund));
+
+        stopwatch.stop();
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Completed updating funds in " + stopwatch.getTotalTimeMillis() + "ms");
+        }
     }
 
     private void setupPastTasks() {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Setting up tasks");
+        }
+
+        StopWatch stopwatch = new StopWatch();
+        stopwatch.start();
+
         final LocalDate currentDate = LocalDate.now(ZoneId.of(timeZone));
         final List<FundDto> fundList = fundService.listAllFunds();
 
@@ -75,5 +106,10 @@ public class NavpsTaskSetupJob {
             fundList.forEach(fund -> taskService.createTask(fund.getCode(), internalDateFrom, internalDateTo));
         }
 
+        stopwatch.stop();
+
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Completed setting up tasks in " + stopwatch.getTotalTimeMillis() + "ms");
+        }
     }
 }
