@@ -92,7 +92,7 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.findOne(task.id.eq(id)).ifPresent(task -> {
             int currentAttempts = task.getAttempts();
             long jitterFactor = ThreadLocalRandom.current().nextInt(5);
-            long cooldownFactor = currentAttempts * currentAttempts * currentAttempts;
+            long cooldownFactor = (long) currentAttempts * currentAttempts * currentAttempts;
             long taskRetryOffset = taskRetryCooldown * (1 + cooldownFactor + jitterFactor);
             task.setStatus(FAILED);
             task.setAttempts(currentAttempts + 1);
