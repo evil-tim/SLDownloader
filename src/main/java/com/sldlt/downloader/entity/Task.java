@@ -12,10 +12,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 
 import com.sldlt.downloader.TaskStatus;
 
 @Entity
+@Table(indexes = @Index(name = "idx_task_fund_date_from_date_to", columnList = "fund, dateFrom, dateTo"))
 public class Task {
 
     @Id
