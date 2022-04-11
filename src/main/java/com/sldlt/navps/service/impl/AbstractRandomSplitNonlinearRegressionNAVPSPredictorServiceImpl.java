@@ -2,6 +2,8 @@ package com.sldlt.navps.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,19 +36,22 @@ public abstract class AbstractRandomSplitNonlinearRegressionNAVPSPredictorServic
             return results;
         }).toList();
 
+        final int numPredictions = daysAdvance.size();
         final PredictionResultsDto finalResults = new PredictionResultsDto();
-        finalResults.setPredictions(daysAdvance.stream().map(day -> BigDecimal.ZERO).toList());
+        finalResults.setPredictions(new ArrayList<>());
+        finalResults.getPredictions().addAll(Collections.nCopies(numPredictions, BigDecimal.ZERO));
         finalResults.setParameters(new HashMap<>());
+
         for (int i = 0; i < splitResults.size(); i++) {
             final int currentIndex = i;
             final List<BigDecimal> splitPredictions = splitResults.get(i).getPredictions();
-            for (int j = 0; j < daysAdvance.size(); j++) {
+            for (int j = 0; j < numPredictions; j++) {
                 finalResults.getPredictions().set(j, finalResults.getPredictions().get(j).add(splitPredictions.get(j)));
             }
             splitResults.get(i).getParameters().entrySet().stream()
                 .forEach(entry -> finalResults.getParameters().put(entry.getKey() + "_" + currentIndex, entry.getValue()));
         }
-        for (int i = 0; i < daysAdvance.size(); i++) {
+        for (int i = 0; i < numPredictions; i++) {
             finalResults.getPredictions().set(i, finalResults.getPredictions().get(i).divide(BigDecimal.valueOf(splitResults.size())));
         }
 
