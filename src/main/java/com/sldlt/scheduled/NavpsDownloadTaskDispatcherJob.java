@@ -68,7 +68,7 @@ public class NavpsDownloadTaskDispatcherJob extends BaseDispatcherJob {
     }
 
     private Pair<String, Runnable> wrapTask(TaskDto task) {
-        return Pair.of(task.toString(), () -> runTask(task));
+        return Pair.of("Download NAVPS", () -> runTask(task));
     }
 
     private void runTask(TaskDto task) {

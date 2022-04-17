@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sldlt.downloader.TaskStatus;
 import com.sldlt.downloader.dto.TaskDto;
 import com.sldlt.downloader.service.TaskService;
+import com.sldlt.metrics.annotation.Instrumented;
 
 @RestController
 public class TaskResource {
@@ -29,6 +30,7 @@ public class TaskResource {
     private TaskService taskService;
 
     @GetMapping("/api/tasks")
+    @Instrumented
     public Page<TaskDto> getTasks(
         @RequestParam(name = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         @RequestParam(name = "fund", required = false) String fund, @RequestParam(name = "status", required = false) String status,
@@ -45,11 +47,13 @@ public class TaskResource {
     }
 
     @GetMapping("/api/tasks/running")
+    @Instrumented
     public List<TaskDto> getRunningTasks() {
         return taskService.listRunningTasks();
     }
 
     @PostMapping("/api/task/{id}/retry")
+    @Instrumented
     public TaskDto retryTask(@PathVariable("id") Long id) {
         return taskService.resetTaskStatus(id);
     }

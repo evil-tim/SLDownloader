@@ -8,12 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.sldlt.metrics.annotation.Instrumented;
+
 @Controller
 public class BaseErrorController implements ErrorController {
 
     private static final String PATH = "/error";
 
     @GetMapping(value = PATH)
+    @Instrumented
     public String handleError(final HttpServletRequest request) {
         int statusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);

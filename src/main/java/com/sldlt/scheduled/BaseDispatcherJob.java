@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
+
+import com.sldlt.metrics.service.InstrumentationService;
 
 @Component
 public abstract class BaseDispatcherJob {
@@ -18,6 +19,9 @@ public abstract class BaseDispatcherJob {
 
     @Autowired
     private TaskExecutor taskExecutor;
+
+    @Autowired
+    private InstrumentationService instrumentationService;
 
     protected void dispatchJob(String name, Runnable runnable) {
         dispatchJob(Pair.of(name, runnable));
@@ -32,23 +36,7 @@ public abstract class BaseDispatcherJob {
     }
 
     private Runnable instrumentRunnable(Pair<String, Runnable> namedRunnable) {
-        return () -> {
-            String name = namedRunnable.getFirst();
-            Runnable runnable = namedRunnable.getSecond();
-
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Executing " + name);
-            }
-            StopWatch stopwatch = new StopWatch();
-            stopwatch.start();
-
-            runnable.run();
-
-            stopwatch.stop();
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Completed " + name + " in " + stopwatch.getTotalTimeMillis() + "ms");
-            }
-        };
+        return instrumentationService.instrument(namedRunnable);
     }
 
 }

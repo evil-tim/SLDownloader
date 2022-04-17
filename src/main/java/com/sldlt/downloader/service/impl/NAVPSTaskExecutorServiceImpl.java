@@ -40,6 +40,10 @@ public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
     @Override
     @Transactional
     public TaskStatus executeTask(final TaskDto task) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Running " + task.toString());
+        }
+
         TaskStatus finalStatus = null;
         try {
             final List<NAVPSEntryDto> navpsList = navpsDownloader.fetchNAVPSFromPage(fundService.getFundByCode(task.getFund()),

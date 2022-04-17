@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sldlt.metrics.annotation.Instrumented;
 import com.sldlt.orders.dto.AggregatedOrder;
 import com.sldlt.orders.dto.OrderRequestDto;
 import com.sldlt.orders.service.OrderAggregatorService;
@@ -20,6 +21,7 @@ public class OrdersResource {
     private OrderAggregatorService orderAggregatorService;
 
     @PostMapping("/api/orders/aggregate-actual-orders")
+    @Instrumented
     public List<AggregatedOrder> generateAggregatedOrders(@RequestBody @Valid OrderRequestDto orders) {
         return orderAggregatorService.aggregateOrders(orders.getOrders());
     }
