@@ -65,7 +65,7 @@ public class NAVPSEntry implements Serializable {
 
     @Override
     public String toString() {
-        return fund + " " + date.toString() + " " + value.toPlainString();
+        return fund + " - " + date.toString() + " - " + value.toPlainString();
     }
 
 }
