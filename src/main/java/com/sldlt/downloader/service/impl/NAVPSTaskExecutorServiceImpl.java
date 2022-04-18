@@ -41,7 +41,7 @@ public class NAVPSTaskExecutorServiceImpl implements NAVPSTaskExecutorService {
     @Transactional
     public TaskStatus executeTask(final TaskDto task) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Running " + task.toString());
+            LOG.debug("Running [{}]", task);
         }
 
         TaskStatus finalStatus = null;

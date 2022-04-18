@@ -143,7 +143,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
         }).toList();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Downloaded NAVPS " + result);
+            LOG.debug("Downloaded NAVPS [{}]", result);
         }
 
         validateResultsNotEmpty(result);

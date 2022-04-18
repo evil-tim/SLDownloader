@@ -116,7 +116,7 @@ function updateOrdersSplitChart(rawOrderData) {
 
     var chartData = new google.visualization.DataTable();
     chartData.addColumn('string', 'Fund');
-    chartData.addColumn('number', 'Value');    
+    chartData.addColumn('number', 'Value');
 
     getOrdersWithCurrentValues(function(orderData) {
         var orderAccumulator = {};
@@ -162,8 +162,12 @@ function buildAccmulatedOrders(orders) {
     });
     // sort orders
     sortedOrders.sort(function(a, b) {
-        return a.orderDateObj < b.orderDateObj ? -1
-                : (a.orderDateObj > b.orderDateObj ? 1 : 0);
+        if (a.orderDateObj < b.orderDateObj) {
+            return -1;
+        } else if  (a.orderDateObj > b.orderDateObj) {
+            return 1;
+        }
+        return 0;
     });
 
     // accumulate orders

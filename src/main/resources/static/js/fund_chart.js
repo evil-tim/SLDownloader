@@ -7,11 +7,11 @@ function updateChart(fundList) {
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Date');
     if (fundList && fundList.length > 0) {
-        for (var i = 0; i < fundList.length; i++) {
+        for (let i = 0; i < fundList.length; i++) {
             data.addColumn('number', fundList[i].name);
         }
         var deferreds = [];
-        for (var i = 0; i < fundList.length; i++) {
+        for (let i = 0; i < fundList.length; i++) {
             deferreds.push(getNAVPSDataDeferred(fundList[i].code));
         }
         $.when.apply($, deferreds).then(function() {
@@ -65,7 +65,7 @@ function buildDataRows(count, arguments, data) {
     do {
         // check if args still has data
         hasData = false;
-        for (var i = 0; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             if (arguments[i] && arguments[i][0] && arguments[i][0][fundCtrs[i]]) {
                 hasData = true;
             }
@@ -73,7 +73,7 @@ function buildDataRows(count, arguments, data) {
         if (hasData) {
             // convert all dates of current entries
             var dateArr = [];
-            for (var i = 0; i < count; i++) {
+            for (let i = 0; i < count; i++) {
                 if (arguments[i] && arguments[i][0]
                         && arguments[i][0][fundCtrs[i]]) {
                     arguments[i][0][fundCtrs[i]].date = new Date(
@@ -86,7 +86,7 @@ function buildDataRows(count, arguments, data) {
             // build data table row
             var row = [];
             row.push(maxDate);
-            for (var i = 0; i < count; i++) {
+            for (let i = 0; i < count; i++) {
                 if (arguments[i]
                         && arguments[i][0]
                         && arguments[i][0][fundCtrs[i]]

@@ -25,7 +25,7 @@ function updateScatterFundPicker(picker, data) {
     picker.on('hidden.bs.select', updateChartFromPicker);
 }
 
-function updateChartFromPicker(event) {
+function updateChartFromPicker(_event) {
     $("#fundPickerX option").removeAttr('disabled');
     $("#fundPickerY option").removeAttr('disabled');
     $("#fundPickerX option:first").attr('disabled', 'disabled');

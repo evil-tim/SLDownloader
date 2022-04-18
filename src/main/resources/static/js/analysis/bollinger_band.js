@@ -1,7 +1,7 @@
 (function() {
 
-    function init(settings) {
-
+    function init(_settings) {
+        // nothing to do
     }
 
     function columns(settings) {
@@ -24,8 +24,8 @@
         var accum = 0;
         var stdDevAccum = 0;
         var valid = true;
-        for (var i = 0; valid && i < settings.period; i++) {
-            var dataIndex = index + i;
+        for (let i = 0; valid && i < settings.period; i++) {
+            let dataIndex = index + i;
             if (dataIndex < data.length) {
                 accum += data[dataIndex];
             } else {
@@ -35,8 +35,8 @@
         if (valid) {
             var average = accum / settings.period;
 
-            for (var i = 0; valid && i < settings.period; i++) {
-                var dataIndex = index + i;
+            for (let i = 0; i < settings.period; i++) {
+                let dataIndex = index + i;
                 stdDevAccum += (data[dataIndex] - average)
                         * (data[dataIndex] - average);
             }

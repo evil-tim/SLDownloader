@@ -50,12 +50,12 @@ public class NavpsDataExportDispatcherJob extends BaseDispatcherJob {
 
     private void exportData() {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Export NAVPS to " + bucketName + "/" + path + csvFilename);
+            LOG.info("Export NAVPS to {}/{}{}", bucketName, path, csvFilename);
         }
         amazonS3.putObject(bucketName, path + csvFilename, navpsExporterService.buildNavpsCsvContent());
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Export NAVPS to " + bucketName + "/" + path + jsonFilename);
+            LOG.info("Export NAVPS to {}/{}{}", bucketName, path, jsonFilename);
         }
         amazonS3.putObject(bucketName, path + jsonFilename, navpsExporterService.buildNavpsJsonContent());
     }

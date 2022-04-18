@@ -138,7 +138,7 @@ function initAllOrdersTable() {
                                         data : "orderShares",
                                         orderable : false,
                                         className : "text-right",
-                                        render : function(data, type, row, meta) {
+                                        render : function(data, _type, _row, _meta) {
                                             return formatBigToNumber(data);
                                         }
                                     },
@@ -147,7 +147,7 @@ function initAllOrdersTable() {
                                         data : "orderValue",
                                         orderable : false,
                                         className : "text-right",
-                                        render : function(data, type, row, meta) {
+                                        render : function(data, _type, _row, _meta) {
                                             return formatBigToCurrency(data);
                                         }
                                     },
@@ -156,7 +156,7 @@ function initAllOrdersTable() {
                                         data : "currentValue",
                                         orderable : false,
                                         className : "text-right",
-                                        render : function(data, type, row, meta) {
+                                        render : function(data, _type, _row, _meta) {
                                             return formatBigToCurrency(data);
                                         }
                                     },
@@ -164,7 +164,7 @@ function initAllOrdersTable() {
                                         name : "percentGain",
                                         orderable : false,
                                         className : "text-right",
-                                        render : function(data, type, row, meta) {
+                                        render : function(_data, _type, row, _meta) {
                                             return formatBigToPercent(
                                                         row.currentValue
                                                         .minus(row.orderValue)
@@ -174,7 +174,7 @@ function initAllOrdersTable() {
                                     {
                                         name : "actions",
                                         orderable : false,
-                                        render : function(data, type, row, meta) {
+                                        render : function(_data, _type, row, _meta) {
                                             return "<button class=\"btn btn-default btn-sm delete-order-btn\" "
                                                     + "style=\"padding-top: 1px; padding-bottom: 1px\" "
                                                     + "data-orderid=\"" + row.id + "\">Remove</button>";

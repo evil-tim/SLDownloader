@@ -13,7 +13,7 @@ function updateAnalysisFundPicker(data) {
     $('#fundPicker').append(
             $('<option></option>').attr('value', null).attr('disabled',
                     'disabled').text('Nothing Selected'));
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         $('#fundPicker').append(
                 $('<option></option>').attr('value', data[i].code).text(
                         data[i].name));
@@ -33,7 +33,7 @@ function updateAnalysisPrecictionTypePicker(data) {
     $('#predTypePicker').append(
             $('<option></option>').attr('value', null).attr('disabled',
                     'disabled').text('Nothing Selected'));
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         $('#predTypePicker').append(
                 $('<option></option>').attr('value', data[i]).text(data[i]));
     }
@@ -135,7 +135,7 @@ function buildDataRows(navpsData, predData, data) {
         predictionDates.push([ new Date(predDateStr), predDateStr ]);
     })
 
-    for (var i = 0; i < navpsData.length; i++) {
+    for (let i = 0; i < navpsData.length; i++) {
         var dateObj = new Date(navpsData[i].date);
         var value = navpsData[i].value;
 
@@ -155,7 +155,7 @@ function buildDataRows(navpsData, predData, data) {
     predictionDates
             .forEach(function(predDate, predictionSeriesIndex) {
                 var startIndex = -1;
-                for (var i = 0; i < dates.length; i++) {
+                for (let i = 0; i < dates.length; i++) {
                     if (predDate[0] == dates[i]) {
                         startIndex = i;
                         break;
@@ -180,7 +180,7 @@ function buildDataRows(navpsData, predData, data) {
                                         + prediction.daysInAdvance - 1);
 
                                 var additionalPredictionRow = null;
-                                for (var i = 0; i < additionalPredictionRows.length; i++) {
+                                for (let i = 0; i < additionalPredictionRows.length; i++) {
                                     if (additionalPredictionRows[i][0] == predictionDate) {
                                         additionalPredictionRow = additionalPredictionRows[i];
                                         break;

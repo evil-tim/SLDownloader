@@ -53,7 +53,7 @@ public class NavpsDownloadTaskDispatcherJob extends BaseDispatcherJob {
             return;
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Dispatching " + tasks.size() + " tasks");
+            LOG.debug("Dispatching {} tasks", tasks.size());
         }
 
         dispatchJobs(tasks.stream().filter(this::tryAddTask).map(this::wrapTask).toList());
@@ -72,10 +72,7 @@ public class NavpsDownloadTaskDispatcherJob extends BaseDispatcherJob {
     }
 
     private void runTask(TaskDto task) {
-        try {
-            navpsTaskExecutorService.executeTask(task);
-        } finally {
-            runningTaskHolder.remove(task.getId());
-        }
+        navpsTaskExecutorService.executeTask(task);
+        runningTaskHolder.remove(task.getId());
     }
 }

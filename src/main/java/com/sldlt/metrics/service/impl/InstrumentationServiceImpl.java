@@ -49,13 +49,13 @@ public class InstrumentationServiceImpl implements InstrumentationService {
 
     private void logExecution(String name) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Executing " + name);
+            LOG.debug("Executing [{}]", name);
         }
     }
 
     private void logCompletion(String name, long totalTimeMs) {
         if (LOG.isInfoEnabled()) {
-            LOG.info("Completed [" + name + "] in " + totalTimeMs + "ms");
+            LOG.info("Completed [{}] in {}ms", name, totalTimeMs);
         }
     }
 

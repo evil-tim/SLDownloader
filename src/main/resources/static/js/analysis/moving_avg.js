@@ -1,7 +1,7 @@
 (function() {
 
-    function init(settings) {
-
+    function init(_settings) {
+        // nothing to do
     }
 
     function movingAvgColumns(settings) {
