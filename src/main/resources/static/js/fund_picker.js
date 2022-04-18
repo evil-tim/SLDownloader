@@ -12,7 +12,7 @@ function updateChartFromPicker() {
     disableFundPicker();
     var fundCodeArr = $('#fundPicker').val();
     var fundArr = [];
-    for (var i = 0; i < fundCodeArr.length; i++) {
+    for (let i = 0; i < fundCodeArr.length; i++) {
         fundArr.push({
             code : fundCodeArr[i],
             name : $('#fundPicker > option[value="' + fundCodeArr[i] + '"]')
@@ -38,7 +38,7 @@ function initFundPicker() {
 }
 
 function updateFundPicker(data) {
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         $("#fundPicker").append(
                 $("<option></option>").attr("value", data[i].code).text(
                         data[i].name));

@@ -53,14 +53,13 @@ function importOrders(orders) {
     if (!orders || !Array.isArray(orders) || orders.length <= 0) {
         return false;
     }
-    for (var i = 0; i < orders.length; i++) {
+    for (let i = 0; i < orders.length; i++) {
         if (!orders[i].id || !orders[i].orderDate || !orders[i].orderFundCode
                 || !orders[i].orderFundName || !orders[i].orderShares
                 || !orders[i].orderValue) {
             return false;
         }
     }
-    
 
     // convert fixed point string to number
     orders.forEach(function(order) {
@@ -76,7 +75,7 @@ function importOrders(orders) {
 function removeOrder(id) {
     var allOrders = getOrders();
     var orderIndex = -1;
-    for (var i = 0; i < allOrders.length; i += 1) {
+    for (let i = 0; i < allOrders.length; i += 1) {
         if (allOrders[i].id == id) {
             orderIndex = i;
             break;
@@ -146,7 +145,7 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
                         var processedOrders = [];
                         rawOrders
                                 .forEach(function(rawOrder) {
-                                    var currentValue = currentNavps && currentNavps[rawOrder.orderFundCode] 
+                                    var currentValue = currentNavps && currentNavps[rawOrder.orderFundCode]
                                             ? rawOrder.orderShares.times(currentNavps[rawOrder.orderFundCode])
                                             : 0;
                                     processedOrders

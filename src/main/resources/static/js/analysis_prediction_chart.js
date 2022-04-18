@@ -213,7 +213,7 @@ function drawChart(data, predColumnCount) {
         colors : [ '#2471a3' ]
     };
 
-    for (var i = 0; i < predColumnCount; i++) {
+    for (let i = 0; i < predColumnCount; i++) {
         options.colors.push('#7fb3d5')
     }
 

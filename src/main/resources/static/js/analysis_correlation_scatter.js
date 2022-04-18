@@ -16,7 +16,7 @@ function updateScatterFundPickers(data) {
 function updateScatterFundPicker(picker, data) {
     picker.append($("<option></option>").attr("value", null).attr("disabled",
             "disabled").text("Nothing Selected"));
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         picker.append($("<option></option>").attr("value", data[i].code).text(
                 data[i].name));
     }

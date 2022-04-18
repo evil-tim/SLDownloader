@@ -44,7 +44,7 @@
         var covXY = 0;
         var n = 0;
 
-        for (var i = 0; i < dataY.length; i++) {
+        for (let i = 0; i < dataY.length; i++) {
             n++;
 
             var dx = i - meanX;
@@ -58,9 +58,9 @@
             meanY += dy / n;
         }
 
-        return { 
-            'alpha' : meanY - covXY * meanX / varX, 
-            'beta' :  covXY / varX, 
+        return {
+            'alpha' : meanY - covXY * meanX / varX,
+            'beta' :  covXY / varX,
             'variance' : Math.sqrt(varY)
         };
     }

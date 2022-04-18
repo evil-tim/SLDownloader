@@ -20,8 +20,8 @@
         var min = null;
         var max = null;
         var valid = true;
-        for (var i = 0; valid && i < settings.period; i++) {
-            var dataIndex = index + i;
+        for (let i = 0; valid && i < settings.period; i++) {
+            let dataIndex = index + i;
             if (dataIndex < data.length) {
                 if (min === null || min > data[dataIndex]) {
                     min = data[dataIndex];

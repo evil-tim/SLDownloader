@@ -22,7 +22,7 @@ function updateAnalysisFundPicker(data) {
     $("#fundPicker").append(
             $("<option></option>").attr("value", null).attr("disabled",
                     "disabled").text("Nothing Selected"));
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         $("#fundPicker").append(
                 $("<option></option>").attr("value", data[i].code).text(
                         data[i].name));
@@ -108,7 +108,7 @@ function updateChart(fund) {
 function buildDataRows(result, data) {
     var dates = [];
     var values = [];
-    for (var i = 0; i < result.length; i++) {
+    for (let i = 0; i < result.length; i++) {
         dates.push(new Date(result[i].date));
         values.push(result[i].value);
     }
@@ -122,7 +122,7 @@ function buildDataRows(result, data) {
         analysisModules.init(moduleName);
     });
 
-    for (var i = 0; i < result.length; i++) {
+    for (let i = 0; i < result.length; i++) {
         var row = [ dates[i], values[i] ];
 
         moduleNames.filter(function(moduleName) {

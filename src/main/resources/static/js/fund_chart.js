@@ -50,11 +50,12 @@ function getNAVPSDataDeferred(code) {
     });
 }
 
-function buildDataRows(count, arguments, data) {
-    // fix arguments if only 1 result
+function buildDataRows(count, result, chartData) {
+    // fix if only 1 result
+    var navpsResult = result;
     if (count === 1) {
-        arguments = {
-            0 : arguments
+        navpsResult = {
+            0 : result
         };
     }
 
@@ -66,7 +67,7 @@ function buildDataRows(count, arguments, data) {
         // check if args still has data
         hasData = false;
         for (let i = 0; i < count; i++) {
-            if (arguments[i] && arguments[i][0] && arguments[i][0][fundCtrs[i]]) {
+            if (navpsResult[i] && navpsResult[i][0] && navpsResult[i][0][fundCtrs[i]]) {
                 hasData = true;
             }
         }
@@ -74,11 +75,11 @@ function buildDataRows(count, arguments, data) {
             // convert all dates of current entries
             var dateArr = [];
             for (let i = 0; i < count; i++) {
-                if (arguments[i] && arguments[i][0]
-                        && arguments[i][0][fundCtrs[i]]) {
-                    arguments[i][0][fundCtrs[i]].date = new Date(
-                            arguments[i][0][fundCtrs[i]].date);
-                    dateArr.push(arguments[i][0][fundCtrs[i]].date);
+                if (navpsResult[i] && navpsResult[i][0]
+                        && navpsResult[i][0][fundCtrs[i]]) {
+                    navpsResult[i][0][fundCtrs[i]].date = new Date(
+                            navpsResult[i][0][fundCtrs[i]].date);
+                    dateArr.push(navpsResult[i][0][fundCtrs[i]].date);
                 }
             }
             // get latest date
@@ -87,13 +88,13 @@ function buildDataRows(count, arguments, data) {
             var row = [];
             row.push(maxDate);
             for (let i = 0; i < count; i++) {
-                if (arguments[i]
-                        && arguments[i][0]
-                        && arguments[i][0][fundCtrs[i]]
-                        && arguments[i][0][fundCtrs[i]].date.getTime() === maxDate
+                if (navpsResult[i]
+                        && navpsResult[i][0]
+                        && navpsResult[i][0][fundCtrs[i]]
+                        && navpsResult[i][0][fundCtrs[i]].date.getTime() === maxDate
                                 .getTime()) {
                     // add entries that have the latest dates to the data table
-                    row.push(arguments[i][0][fundCtrs[i]].value);
+                    row.push(navpsResult[i][0][fundCtrs[i]].value);
                     fundCtrs[i]++;
                 } else {
                     row.push(null);
@@ -102,5 +103,5 @@ function buildDataRows(count, arguments, data) {
             rows.push(row);
         }
     } while (hasData);
-    data.addRows(rows);
+    chartData.addRows(rows);
 }

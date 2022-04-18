@@ -15,7 +15,7 @@
     function movingAvgCompute(index, data, settings) {
         var accum = 0;
         var valid = true;
-        for (var i = 0; valid && i < settings.period; i++) {
+        for (let i = 0; valid && i < settings.period; i++) {
             var dataIndex = index + i;
             if (dataIndex < data.length) {
                 accum += data[dataIndex];

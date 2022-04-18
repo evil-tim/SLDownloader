@@ -43,7 +43,7 @@ function initAllTaskTable() {
         }, {
             name : "actions",
             orderable: false,
-            render: function (data, type, row, meta) {
+            render: function (_data, _type, row, _meta) {
                 return "<button class=\"btn btn-default btn-sm retry-btn\" " +
                     "style=\"display:none; padding-top: 1px; padding-bottom: 1px\" " +
                     "data-taskid=\"" + row.id + "\">Retry</button>"
@@ -54,7 +54,7 @@ function initAllTaskTable() {
         pageLength : 20,
         searchCols : [ null, null, null, null, null, null ],
         order : [ [ 2, "desc" ] ],
-        createdRow : function(row, data, dataIndex) {
+        createdRow : function(row, data, _dataIndex) {
             if (data.status === "FAILED" && data.retryable === true) {
                 $(row).addClass('warning');
             } else if (data.status === "FAILED" && data.retryable === false) {
@@ -124,7 +124,7 @@ function initAllTaskFundFilter() {
 }
 
 function updateAllTaskFundFilter(data) {
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         $("#fundFilter").append(
                 $("<option></option>").attr("value", data[i].code).text(
                         data[i].name));

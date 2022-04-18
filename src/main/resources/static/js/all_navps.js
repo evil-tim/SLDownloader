@@ -106,7 +106,7 @@ function initAllNavpsFundFilter() {
 }
 
 function updateAllNavpsFundFilter(data) {
-    for (var i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
         $("#fundFilter").append(
                 $("<option></option>").attr("value", data[i].code).text(
                         data[i].name));
