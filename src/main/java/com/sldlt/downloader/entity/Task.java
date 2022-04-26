@@ -18,7 +18,8 @@ import javax.persistence.Table;
 import com.sldlt.downloader.TaskStatus;
 
 @Entity
-@Table(indexes = @Index(name = "idx_task_fund_date_from_date_to", columnList = "fund, dateFrom, dateTo"))
+@Table(indexes = { @Index(name = "idx_task_fund_date_from_date_to", columnList = "fund, dateFrom, dateTo"),
+    @Index(name = "idx_task_status_attempt_next", columnList = "status, attempts, nextAttemptAfter") })
 public class Task {
 
     @Id
