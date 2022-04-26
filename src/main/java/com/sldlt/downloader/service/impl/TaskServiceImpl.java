@@ -54,6 +54,9 @@ public class TaskServiceImpl implements TaskService {
     @Value("${task.retryCooldown}")
     private long taskRetryCooldown;
 
+    @Value("${task.retryMaxJitter}")
+    private int taskRetryMaxJitter;
+
     @Override
     @Transactional
     public void createTask(String fund, LocalDate dateFrom, LocalDate dateTo) {
@@ -91,7 +94,7 @@ public class TaskServiceImpl implements TaskService {
     public void updateTaskFailed(Long id) {
         taskRepository.findOne(task.id.eq(id)).ifPresent(task -> {
             int currentAttempts = task.getAttempts();
-            long jitterFactor = ThreadLocalRandom.current().nextInt(5);
+            long jitterFactor = ThreadLocalRandom.current().nextInt(taskRetryMaxJitter);
             long cooldownFactor = (long) currentAttempts * currentAttempts * currentAttempts;
             long taskRetryOffset = taskRetryCooldown * (1 + cooldownFactor + jitterFactor);
             task.setStatus(FAILED);
