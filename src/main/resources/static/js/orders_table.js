@@ -273,16 +273,25 @@ function buildOrderSummaryCard(ordersSummary) {
     });
     panelHead.append(ordersSummary.title == "Total" ? $("<h4>Total</h4>")
             : $("<b>" + ordersSummary.title + "</b>"));
+
     var totalBaseValue = $("<tr />");
     totalBaseValue
             .append($("<td><b>Base Value :</b></td><td class='pull-right'>"
                     + formatBigToCurrency(ordersSummary.baseValue) + "</td>"));
+
     var currentValue = $("<tr />");
     currentValue
             .append($("<td><b>Current Value :</b></td><td class='pull-right'>"
                     + formatBigToCurrency(ordersSummary.currentValue) + "</td>"));
-    var percentGain = $("<tr />");
 
+    var gain = $("<tr />");
+    gain
+            .append($("<td><b>Gain :</b></td><td class='pull-right'>"
+                    + formatBigToCurrency(
+                            ordersSummary.currentValue
+                            .minus(ordersSummary.baseValue)) + "</td>"));
+
+    var percentGain = $("<tr />");
     percentGain
             .append($("<td><b>Percent Gain :</b></td><td class='pull-right'>"
                     + formatBigToPercent(
@@ -293,6 +302,7 @@ function buildOrderSummaryCard(ordersSummary) {
     var panelBodyTable = $("<table />")
     panelBodyTable.append(totalBaseValue);
     panelBodyTable.append(currentValue);
+    panelBodyTable.append(gain);
     panelBodyTable.append(percentGain);
     if (ordersSummary.title != "Total") {
         var totalShares = $("<tr />");
