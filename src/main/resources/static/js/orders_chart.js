@@ -62,7 +62,7 @@ function drawValuesChart(chartData) {
     chart.draw(chartData, options);
 }
 
-function updateOrdersSharesChart(rawOrderData) {
+function updateOrdersSharesChart(rawOrderData, filter) {
     rawOrderData = rawOrderData ? rawOrderData : getOrders();
 
     var chartData = new google.visualization.DataTable();
@@ -70,6 +70,8 @@ function updateOrdersSharesChart(rawOrderData) {
 
     var uniqueFunds = [];
     var uniqueFundCodes = [];
+    var hiddenColumns = [];
+    var shownColumns = [];
     rawOrderData.forEach(function(rawOrder) {
         if (!uniqueFunds[rawOrder.orderFundCode]) {
             uniqueFundCodes.push(rawOrder.orderFundCode);
@@ -77,9 +79,15 @@ function updateOrdersSharesChart(rawOrderData) {
         }
     });
     uniqueFundCodes.sort();
-    uniqueFundCodes.forEach(function(fundCode) {
+    for (let i = 0; i < uniqueFundCodes.length; i++) {
+        let fundCode = uniqueFundCodes[i];
         chartData.addColumn('number', uniqueFunds[fundCode]);
-    });
+        if (filter && fundCode !== filter) {
+            hiddenColumns.push(i + 1);
+        } else {
+            shownColumns.push(i + 1);
+        }
+    }
 
     getOrdersWithCurrentValues(function(orderData) {
         var accumulatedOrderData = buildAccmulatedOrders(orderData);
@@ -91,11 +99,14 @@ function updateOrdersSharesChart(rawOrderData) {
             chartData.addRow(row);
         });
 
-        drawSharesChart(chartData);
+        drawSharesChart(chartData, hiddenColumns, shownColumns);
     }, rawOrderData);
 }
 
-function drawSharesChart(chartData) {
+function drawSharesChart(chartData, hiddenColumns, shownColumns) {
+    var view = new google.visualization.DataView(chartData);
+    view.hideColumns(hiddenColumns);
+
     var chart = new google.visualization.AreaChart(document
             .getElementById('ordersSharesChart'));
     var options = {
@@ -108,7 +119,14 @@ function drawSharesChart(chartData) {
             width: '100%',
         }
     };
-    chart.draw(chartData, options);
+    if (shownColumns.length === 1) {
+        let colors = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6","#dd4477","#66aa00",
+        "#b82e2e","#316395","#3366cc","#994499","#22aa99","#aaaa11","#6633cc","#e67300",
+        "#8b0707","#651067","#329262","#5574a6","#3b3eac","#b77322","#16d620","#b91383",
+        "#f4359e","#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922","#743411"];
+        options['colors'] = [colors[shownColumns[0] - 1]]
+    }
+    chart.draw(view, options);
 }
 
 function updateOrdersSplitChart(rawOrderData) {
@@ -117,12 +135,13 @@ function updateOrdersSplitChart(rawOrderData) {
     var chartData = new google.visualization.DataTable();
     chartData.addColumn('string', 'Fund');
     chartData.addColumn('number', 'Value');
+    chartData.addColumn('string', 'Code');
 
     getOrdersWithCurrentValues(function(orderData) {
         var orderAccumulator = {};
         orderData.forEach(function(order) {
             if (!orderAccumulator[order.orderFundCode]) {
-                orderAccumulator[order.orderFundCode] = [order.orderFundName, new Big(0)];
+                orderAccumulator[order.orderFundCode] = [order.orderFundName, new Big(0), order.orderFundCode];
             }
             orderAccumulator[order.orderFundCode][1] = orderAccumulator[order.orderFundCode][1]
                 .plus(order.currentValue);
@@ -147,6 +166,19 @@ function drawSplitChart(chartData) {
         }
     };
     chart.draw(chartData, options);
+    google.visualization.events.addListener(chart, 'select', function() {
+        var selection = chart.getSelection();
+        if (!selection) {
+            return;
+        }
+        if (selection.length === 0) {
+            updateOrdersSharesChart();
+        } else {
+            selection.forEach(function(item) {
+                updateOrdersSharesChart(undefined, chartData.getValue(item['row'], 2));
+            });
+        }
+    });
 }
 
 function buildAccmulatedOrders(orders) {
