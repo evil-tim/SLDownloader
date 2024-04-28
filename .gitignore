@@ -31,3 +31,7 @@ nbdist/
 /.checkstyle
 /.pmdruleset.xml
 /sldownloader.log
+
+/database
+/logs
+

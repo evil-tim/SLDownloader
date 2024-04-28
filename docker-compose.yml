@@ -1,27 +1,14 @@
-version: '2'
+version: '3'
 
 services:
   sldownloader:
-    image: 535425158818.dkr.ecr.ap-southeast-1.amazonaws.com/crabranch/sldownloader:latest
+    build:
+      context: .
     environment:
-      - VIRTUAL_HOST=crabranch.info
-      - LETSENCRYPT_HOST=crabranch.info
-      - LETSENCRYPT_EMAIL=james.villegas@gmail.com
       - SPRING_PROFILES_ACTIVE
-    expose:
-      - "8080"
+    ports:
+      - "8080:8080/tcp"
     volumes:
-      - sldownloader-database:/var/lib/apps/sldownloader/database
-      - sldownloader-logs:/var/log/sldownloader
-    mem_limit: 400m
-
-volumes:
-  sldownloader-database:
-    driver: local
-  sldownloader-logs:
-    driver: local
-
-networks:
-  default:
-    external:
-      name: crabranch_network
+      - './database:/var/lib/apps/sldownloader/database'
+      - './logs:/var/log/sldownloader'
+    mem_limit: 512m
