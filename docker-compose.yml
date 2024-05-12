@@ -4,11 +4,16 @@ services:
   sldownloader:
     build:
       context: .
+      network: host
     environment:
       - SPRING_PROFILES_ACTIVE
-    ports:
-      - "8080:8080/tcp"
     volumes:
       - './database:/var/lib/apps/sldownloader/database'
       - './logs:/var/log/sldownloader'
+    cpus: 0.5
     mem_limit: 512m
+    network_mode: host
+    user: 1000:1000
+    security_opt:
+      - 'no-new-privileges:true'
+
