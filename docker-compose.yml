@@ -10,7 +10,8 @@ services:
     volumes:
       - './database:/var/lib/apps/sldownloader/database'
       - './logs:/var/log/sldownloader'
-    cpus: 0.5
+      - '/etc/localtime:/etc/localtime:ro'
+    cpus: 2
     mem_limit: 512m
     network_mode: host
     user: 1000:1000
