@@ -90,13 +90,14 @@ function updateChart(selectedData) {
         currYearFrom.setMinutes(currYearFrom.getMinutes()
                 - currentDate.getTimezoneOffset());
 
-        $.ajax({
-            url : '/api/navps/all',
-            data : {
-                fund : selectedData.code
-            }
-        }).then(function(navpsData) {
+        var deferreds = [
             $.ajax({
+                url : '/api/navps/all',
+                data : {
+                    fund : selectedData.code
+                }
+            }),
+             $.ajax({
                 url : '/api/navps/predictions',
                 data : {
                     type : selectedData.type,
@@ -104,11 +105,15 @@ function updateChart(selectedData) {
                     dateFrom : currYearFrom.toISOString().slice(0, 10),
                     dateTo : currentDate.toISOString().slice(0, 10)
                 }
-            }).then(function(predData) {
-                buildDataRows(navpsData, predData, data);
-                drawChart(data, Object.keys(predData).length);
-                enableControls();
-            });
+            })
+        ];
+
+        $.when.apply($, deferreds).then(function(...results) {
+            var navpsData = results[0][0];
+            var predData = results[1][0];
+            buildDataRows(navpsData, predData, data);
+            drawChart(data, Object.keys(predData).length);
+            enableControls();
         });
 
     } else {
@@ -126,82 +131,92 @@ function updateChart(selectedData) {
 }
 
 function buildDataRows(navpsData, predData, data) {
-    var dates = [];
-    var rows = [];
-    var predictionDates = [];
+    var numPredictions = Object.keys(predData).length;
 
+    // date rage of navps
+    var lastNavpsDate = new Date(navpsData[0].date);
+    lastNavpsDate.setDate(lastNavpsDate.getDate() - lastNavpsDate.getDay());
+    var firstNavpsDate = new Date(navpsData[navpsData.length - 1].date);
+    firstNavpsDate.setDate(firstNavpsDate.getDate() - firstNavpsDate.getDay());
+
+    // date range of predictions
+    var lastPredictionDate = null;
     Object.keys(predData).forEach(function(predDateStr) {
-        data.addColumn('number', 'Prediction ' + predDateStr);
-        predictionDates.push([ new Date(predDateStr), predDateStr ]);
-    })
-
-    for (let i = 0; i < navpsData.length; i++) {
-        var dateObj = new Date(navpsData[i].date);
-        var value = navpsData[i].value;
-
-        dates.push(dateObj);
-
-        var row = [ dateObj, value ];
-        predictionDates.forEach(function() {
-            row.push(null);
-        });
-
-        rows.push(row);
+        var predDate = new Date(predDateStr);
+        if (lastPredictionDate == null
+            || predDate > lastPredictionDate) {
+            lastPredictionDate = predDate;
+        }
+    });
+    if (lastPredictionDate != null) {
+        lastPredictionDate.setDate(lastPredictionDate.getDate() - lastPredictionDate.getDay());
     }
 
-    data.addRows(rows);
+    // overall date range
+    var startDate = firstNavpsDate;
+    var endDate = lastPredictionDate != null ? lastPredictionDate : lastNavpsDate;
 
-    var additionalPredictionRows = [];
-    predictionDates
-            .forEach(function(predDate, predictionSeriesIndex) {
-                var startIndex = -1;
-                for (let i = 0; i < dates.length; i++) {
-                    if (predDate[0] == dates[i]) {
-                        startIndex = i;
-                        break;
-                    } else if (predDate[0] > dates[i]) {
-                        startIndex = i - 1;
-                        break;
-                    }
-                }
+    // setup columns
+    var colIndex = 0;
+    var predictionColumnIndexes = {};
+    Object.keys(predData).forEach(function(predDateStr) {
+        data.addColumn('number', 'Prediction ' + predDateStr);
 
-                predData[predDate[1]]
-                        .forEach(function(prediction) {
-                            var predValueIndex = startIndex
-                                    - prediction.daysInAdvance + 1;
+        // build column index lookup
+        predictionColumnIndexes[predDateStr] = colIndex + 2;
+        colIndex++;
+    })
 
-                            if (predValueIndex >= 0) {
-                                data.setCell(predValueIndex,
-                                        predictionSeriesIndex + 2,
-                                        prediction.value);
-                            } else {
-                                var predictionDate = new Date(predDate[0]);
-                                predictionDate.setDate(predictionDate.getDate()
-                                        + prediction.daysInAdvance - 1);
+    // setup rows
+    var rowIndex = 0;
+    var startOfWeek = new Date(startDate.getTime());
+    var rowIndexes = {};
+    while (startOfWeek <= endDate) {
+        for (var i = 1; i <= 5; i++) {
+            var weekDay = new Date(startOfWeek.getTime());
+            weekDay.setDate(weekDay.getDate() + i);
+            row = [weekDay, null];
+            for (var j = 0; j < numPredictions; j++) {
+                row.push(null);
+            }
+            data.addRow(row);
 
-                                var additionalPredictionRow = null;
-                                for (let i = 0; i < additionalPredictionRows.length; i++) {
-                                    if (additionalPredictionRows[i][0] == predictionDate) {
-                                        additionalPredictionRow = additionalPredictionRows[i];
-                                        break;
-                                    }
-                                }
-                                if (!additionalPredictionRow) {
-                                    additionalPredictionRow = [ predictionDate,
-                                            null ];
-                                    predictionDates.forEach(function() {
-                                        additionalPredictionRow.push(null);
-                                    });
-                                    additionalPredictionRows
-                                            .push(additionalPredictionRow);
-                                }
-                                additionalPredictionRow[predictionSeriesIndex + 2] = prediction.value;
-                            }
-                        });
+            // build row index lookup
+            var weekDayStr =
+                weekDay.getFullYear()
+                + "-" + ("0" + (weekDay.getMonth() + 1)).slice(-2)
+                + "-" + ("0" + weekDay.getDate()).slice(-2);
+            rowIndexes[weekDayStr] = rowIndex;
+            rowIndex++;
+        }
+        startOfWeek.setDate(startOfWeek.getDate() + 7);
+    }
 
-            });
+    // add navps
+    for (var i = 0; i < navpsData.length; i++) {
+        var navpsDate = navpsData[i].date;
+        var rowIndex = rowIndexes[navpsDate];
+        if (rowIndex !== undefined) {
+            data.setCell(rowIndex, 1, navpsData[i].value)
+        }
+    }
 
-    data.addRows(additionalPredictionRows);
+    // add predictions
+    Object.keys(predData).forEach(function(predDateStr) {
+        var colIndex = predictionColumnIndexes[predDateStr];
+        predData[predDateStr].forEach(function(prediction) {
+            var predWeekDayDate = new Date(predDateStr);
+            predWeekDayDate.setDate(predWeekDayDate.getDate() + prediction.daysInAdvance);
+            var predWeekDayDateStr =
+                predWeekDayDate.getFullYear()
+                + "-" + ("0" + (predWeekDayDate.getMonth() + 1)).slice(-2)
+                + "-" + ("0" + predWeekDayDate.getDate()).slice(-2);
+            var rowIndex = rowIndexes[predWeekDayDateStr];
+            if (colIndex !== undefined && rowIndex !== undefined) {
+                data.setCell(rowIndex, colIndex, prediction.value)
+            }
+        });
+    });
 }
 
 function drawChart(data, predColumnCount) {
