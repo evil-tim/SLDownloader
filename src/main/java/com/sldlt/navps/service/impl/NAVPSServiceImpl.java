@@ -150,11 +150,18 @@ public class NAVPSServiceImpl implements NAVPSService {
         }
 
         final Map<String, Map<String, BigDecimal>> correlations = new TreeMap<>();
-        final Set<FundDto> completed = new HashSet<>();
-
         for (final FundDto fund : sortedFunds) {
-            correlations.put(fund.getCode(), calculateCorrelations(fund, sortedFunds, completed, allNavps));
-            completed.add(fund);
+            final Set<FundDto> exclude = new HashSet<>();
+            boolean found = false;
+            for (final FundDto comparedFund : sortedFunds) {
+                if (fund.getCode().equals(comparedFund.getCode())) {
+                    found = true;
+                }
+                if (found) {
+                    exclude.add(comparedFund);
+                }
+            }
+            correlations.put(fund.getCode(), calculateCorrelations(fund, sortedFunds, exclude, allNavps));
         }
 
         return correlations;
@@ -174,13 +181,13 @@ public class NAVPSServiceImpl implements NAVPSService {
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
     }
 
-    private Map<String, BigDecimal> calculateCorrelations(final FundDto fund, final List<FundDto> funds, final Set<FundDto> completed,
+    private Map<String, BigDecimal> calculateCorrelations(final FundDto fund, final List<FundDto> funds, final Set<FundDto> exclude,
         final Map<String, List<NAVPSEntryDto>> allNavps) {
 
         final Map<String, BigDecimal> correlations = new TreeMap<>();
 
         for (final FundDto comparedFund : funds) {
-            if (fund.getCode().equals(comparedFund.getCode()) || completed.contains(comparedFund)) {
+            if (fund.getCode().equals(comparedFund.getCode()) || exclude.contains(comparedFund)) {
                 correlations.put(comparedFund.getCode(), null);
             } else {
                 correlations.put(comparedFund.getCode(),
