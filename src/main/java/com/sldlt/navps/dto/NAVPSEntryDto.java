@@ -12,9 +12,9 @@ public class NAVPSEntryDto {
     private String fundName;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    private LocalDate entryDate;
 
-    private BigDecimal value;
+    private BigDecimal fundValue;
 
     public String getFund() {
         return fund;
@@ -32,25 +32,25 @@ public class NAVPSEntryDto {
         this.fundName = fundName;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getEntryDate() {
+        return entryDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setEntryDate(LocalDate entryDate) {
+        this.entryDate = entryDate;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getFundValue() {
+        return fundValue;
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
+    public void setFundValue(BigDecimal fundValue) {
+        this.fundValue = fundValue;
     }
 
     @Override
     public String toString() {
-        return fund + " - " + date.toString() + " - " + value.toPlainString();
+        return fund + " - " + entryDate.toString() + " - " + fundValue.toPlainString();
     }
 
 }

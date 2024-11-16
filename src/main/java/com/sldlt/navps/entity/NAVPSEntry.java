@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = @Index(name = "idx_navps_fund_date", columnList = "fund, date"))
+@Table(indexes = @Index(name = "idx_navps_fund_date", columnList = "fund, entry_date"))
 public class NAVPSEntry implements Serializable {
 
     private static final long serialVersionUID = -3464455970423863740L;
@@ -26,10 +26,10 @@ public class NAVPSEntry implements Serializable {
     private String fund;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate entryDate;
 
     @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal value;
+    private BigDecimal fundValue;
 
     public Long getId() {
         return id;
@@ -47,25 +47,25 @@ public class NAVPSEntry implements Serializable {
         this.fund = fund;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getEntryDate() {
+        return entryDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setEntryDate(LocalDate entryDate) {
+        this.entryDate = entryDate;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getFundValue() {
+        return fundValue;
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
+    public void setFundValue(BigDecimal fundValue) {
+        this.fundValue = fundValue;
     }
 
     @Override
     public String toString() {
-        return fund + " - " + date.toString() + " - " + value.toPlainString();
+        return fund + " - " + entryDate.toString() + " - " + fundValue.toPlainString();
     }
 
 }

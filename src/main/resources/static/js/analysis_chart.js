@@ -109,8 +109,8 @@ function buildDataRows(result, data) {
     var dates = [];
     var values = [];
     for (let i = 0; i < result.length; i++) {
-        dates.push(new Date(result[i].date));
-        values.push(result[i].value);
+        dates.push(new Date(result[i].entryDate));
+        values.push(result[i].fundValue);
     }
     var rows = [];
     var moduleNames = analysisModules.getModules();

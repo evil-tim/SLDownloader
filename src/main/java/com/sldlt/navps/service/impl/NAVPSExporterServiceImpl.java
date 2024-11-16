@@ -51,8 +51,8 @@ public class NAVPSExporterServiceImpl implements NAVPSExporterService {
 
     private String convertNavpsToCsv(NAVPSEntryDto navpsEntry) {
         StringBuilder navpsCsv = new StringBuilder();
-        return navpsCsv.append(navpsEntry.getFund()).append(',').append(navpsEntry.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
-            .append(',').append(navpsEntry.getValue()).append('\n').toString();
+        return navpsCsv.append(navpsEntry.getFund()).append(',').append(navpsEntry.getEntryDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
+            .append(',').append(navpsEntry.getFundValue()).append('\n').toString();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class NAVPSExporterServiceImpl implements NAVPSExporterService {
         Collections.reverse(navpsList);
         NAVPSEntryDto navpsEntry = navpsList.get(0);
 
-        return new NAVPSListJsonDto(navpsEntry.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + " 00:00:00",
+        return new NAVPSListJsonDto(navpsEntry.getEntryDate().format(DateTimeFormatter.ISO_LOCAL_DATE) + " 00:00:00",
             makeNavpsValuesList(navpsList), Collections.singletonList(navpsListData.getFirst()));
     }
 
@@ -78,12 +78,12 @@ public class NAVPSExporterServiceImpl implements NAVPSExporterService {
 
         int index = 0;
         NAVPSEntryDto navpsEntry = navpsList.get(index);
-        LocalDate navpsDate = navpsEntry.getDate();
+        LocalDate navpsDate = navpsEntry.getEntryDate();
         LocalDate currentDate = LocalDate.now();
 
         do {
-            if (navpsEntry != null && navpsEntry.getDate().equals(navpsDate)) {
-                navpsValuesList.add(navpsEntry.getValue());
+            if (navpsEntry != null && navpsEntry.getEntryDate().equals(navpsDate)) {
+                navpsValuesList.add(navpsEntry.getFundValue());
                 index++;
                 if (index < navpsList.size()) {
                     navpsEntry = navpsList.get(index);

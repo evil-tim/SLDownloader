@@ -15,11 +15,11 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
     private String type;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate date;
+    private LocalDate predictionDate;
 
     private Integer daysInAdvance;
 
-    private BigDecimal value;
+    private BigDecimal predictionValue;
 
     public Long getId() {
         return id;
@@ -45,12 +45,12 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
         this.type = type;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getPredictionDate() {
+        return predictionDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setPredictionDate(LocalDate predictionDate) {
+        this.predictionDate = predictionDate;
     }
 
     public Integer getDaysInAdvance() {
@@ -61,18 +61,18 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
         this.daysInAdvance = daysInAdvance;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPredictionValue() {
+        return predictionValue;
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
+    public void setPredictionValue(BigDecimal predictionValue) {
+        this.predictionValue = predictionValue;
     }
 
     @Override
     public String toString() {
-        return new StringBuilder().append(type).append("\n").append(fund).append(" ").append(date).append(" +").append(daysInAdvance)
-            .append("\n").append(value).toString();
+        return new StringBuilder().append(type).append("\n").append(fund).append(" ").append(predictionDate).append(" +")
+            .append(daysInAdvance).append("\n").append(predictionValue).toString();
     }
 
     @Override
@@ -82,7 +82,7 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
         }
 
         int compare = 0;
-        compare = this.getDate().compareTo(other.getDate());
+        compare = this.getPredictionDate().compareTo(other.getPredictionDate());
         if (compare != 0) {
             return compare;
         }
@@ -116,7 +116,7 @@ public class NAVPSPredictionDto implements Comparable<NAVPSPredictionDto> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getDate(), this.getDaysInAdvance(), this.getFund(), this.getType());
+        return Objects.hash(this.getPredictionDate(), this.getDaysInAdvance(), this.getFund(), this.getType());
     }
 
 }

@@ -22,14 +22,14 @@ function initAllNavpsTable() {
         serverSide : true,
         columns : [ {
             name : "date",
-            data : "date"
+            data : "entryDate"
         }, {
             name : "fund",
             data : "fundName",
             orderable : false
         }, {
             name : "value",
-            data : "value",
+            data : "fundValue",
             orderable : false
         } ],
         searching : false,
@@ -53,7 +53,7 @@ function convertToNavpsSpringDataParams(params) {
 
     // sort
     params.order && params.order.map(function(sortItem) {
-        var sortColName = params.columns[sortItem.column].name;
+        var sortColName = params.columns[sortItem.column].data;
         params.sort = sortColName + "," + sortItem.dir;
     });
     delete params.order;

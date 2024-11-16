@@ -77,9 +77,9 @@ function buildDataRows(count, result, chartData) {
             for (let i = 0; i < count; i++) {
                 if (navpsResult[i] && navpsResult[i][0]
                         && navpsResult[i][0][fundCtrs[i]]) {
-                    navpsResult[i][0][fundCtrs[i]].date = new Date(
-                            navpsResult[i][0][fundCtrs[i]].date);
-                    dateArr.push(navpsResult[i][0][fundCtrs[i]].date);
+                    navpsResult[i][0][fundCtrs[i]].entryDate = new Date(
+                            navpsResult[i][0][fundCtrs[i]].entryDate);
+                    dateArr.push(navpsResult[i][0][fundCtrs[i]].entryDate);
                 }
             }
             // get latest date
@@ -91,10 +91,10 @@ function buildDataRows(count, result, chartData) {
                 if (navpsResult[i]
                         && navpsResult[i][0]
                         && navpsResult[i][0][fundCtrs[i]]
-                        && navpsResult[i][0][fundCtrs[i]].date.getTime() === maxDate
+                        && navpsResult[i][0][fundCtrs[i]].entryDate.getTime() === maxDate
                                 .getTime()) {
                     // add entries that have the latest dates to the data table
-                    row.push(navpsResult[i][0][fundCtrs[i]].value);
+                    row.push(navpsResult[i][0][fundCtrs[i]].fundValue);
                     fundCtrs[i]++;
                 } else {
                     row.push(null);
