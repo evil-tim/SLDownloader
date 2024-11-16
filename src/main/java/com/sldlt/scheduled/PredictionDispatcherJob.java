@@ -57,9 +57,9 @@ public class PredictionDispatcherJob extends BaseDispatcherJob {
                     NAVPSPredictionDto prediction = new NAVPSPredictionDto();
                     prediction.setFund(fund.getCode());
                     prediction.setType(predictorService.getType());
-                    prediction.setDate(currentDate);
+                    prediction.setPredictionDate(currentDate);
                     prediction.setDaysInAdvance(offsets.get(index));
-                    prediction.setValue(predictions.getPredictions().get(index));
+                    prediction.setPredictionValue(predictions.getPredictions().get(index));
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(prediction);
                     }

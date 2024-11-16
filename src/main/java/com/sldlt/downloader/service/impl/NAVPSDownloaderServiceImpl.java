@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -48,16 +48,11 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     @Value("${task.updater.zone:GMT+8}")
     private String timeZone;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Override
     public List<FundDto> findAvailableFunds() {
-        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-
-        clientHttpRequestFactory.setConnectionRequestTimeout(60000);
-        clientHttpRequestFactory.setConnectTimeout(60000);
-        clientHttpRequestFactory.setReadTimeout(60000);
-
-        final RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
-
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -114,14 +109,6 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     @Override
     public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund, final LocalDate limitFrom,
         final LocalDate limitTo) throws IOException {
-        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-
-        clientHttpRequestFactory.setConnectionRequestTimeout(60000);
-        clientHttpRequestFactory.setConnectTimeout(60000);
-        clientHttpRequestFactory.setReadTimeout(60000);
-
-        final RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
-
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -137,8 +124,8 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
         final List<NAVPSEntryDto> result = Arrays.stream(response).map(navpsResponse -> {
             NAVPSEntryDto entry = new NAVPSEntryDto();
             entry.setFund(navpsResponse.getFundCode());
-            entry.setDate(LocalDate.parse(navpsResponse.getFundValDate(), responseDateFormat));
-            entry.setValue(new BigDecimal(navpsResponse.getFundNetVal()));
+            entry.setEntryDate(LocalDate.parse(navpsResponse.getFundValDate(), responseDateFormat));
+            entry.setFundValue(new BigDecimal(navpsResponse.getFundNetVal()));
             return entry;
         }).toList();
 
@@ -160,7 +147,7 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     }
 
     private void validateResultsInRange(final List<NAVPSEntryDto> result, final LocalDate limitFrom, final LocalDate limitTo) {
-        result.stream().filter(entry -> entry.getDate().isBefore(limitFrom) || entry.getDate().isAfter(limitTo)).findAny()
+        result.stream().filter(entry -> entry.getEntryDate().isBefore(limitFrom) || entry.getEntryDate().isAfter(limitTo)).findAny()
             .ifPresent(entry -> {
                 throw new NAVPSDownloadValidationException("Found out of range entry - " + entry);
             });

@@ -41,7 +41,7 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
         BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSPrediction.fund.eq(newPrediction.getFund()));
         predicate.and(nAVPSPrediction.type.eq(newPrediction.getType()));
-        predicate.and(nAVPSPrediction.date.eq(newPrediction.getDate()));
+        predicate.and(nAVPSPrediction.predictionDate.eq(newPrediction.getPredictionDate()));
         predicate.and(nAVPSPrediction.daysInAdvance.eq(newPrediction.getDaysInAdvance()));
 
         NAVPSPrediction predictionObj = navpsPredictionRepository.findOne(predicate).orElseGet(NAVPSPrediction::new);
@@ -57,13 +57,13 @@ public class NAVPSPredictionServiceImpl implements NAVPSPredictionService {
         BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSPrediction.fund.eq(fund));
         predicate.and(nAVPSPrediction.type.eq(predictionType));
-        predicate.and(nAVPSPrediction.date.goe(dateFrom));
-        predicate.and(nAVPSPrediction.date.loe(dateTo));
+        predicate.and(nAVPSPrediction.predictionDate.goe(dateFrom));
+        predicate.and(nAVPSPrediction.predictionDate.loe(dateTo));
 
         return StreamSupport
-            .stream(navpsPredictionRepository.findAll(predicate, nAVPSPrediction.date.desc(), nAVPSPrediction.daysInAdvance.asc())
+            .stream(navpsPredictionRepository.findAll(predicate, nAVPSPrediction.predictionDate.desc(), nAVPSPrediction.daysInAdvance.asc())
                 .spliterator(), false)
-            .map(entry -> mapper.map(entry, NAVPSPredictionDto.class)).collect(Collectors.groupingBy(NAVPSPredictionDto::getDate,
+            .map(entry -> mapper.map(entry, NAVPSPredictionDto.class)).collect(Collectors.groupingBy(NAVPSPredictionDto::getPredictionDate,
                 TreeMap<LocalDate, Set<NAVPSPredictionDto>>::new, Collectors.toCollection(TreeSet<NAVPSPredictionDto>::new)));
     }
 

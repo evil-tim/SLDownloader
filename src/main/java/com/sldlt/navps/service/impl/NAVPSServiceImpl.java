@@ -56,7 +56,8 @@ public class NAVPSServiceImpl implements NAVPSService {
     @Transactional
     public void saveNAVPS(final List<NAVPSEntryDto> entries) {
         navpsEntryRepository.saveAll(entries.stream()
-            .filter(entry -> navpsEntryRepository.count(nAVPSEntry.date.eq(entry.getDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
+            .filter(entry -> navpsEntryRepository
+                .count(nAVPSEntry.entryDate.eq(entry.getEntryDate()).and(nAVPSEntry.fund.eq(entry.getFund()))) == 0)
             .map(entry -> mapper.map(entry, NAVPSEntry.class)).toList());
     }
 
@@ -68,13 +69,13 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.fund.eq(fund));
         }
         if (dateFrom != null) {
-            predicate.and(nAVPSEntry.date.goe(dateFrom));
+            predicate.and(nAVPSEntry.entryDate.goe(dateFrom));
         }
         if (dateTo != null) {
-            predicate.and(nAVPSEntry.date.loe(dateTo));
+            predicate.and(nAVPSEntry.entryDate.loe(dateTo));
         }
 
-        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
+        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.entryDate.desc()).spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
     }
 
@@ -90,10 +91,10 @@ public class NAVPSServiceImpl implements NAVPSService {
             fundNames.putAll(fundService.listAllFunds().stream().collect(Collectors.toMap(FundDto::getCode, FundDto::getName)));
         }
         if (dateFrom != null) {
-            predicate.and(nAVPSEntry.date.goe(dateFrom));
+            predicate.and(nAVPSEntry.entryDate.goe(dateFrom));
         }
         if (dateTo != null) {
-            predicate.and(nAVPSEntry.date.loe(dateTo));
+            predicate.and(nAVPSEntry.entryDate.loe(dateTo));
         }
 
         return navpsEntryRepository.findAll(predicate, page).map(entry -> mapper.map(entry, NAVPSEntryDto.class))
@@ -108,14 +109,14 @@ public class NAVPSServiceImpl implements NAVPSService {
             predicate.and(nAVPSEntry.fund.in(funds));
         }
         if (dateFrom != null) {
-            predicate.and(nAVPSEntry.date.goe(dateFrom));
+            predicate.and(nAVPSEntry.entryDate.goe(dateFrom));
         }
         if (dateTo != null) {
-            predicate.and(nAVPSEntry.date.loe(dateTo));
+            predicate.and(nAVPSEntry.entryDate.loe(dateTo));
         }
 
         return StreamSupport
-            .stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.fund.desc(), nAVPSEntry.date.desc()).spliterator(), false)
+            .stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.fund.desc(), nAVPSEntry.entryDate.desc()).spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).collect(Collectors.groupingBy(NAVPSEntryDto::getFund));
     }
 
@@ -129,7 +130,7 @@ public class NAVPSServiceImpl implements NAVPSService {
     public List<NAVPSEntryDto> listAllNAVPS(final String fund) {
         final BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSEntry.fund.eq(fund));
-        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
+        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.entryDate.desc()).spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
     }
 
@@ -175,9 +176,9 @@ public class NAVPSServiceImpl implements NAVPSService {
         final BooleanBuilder predicate = new BooleanBuilder();
         predicate.and(nAVPSEntry.fund.eq(fundCode));
         if (dateFrom != null) {
-            predicate.and(nAVPSEntry.date.goe(dateFrom));
+            predicate.and(nAVPSEntry.entryDate.goe(dateFrom));
         }
-        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.date.desc()).spliterator(), false)
+        return StreamSupport.stream(navpsEntryRepository.findAll(predicate, nAVPSEntry.entryDate.desc()).spliterator(), false)
             .map(entry -> mapper.map(entry, NAVPSEntryDto.class)).toList();
     }
 
@@ -203,9 +204,9 @@ public class NAVPSServiceImpl implements NAVPSService {
             return null;
         }
 
-        final Optional<LocalDate> minDate1 = list1.stream().map(NAVPSEntryDto::getDate)
+        final Optional<LocalDate> minDate1 = list1.stream().map(NAVPSEntryDto::getEntryDate)
             .reduce((date1, date2) -> date2.isAfter(date1) ? date1 : date2);
-        final Optional<LocalDate> minDate2 = list2.stream().map(NAVPSEntryDto::getDate)
+        final Optional<LocalDate> minDate2 = list2.stream().map(NAVPSEntryDto::getEntryDate)
             .reduce((date1, date2) -> date2.isAfter(date1) ? date1 : date2);
 
         if (!minDate1.isPresent() || !minDate2.isPresent()) {
@@ -247,8 +248,8 @@ public class NAVPSServiceImpl implements NAVPSService {
             return Collections.emptyList();
         }
 
-        final List<Pair<LocalDate, BigDecimal>> values = navpsList.stream().filter(entry -> !entry.getDate().isBefore(minDate))
-            .map(entry -> Pair.of(entry.getDate(), entry.getValue())).toList();
+        final List<Pair<LocalDate, BigDecimal>> values = navpsList.stream().filter(entry -> !entry.getEntryDate().isBefore(minDate))
+            .map(entry -> Pair.of(entry.getEntryDate(), entry.getFundValue())).toList();
 
         final BigDecimal size = BigDecimal.valueOf(values.size());
         final BigDecimal sum = values.stream().map(Pair::getSecond).reduce(BigDecimal.ZERO, (value1, value2) -> value1.add(value2));
@@ -282,15 +283,15 @@ public class NAVPSServiceImpl implements NAVPSService {
         LocalDate currDateY = null;
 
         while (navpsXIndex < navpsXSize && navpsYIndex < navpsYSize) {
-            currDateX = navpsX.get(navpsXIndex).getDate();
-            currDateY = navpsY.get(navpsYIndex).getDate();
+            currDateX = navpsX.get(navpsXIndex).getEntryDate();
+            currDateY = navpsY.get(navpsYIndex).getEntryDate();
 
             if (currDateX.isBefore(currDateY)) {
                 navpsYIndex++;
             } else if (currDateX.isAfter(currDateY)) {
                 navpsXIndex++;
             } else {
-                result.add(Pair.of(navpsX.get(navpsXIndex).getValue(), navpsY.get(navpsYIndex).getValue()));
+                result.add(Pair.of(navpsX.get(navpsXIndex).getFundValue(), navpsY.get(navpsYIndex).getFundValue()));
                 navpsXIndex++;
                 navpsYIndex++;
             }

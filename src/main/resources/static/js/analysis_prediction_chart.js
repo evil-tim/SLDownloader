@@ -134,9 +134,9 @@ function buildDataRows(navpsData, predData, data) {
     var numPredictions = Object.keys(predData).length;
 
     // date rage of navps
-    var lastNavpsDate = new Date(navpsData[0].date);
+    var lastNavpsDate = new Date(navpsData[0].entryDate);
     lastNavpsDate.setDate(lastNavpsDate.getDate() - lastNavpsDate.getDay());
-    var firstNavpsDate = new Date(navpsData[navpsData.length - 1].date);
+    var firstNavpsDate = new Date(navpsData[navpsData.length - 1].entryDate);
     firstNavpsDate.setDate(firstNavpsDate.getDate() - firstNavpsDate.getDay());
 
     // date range of predictions
@@ -194,10 +194,10 @@ function buildDataRows(navpsData, predData, data) {
 
     // add navps
     for (var i = 0; i < navpsData.length; i++) {
-        var navpsDate = navpsData[i].date;
+        var navpsDate = navpsData[i].entryDate;
         var rowIndex = rowIndexes[navpsDate];
         if (rowIndex !== undefined) {
-            data.setCell(rowIndex, 1, navpsData[i].value)
+            data.setCell(rowIndex, 1, navpsData[i].fundValue)
         }
     }
 
@@ -213,7 +213,7 @@ function buildDataRows(navpsData, predData, data) {
                 + "-" + ("0" + predWeekDayDate.getDate()).slice(-2);
             var rowIndex = rowIndexes[predWeekDayDateStr];
             if (colIndex !== undefined && rowIndex !== undefined) {
-                data.setCell(rowIndex, colIndex, prediction.value)
+                data.setCell(rowIndex, colIndex, prediction.predictionValue)
             }
         });
     });

@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class NAVPSPrediction implements Serializable {
@@ -26,13 +26,13 @@ public class NAVPSPrediction implements Serializable {
     private String type;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate predictionDate;
 
     @Column(nullable = false)
     private Integer daysInAdvance;
 
     @Column(nullable = false, precision = 10, scale = 6)
-    private BigDecimal value;
+    private BigDecimal predictionValue;
 
     public Long getId() {
         return id;
@@ -58,12 +58,12 @@ public class NAVPSPrediction implements Serializable {
         this.type = type;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getPredictionDate() {
+        return predictionDate;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setPredictionDate(LocalDate predictionDate) {
+        this.predictionDate = predictionDate;
     }
 
     public Integer getDaysInAdvance() {
@@ -74,12 +74,12 @@ public class NAVPSPrediction implements Serializable {
         this.daysInAdvance = daysInAdvance;
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPredictionValue() {
+        return predictionValue;
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
+    public void setPredictionValue(BigDecimal predictionValue) {
+        this.predictionValue = predictionValue;
     }
 
 }

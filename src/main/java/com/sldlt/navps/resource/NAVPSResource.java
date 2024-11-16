@@ -38,7 +38,7 @@ public class NAVPSResource {
     public Page<NAVPSEntryDto> getNAVPS(@RequestParam(name = "fund", required = false) String fund,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateFrom", required = false) LocalDate dateFrom,
         @DateTimeFormat(iso = ISO.DATE) @RequestParam(name = "dateTo", required = false) LocalDate dateTo,
-        @PageableDefault(sort = { "date" }, direction = Direction.DESC) Pageable page) {
+        @PageableDefault(sort = { "entryDate" }, direction = Direction.DESC) Pageable page) {
         return navpsService.listNAVPS(fund, dateFrom, dateTo, page);
     }
 

@@ -19,7 +19,7 @@ public abstract class AbstractNAVPSPredictorServiceImpl implements NAVPSPredicto
 
     protected List<Pair<BigDecimal, BigDecimal>> fetchNavpsData(final String fund, final LocalDate maxRange) {
         final List<NAVPSEntryDto> navpsEntries = navpsService.listNAVPS(fund, maxRange, null);
-        return IntStream.range(0, navpsEntries.size()).mapToObj(i -> Pair.of(BigDecimal.valueOf(-i), navpsEntries.get(i).getValue()))
+        return IntStream.range(0, navpsEntries.size()).mapToObj(i -> Pair.of(BigDecimal.valueOf(-i), navpsEntries.get(i).getFundValue()))
             .toList();
     }
 

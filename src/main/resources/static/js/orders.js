@@ -111,7 +111,7 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
         latestNavpsRequests.push($.ajax({
             url : "/api/navps",
             data : {
-                sort : "date,desc",
+                sort : "entryDate,desc",
                 size : 1,
                 fund : fundCode,
             }
@@ -136,8 +136,8 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
                                                 && navpsLookupResult[0].content
                                                 && navpsLookupResult[0].content[0]
                                                 && navpsLookupResult[0].content[0].fund
-                                                && navpsLookupResult[0].content[0].value) {
-                                            currentNavps[navpsLookupResult[0].content[0].fund] = navpsLookupResult[0].content[0].value;
+                                                && navpsLookupResult[0].content[0].fundValue) {
+                                            currentNavps[navpsLookupResult[0].content[0].fund] = navpsLookupResult[0].content[0].fundValue;
                                         }
                                     });
                         }
