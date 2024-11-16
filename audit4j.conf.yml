@@ -1,8 +1,0 @@
-!Configuration
-    handlers: 
-        - !org.audit4j.core.handler.ConsoleAuditHandler {}
-    layout: !org.audit4j.core.layout.SimpleLayout {
-        dateFormat: "yyyy-MM-dd HH:mm:ss.SSS"
-    }
-    properties: 
-       log.file.location: user.dir
