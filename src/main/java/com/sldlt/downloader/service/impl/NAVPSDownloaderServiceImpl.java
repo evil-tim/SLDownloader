@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -51,12 +50,12 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private HttpHeaders httpHeaders;
+
     @Override
     public List<FundDto> findAvailableFunds() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        final HttpEntity<NAVPSRequest> requestEntity = new HttpEntity<>(headers);
+        final HttpEntity<NAVPSRequest> requestEntity = new HttpEntity<>(httpHeaders);
 
         final FundsResponse response = restTemplate.postForObject(fundsUrl, requestEntity, FundsResponse.class);
 
@@ -109,15 +108,12 @@ public class NAVPSDownloaderServiceImpl implements NAVPSDownloaderService {
     @Override
     public List<NAVPSEntryDto> fetchNAVPSFromPage(final FundDto fund, final LocalDate limitFrom,
         final LocalDate limitTo) throws IOException {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         final NAVPSRequest request = new NAVPSRequest();
         request.setFundCode(fund.getCode());
         request.setDateFrom(limitFrom.format(paramDateFormat));
         request.setDateTo(limitTo.format(paramDateFormat));
 
-        final HttpEntity<NAVPSRequest> requestEntity = new HttpEntity<>(request, headers);
+        final HttpEntity<NAVPSRequest> requestEntity = new HttpEntity<>(request, httpHeaders);
 
         final NAVPSResponse[] response = restTemplate.postForObject(navpsUrl, requestEntity, NAVPSResponse[].class);
 
