@@ -11,4 +11,6 @@ public interface FundRepository extends JpaRepository<Fund, Long>, QuerydslPredi
 
     Fund findOneByCode(String code);
 
+    Fund findFirstByName(String name);
+
 }

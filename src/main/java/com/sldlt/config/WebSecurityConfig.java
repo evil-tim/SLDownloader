@@ -24,6 +24,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/webjars/**").permitAll() //
                 // API
                 .requestMatchers("/api").permitAll() //
+                // actuator
+                .requestMatchers("/actuator/**").permitAll()
                 // catch all
                 .requestMatchers("/**").permitAll());
         return http.build();

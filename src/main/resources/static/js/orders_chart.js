@@ -18,6 +18,7 @@ function initOrdersChart() {
 function updateOrdersValueChart(rawOrderData) {
     rawOrderData = rawOrderData ? rawOrderData : getOrders();
     var requestOrderData = [];
+    var fundNames = {};
 
     rawOrderData.forEach(function(rawOrder) {
         requestOrderData.push({
@@ -26,12 +27,8 @@ function updateOrdersValueChart(rawOrderData) {
             'shares' : rawOrder.orderShares,
             'baseValue' : rawOrder.orderValue
         });
+        fundNames[rawOrder.orderFundCode] = rawOrder.orderFundName;
     });
-
-    var chartData = new google.visualization.DataTable();
-    chartData.addColumn('date', 'Date');
-    chartData.addColumn('number', 'Base Value');
-    chartData.addColumn('number', 'Actual Value');
 
     $.ajax({
         url : "/api/orders/aggregate-actual-orders",
@@ -42,6 +39,10 @@ function updateOrdersValueChart(rawOrderData) {
         })
     }).done(
             function(data) {
+                var chartData = new google.visualization.DataTable();
+                chartData.addColumn('date', 'Date');
+                chartData.addColumn('number', 'Base Value');
+                chartData.addColumn('number', 'Actual Value');
                 if (data && Array.isArray(data)) {
                     data.forEach(function(aggregatedOrder) {
                         chartData.addRow([ new Date(aggregatedOrder.date),
@@ -50,6 +51,36 @@ function updateOrdersValueChart(rawOrderData) {
                     });
                 }
                 drawValuesChart(chartData);
+
+                var detailedChartData = new google.visualization.DataTable();
+                detailedChartData.addColumn('date', 'Date');
+                if (data && Array.isArray(data)) {
+                    var uniqueFundCodes = [];
+                    data.forEach(function(aggregatedOrder) {
+                        Object.keys(aggregatedOrder.aggregatedFundOrders)
+                                .forEach(function(fundCode) {
+                                    if (!uniqueFundCodes.includes(fundCode)) {
+                                        uniqueFundCodes.push(fundCode);
+                                    }
+                                });
+                    });
+                    uniqueFundCodes.sort();
+                    uniqueFundCodes.forEach(function(fundCode) {
+                        detailedChartData.addColumn('number', fundNames[fundCode]);
+                    });
+                    data.forEach(function(aggregatedOrder) {
+                        var row = [ new Date(aggregatedOrder.date) ];
+                        uniqueFundCodes.forEach(function(fundCode) {
+                            if (aggregatedOrder.aggregatedFundOrders[fundCode]) {
+                                row.push(aggregatedOrder.aggregatedFundOrders[fundCode].actualValue);
+                            } else {
+                                row.push(null);
+                            }
+                        });
+                        detailedChartData.addRow(row);
+                    });
+                }
+                drawDetailedValuesChart(detailedChartData);
             });
 }
 
@@ -58,6 +89,21 @@ function drawValuesChart(chartData) {
             .getElementById('ordersChart'));
     var options = {
         displayAnnotations : false
+    };
+    chart.draw(chartData, options);
+}
+
+function drawDetailedValuesChart(chartData) {
+    var chart = new google.visualization.AreaChart(document
+            .getElementById('detailedOrdersChart'));
+    var options = {
+        isStacked : true,
+        legend : {
+            position : 'bottom',
+        },
+        chartArea : {
+            width: '100%',
+        }
     };
     chart.draw(chartData, options);
 }

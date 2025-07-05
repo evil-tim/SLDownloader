@@ -45,4 +45,10 @@ public class FundServiceImpl implements FundService {
         return mapper.map(fundRepository.findOneByCode(code), FundDto.class);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public FundDto getFundByName(final String name) {
+        return mapper.map(fundRepository.findFirstByName(name), FundDto.class);
+    }
+
 }

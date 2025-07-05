@@ -12,4 +12,6 @@ public interface FundService {
 
     FundDto getFundByCode(String code);
 
+    FundDto getFundByName(String name);
+
 }
