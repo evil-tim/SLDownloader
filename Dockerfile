@@ -14,8 +14,8 @@ FROM amazoncorretto:17-alpine
 COPY --from=builder /opt/sldownloader/target/sldownloader.jar /var/lib/apps/sldownloader/sldownloader.jar
 ENTRYPOINT [    "/usr/bin/java", \
                 "-server", \
-                "-Xmx128m", \
-                "-XX:MaxMetaspaceSize=128m", \
+                "-Xmx512m", \
+                "-XX:MaxMetaspaceSize=512m", \
                 "-jar", \
                 "/var/lib/apps/sldownloader/sldownloader.jar", \
                 "--spring.datasource.url=jdbc:h2:/var/lib/apps/sldownloader/database/database;DB_CLOSE_ON_EXIT=FALSE", \
