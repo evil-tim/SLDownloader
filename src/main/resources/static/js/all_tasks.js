@@ -108,8 +108,8 @@ function convertToTasksSpringDataResult(data) {
     var json = jQuery.parseJSON(data);
 
     // convert totals
-    json.recordsTotal = json.totalElements;
-    json.recordsFiltered = json.totalElements;
+    json.recordsTotal = json.page.totalElements;
+    json.recordsFiltered = json.page.totalElements;
 
     // convert data
     json.data = json.content;

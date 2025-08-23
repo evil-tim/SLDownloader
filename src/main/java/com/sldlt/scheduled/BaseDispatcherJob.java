@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import com.sldlt.metrics.service.InstrumentationService;
 public abstract class BaseDispatcherJob {
 
     @Autowired
+    @Qualifier("applicationTaskExecutor")
     private TaskExecutor taskExecutor;
 
     @Autowired
