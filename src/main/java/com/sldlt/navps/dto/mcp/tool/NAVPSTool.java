@@ -5,11 +5,11 @@ import java.time.LocalDate;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.sldlt.mcp.tool.dto.McpPage;
 import com.sldlt.metrics.annotation.Instrumented;
 import com.sldlt.navps.dto.NAVPSEntryDto;
 import com.sldlt.navps.service.NAVPSService;
@@ -22,7 +22,7 @@ public class NAVPSTool {
 
     @Tool(description = "Get the NAVPS for a specified fund code and date range")
     @Instrumented
-    public Page<NAVPSEntryDto> getNAVPS(
+    public McpPage<NAVPSEntryDto> getNAVPS(
         @ToolParam(required = true, description = "The fund code of the NAVPS, See the fund tool for valid fund codes") String fund,
         @ToolParam(required = true, description = "The start date of the date range") LocalDate dateFrom,
         @ToolParam(required = true, description = "The end date of the date range") LocalDate dateTo,
@@ -34,14 +34,14 @@ public class NAVPSTool {
         if (size == null || size < 1) {
             size = 10;
         }
-        return navpsService.listNAVPS(//
+        return new McpPage<>(navpsService.listNAVPS(//
             fund, //
             dateFrom, //
             dateTo, //
             PageRequest.of(//
                 page, //
                 size, //
-                Sort.by("entryDate").descending()));
+                Sort.by("entryDate").descending())));
     }
 
 }
