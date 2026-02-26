@@ -1,6 +1,7 @@
 package com.sldlt.orders.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
@@ -115,9 +116,25 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
                 currentAggFundOrder = new AggregatedFundOrder(prevFundAggOrder);
                 aggregatedOrder.getAggregatedFundOrders().put(code, currentAggFundOrder);
             } else {
-                // add to current
-                currentAggFundOrder.setShares(currentAggFundOrder.getShares().add(prevFundAggOrder.getShares()));
-                currentAggFundOrder.setBaseValue(currentAggFundOrder.getBaseValue().add(prevFundAggOrder.getBaseValue()));
+                if (currentAggFundOrder.getShares().compareTo(BigDecimal.ZERO) > 0) {
+                    // if buy order (positive shares)
+                    // add base value
+                    currentAggFundOrder.setBaseValue(currentAggFundOrder.getBaseValue().add(prevFundAggOrder.getBaseValue()));
+                    // add shares
+                    currentAggFundOrder.setShares(currentAggFundOrder.getShares().add(prevFundAggOrder.getShares()));
+                } else {
+                    // if sell order (negative shares), subtract prev from current
+                    // get proportion of shares sold from aggregated shares
+                    BigDecimal startingShares = prevFundAggOrder.getShares();
+                    BigDecimal soldShares = currentAggFundOrder.getShares().abs();
+                    BigDecimal proportionSold = soldShares.divide(startingShares, 10, RoundingMode.HALF_UP);
+                    // subtract base value proportionally to shares sold
+                    BigDecimal startingBaseValue = prevFundAggOrder.getBaseValue();
+                    BigDecimal baseValueToSubtract = startingBaseValue.multiply(proportionSold);
+                    currentAggFundOrder.setBaseValue(startingBaseValue.subtract(baseValueToSubtract));
+                    // add negative shares
+                    currentAggFundOrder.setShares(currentAggFundOrder.getShares().add(prevFundAggOrder.getShares()));
+                }
             }
         });
 
@@ -151,7 +168,9 @@ public class OrderAggregatorServiceImpl implements OrderAggregatorService {
                     aggOrder.getAggregatedFundOrders().put(order.getCode(), matchingAggregatedFundOrder);
                 }
 
-                matchingAggregatedFundOrder.setBaseValue(matchingAggregatedFundOrder.getBaseValue().add(order.getBaseValue()));
+                if (order.getBaseValue() != null) {
+                    matchingAggregatedFundOrder.setBaseValue(matchingAggregatedFundOrder.getBaseValue().add(order.getBaseValue()));
+                }
                 matchingAggregatedFundOrder.setShares(matchingAggregatedFundOrder.getShares().add(order.getShares()));
             });
         });

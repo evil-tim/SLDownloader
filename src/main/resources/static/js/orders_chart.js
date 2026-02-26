@@ -136,7 +136,7 @@ function updateOrdersSharesChart(rawOrderData, filter) {
     }
 
     getOrdersWithCurrentValues(function(orderData) {
-        var accumulatedOrderData = buildAccmulatedOrders(orderData);
+        var accumulatedOrderData = buildAccumulatedOrders(orderData);
         accumulatedOrderData.forEach(function(accumulatedOrder) {
             var row = [ accumulatedOrder.orderDateObj ];
             uniqueFundCodes.forEach(function(fundCode) {
@@ -227,7 +227,7 @@ function drawSplitChart(chartData) {
     });
 }
 
-function buildAccmulatedOrders(orders) {
+function buildAccumulatedOrders(orders) {
     var accumulatedOrders = [];
     var accumulatedOrderIndex = -1;
 
@@ -300,16 +300,16 @@ function buildAccmulatedOrders(orders) {
                 // accumulate values to current entry
                 // accumulate base value
                 accumulatedOrders[accumulatedOrderIndex].baseValue = accumulatedOrders[accumulatedOrderIndex].baseValue
-                        .plus(order.orderValue);
+                        .plus(order.orderValue || new Big(0));
                 // accumulate base value per fund
                 if (accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode]) {
                     // add base value if existing
                     accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode] = accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode]
-                            .plus(order.orderValue);
+                            .plus(order.orderValue || new Big(0));
                 } else {
                     // create new entry
                     accumulatedOrders[accumulatedOrderIndex - 1].baseValuesPerFund[order.orderFundCode] = new Big(0);
-                    accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode] = order.orderValue;
+                    accumulatedOrders[accumulatedOrderIndex].baseValuesPerFund[order.orderFundCode] = order.orderValue || new Big(0);
                 }
                 // accumulate shares per fund
                 if (accumulatedOrders[accumulatedOrderIndex].sharesPerFund[order.orderFundCode]) {

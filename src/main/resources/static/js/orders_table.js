@@ -14,12 +14,24 @@ function initEvents() {
     $('#loadOrders').on('click', loadOrdersAction);
     $('#addOrder').on('click', addNewOrderAction);
     $('#ordersTable').on('click', '.delete-order-btn', removeOrderAction)
+    $('#orderShares').on('change', toggleOrderValueRequired);
 }
 
 function initAddOrderFundField() {
     $.ajax({
         url : "/api/funds"
     }).done(updateAddOrderFundField);
+}
+
+function toggleOrderValueRequired() {
+    var shares = $('#orderShares').val();
+    if (!shares || shares >= 0) {
+        $('#orderValue').prop('required', true);
+        $('#orderValue').prop('disabled', false);
+    } else {
+        $('#orderValue').prop('required', false);
+        $('#orderValue').prop('disabled', true);
+    }
 }
 
 function updateAddOrderFundField(data) {
@@ -152,26 +164,6 @@ function initAllOrdersTable() {
                                         }
                                     },
                                     {
-                                        name : "currentValue",
-                                        data : "currentValue",
-                                        orderable : false,
-                                        className : "text-right",
-                                        render : function(data, _type, _row, _meta) {
-                                            return formatBigToCurrency(data);
-                                        }
-                                    },
-                                    {
-                                        name : "percentGain",
-                                        orderable : false,
-                                        className : "text-right",
-                                        render : function(_data, _type, row, _meta) {
-                                            return formatBigToPercent(
-                                                        row.currentValue
-                                                        .minus(row.orderValue)
-                                                        .div(row.orderValue));
-                                        }
-                                    },
-                                    {
                                         name : "actions",
                                         orderable : false,
                                         render : function(_data, _type, row, _meta) {
@@ -229,31 +221,68 @@ function makeSummaries(data) {
         currentValue : new Big(0),
     };
 
-    data
-            .forEach(function(order) {
-                totalSummary.baseValue = totalSummary.baseValue
+    for(var i = 0; i < data.length; i++) {
+        var order = data[i];
+        var fundCode = order.orderFundCode;
+        var isBuy = order.orderShares.gte(0);
+
+        // add up all current values for each order
+        // should compute buys and sells correctly since sells have negative values
+        totalSummary.currentValue = totalSummary.currentValue
+            .plus(order.currentValue);
+
+        // compute base value / cost basis
+        if (isBuy) {
+            // add all buys
+            totalSummary.baseValue = totalSummary.baseValue
+                .plus(order.orderValue);
+        } else {
+            // get the latest number of shares
+            var fundShares = summaries[fundCode] ? summaries[fundCode].shares : new Big(0);
+            // get the proportion of shares sold to total shares for this fund
+            var sharesSold = order.orderShares.abs();
+            var sharesProportion = fundShares.gt(0) ? sharesSold.div(fundShares) : new Big(0);
+            // compute the new cost basis by reducing the cost basis by the proportion of shares sold
+            var fundCostBasis = summaries[fundCode] ? summaries[fundCode].baseValue : new Big(0);
+            var costBasisReduction = fundCostBasis.times(sharesProportion);
+            totalSummary.baseValue = totalSummary.baseValue.minus(costBasisReduction);
+        }
+
+        // compute summary for each fund
+        if (summaries[fundCode]) {
+            if (isBuy) {
+                // add up all buys for this fund
+                summaries[fundCode].baseValue = summaries[fundCode].baseValue
                         .plus(order.orderValue);
-                totalSummary.currentValue = totalSummary.currentValue
-                        .plus(order.currentValue);
-
-                if (summaries[order.orderFundCode]) {
-                    summaries[order.orderFundCode].shares = summaries[order.orderFundCode].shares
-                            .plus(order.orderShares);
-                    summaries[order.orderFundCode].baseValue = summaries[order.orderFundCode].baseValue
-                            .plus(order.orderValue);
-                    summaries[order.orderFundCode].currentValue = summaries[order.orderFundCode].currentValue
-                            .plus(order.currentValue);
-                } else {
-                    funds.push(order.orderFundCode);
-                    summaries[order.orderFundCode] = {
-                        title : order.orderFundName,
-                        shares : order.orderShares,
-                        baseValue : order.orderValue,
-                        currentValue : order.currentValue,
-                    }
-                }
-
-            });
+            } else {
+                // get the current fund's number of shares
+                var fundShares = summaries[fundCode].shares;
+                // get the proportion of shares sold to total shares for this fund
+                var sharesSold = order.orderShares.abs();
+                var sharesProportion = fundShares.gt(0) ? sharesSold.div(fundShares) : new Big(0);
+                // compute the new cost basis by reducing the cost basis by the proportion of shares sold
+                var fundCostBasis = summaries[fundCode].baseValue;
+                var costBasisReduction = fundCostBasis.times(sharesProportion);
+                summaries[fundCode].baseValue = fundCostBasis.minus(costBasisReduction);
+            }
+            // add up all shares current values for this fund
+            // should compute buys and sells correctly since sells have negative values
+            summaries[fundCode].currentValue = summaries[fundCode].currentValue
+                    .plus(order.currentValue);
+            summaries[fundCode].shares = summaries[fundCode].shares
+                    .plus(order.orderShares);
+        } else {
+            // initialize summary for this fund
+            // assume buy
+            funds.push(fundCode);
+            summaries[fundCode] = {
+                title : order.orderFundName,
+                shares : order.orderShares,
+                baseValue : order.orderValue,
+                currentValue : order.currentValue,
+            }
+        }
+    }
 
     var summaryList = [];
     if (data.length > 0) {

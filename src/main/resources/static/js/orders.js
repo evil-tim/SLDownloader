@@ -17,7 +17,7 @@ function getOrders() {
     // convert fixed point string to number
     orders.forEach(function(rawOrder) {
         rawOrder.orderShares = new Big(rawOrder.orderShares);
-        rawOrder.orderValue = new Big(rawOrder.orderValue);
+        rawOrder.orderValue = rawOrder.orderValue ? new Big(rawOrder.orderValue) : undefined;
     });
 
     return orders;
@@ -43,7 +43,7 @@ function addOrder(orderDate, orderFundCode, orderFundName, orderShares,
         orderFundCode : orderFundCode,
         orderFundName : orderFundName,
         orderShares : new Big(orderShares),
-        orderValue : new Big(orderValue),
+        orderValue : orderValue ? new Big(orderValue) : undefined,
     });
     saveOrders(allOrders);
     executeCallbacks(allOrders);
@@ -55,8 +55,10 @@ function importOrders(orders) {
     }
     for (let i = 0; i < orders.length; i++) {
         if (!orders[i].id || !orders[i].orderDate || !orders[i].orderFundCode
-                || !orders[i].orderFundName || !orders[i].orderShares
-                || !orders[i].orderValue) {
+                || !orders[i].orderFundName || !orders[i].orderShares) {
+            return false;
+        }
+        if (orders[i].orderShares && orders[i].orderShares >= 0 && !orders[i].orderValue) {
             return false;
         }
     }
@@ -64,7 +66,7 @@ function importOrders(orders) {
     // convert fixed point string to number
     orders.forEach(function(order) {
         order.orderShares = new Big(order.orderShares);
-        order.orderValue = new Big(order.orderValue);
+        order.orderValue = order.orderValue ? new Big(order.orderValue) : undefined;
     });
 
     saveOrders(orders);
@@ -143,11 +145,17 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
                         }
                         // convert raw orders to orders with current values
                         var processedOrders = [];
+                        // order by orderDate asc and compute current value
                         rawOrders
+                                .sort(function(a, b) {
+                                    var dateA = new Date(a.orderDate);
+                                    var dateB = new Date(b.orderDate);
+                                    return dateA - dateB;
+                                })
                                 .forEach(function(rawOrder) {
                                     var currentValue = currentNavps && currentNavps[rawOrder.orderFundCode]
                                             ? rawOrder.orderShares.times(currentNavps[rawOrder.orderFundCode])
-                                            : 0;
+                                            : Big(0);
                                     processedOrders
                                             .push({
                                                 id : rawOrder.id,
