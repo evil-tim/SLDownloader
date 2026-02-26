@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
 public class OrderDto {
@@ -19,7 +20,6 @@ public class OrderDto {
     @NotNull
     private BigDecimal shares;
 
-    @NotNull
     private BigDecimal baseValue;
 
     public String getCode() {
@@ -54,4 +54,13 @@ public class OrderDto {
         this.baseValue = baseValue;
     }
 
+    @AssertTrue
+    public boolean isBaseValueValid() {
+        if (this.shares != null && this.shares.compareTo(BigDecimal.ZERO) >= 0) {
+            return this.baseValue != null;
+        } else if (this.shares != null && this.shares.compareTo(BigDecimal.ZERO) < 0) {
+            return this.baseValue == null;
+        }
+        return false;
+    }
 }
