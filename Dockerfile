@@ -1,4 +1,4 @@
-FROM maven:3.9.6-eclipse-temurin-17-alpine as builder
+FROM maven:3.9.12-eclipse-temurin-25-alpine as builder
 
 WORKDIR /opt/sldownloader
 ADD pom.xml .
@@ -9,7 +9,7 @@ RUN mvn clean package -Ddependency-check.skip=true -Ddockerfile.skip=true -Dmave
 
 ###################################
 
-FROM amazoncorretto:17-alpine
+FROM amazoncorretto:25-alpine
 
 COPY --from=builder /opt/sldownloader/target/sldownloader.jar /var/lib/apps/sldownloader/sldownloader.jar
 ENTRYPOINT [    "/usr/bin/java", \
