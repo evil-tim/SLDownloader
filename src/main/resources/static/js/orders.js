@@ -107,6 +107,17 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
         }
     });
 
+    // get all fund codes + dates for all sell orders
+    var fundCodesAndDates = [];
+    rawOrders.forEach(function(rawOrder) {
+        if (rawOrder.orderShares.lt(0)) {
+            fundCodesAndDates.push({
+                fundCode : rawOrder.orderFundCode,
+                date : rawOrder.orderDate,
+            });
+        }
+    });
+
     // build fetch latest navps requests
     var latestNavpsRequests = [];
     allFundCodes.forEach(function(fundCode) {
@@ -120,28 +131,72 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
         }));
     });
 
+    // build fetch navps by date requests for sell orders
+    var sellNavpsRequests = [];
+    fundCodesAndDates.forEach(function(fundCodeAndDate) {
+        sellNavpsRequests.push($.ajax({
+            url : "/api/navps",
+            data : {
+                sort : "entryDate,desc",
+                size : 1,
+                fund : fundCodeAndDate.fundCode,
+                dateFrom : fundCodeAndDate.date,
+                dateTo : fundCodeAndDate.date,
+            }
+        }));
+    });
+
+    var latestNavpsStartIndex = 0;
+    var latestNavpsEndIndex = latestNavpsRequests.length - 1;
+    var sellNavpsStartIndex = latestNavpsEndIndex + 1;
+    var sellNavpsEndIndex = latestNavpsEndIndex + sellNavpsRequests.length;
+    var allRequests = [].concat(latestNavpsRequests, sellNavpsRequests);
+
     // fetch latest navps
     $.when
-            .apply($, latestNavpsRequests)
+            .apply($, allRequests)
             .then(
                     function(...navpsLookupResults) {
-                        if (latestNavpsRequests.length == 1) {
+                        if (allRequests.length == 1) {
                             navpsLookupResults = [ navpsLookupResults ];
                         }
                         // convert multiple navps lookups to single lookup
                         var currentNavps = {};
+                        var sellNavps = {};
                         if (navpsLookupResults) {
-                            navpsLookupResults
-                                    .forEach(function(navpsLookupResult) {
-                                        if (navpsLookupResult
-                                                && navpsLookupResult[0]
-                                                && navpsLookupResult[0].content
-                                                && navpsLookupResult[0].content[0]
-                                                && navpsLookupResult[0].content[0].fund
-                                                && navpsLookupResult[0].content[0].fundValue) {
-                                            currentNavps[navpsLookupResult[0].content[0].fund] = navpsLookupResult[0].content[0].fundValue;
-                                        }
-                                    });
+                            for (var i = latestNavpsStartIndex; i <= latestNavpsEndIndex; i++) {
+                                navpsLookupResult = navpsLookupResults[i];
+                                if (!navpsLookupResult
+                                    || !navpsLookupResult[0]
+                                    || !navpsLookupResult[0].content
+                                    || !navpsLookupResult[0].content[0]
+                                    || !navpsLookupResult[0].content[0].fund
+                                    || !navpsLookupResult[0].content[0].fundValue) {
+                                    continue;
+                                }
+                                var currentFund = navpsLookupResult[0].content[0].fund;
+                                var currentValue = navpsLookupResult[0].content[0].fundValue;
+                                currentNavps[currentFund] = currentValue;
+                            }
+                            for (var i = sellNavpsStartIndex; i <= sellNavpsEndIndex; i++) {
+                                navpsLookupResult = navpsLookupResults[i];
+                                if (!navpsLookupResult
+                                    || !navpsLookupResult[0]
+                                    || !navpsLookupResult[0].content
+                                    || !navpsLookupResult[0].content[0]
+                                    || !navpsLookupResult[0].content[0].fund
+                                    || !navpsLookupResult[0].content[0].fundValue
+                                    || !navpsLookupResult[0].content[0].entryDate) {
+                                    continue;
+                                }
+                                var currentFund = navpsLookupResult[0].content[0].fund;
+                                var currentValue = navpsLookupResult[0].content[0].fundValue;
+                                var entryDate = navpsLookupResult[0].content[0].entryDate;
+                                if (!sellNavps[currentFund]) {
+                                    sellNavps[currentFund] = {};
+                                }
+                                sellNavps[currentFund][entryDate] = currentValue;
+                            }
                         }
                         // convert raw orders to orders with current values
                         var processedOrders = [];
@@ -156,6 +211,16 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
                                     var currentValue = currentNavps && currentNavps[rawOrder.orderFundCode]
                                             ? rawOrder.orderShares.times(currentNavps[rawOrder.orderFundCode])
                                             : Big(0);
+                                    var realizedValue = undefined;
+                                    if (rawOrder.orderShares.lt(0)) {
+                                        var orderFundCode = rawOrder.orderFundCode;
+                                        var orderDate = rawOrder.orderDate;
+                                        if (sellNavps[orderFundCode] && sellNavps[orderFundCode][orderDate]) {
+                                            realizedValue = rawOrder.orderShares.times(sellNavps[orderFundCode][orderDate]).times(-1);
+                                        } else {
+                                            realizedValue = new Big(0);
+                                        }
+                                    }
                                     processedOrders
                                             .push({
                                                 id : rawOrder.id,
@@ -165,6 +230,7 @@ function getOrdersWithCurrentValues(callback, existingOrders) {
                                                 orderShares : rawOrder.orderShares,
                                                 orderValue : rawOrder.orderValue,
                                                 currentValue : currentValue,
+                                                realizedValue : realizedValue,
                                             });
                                 });
                         callback(processedOrders);
