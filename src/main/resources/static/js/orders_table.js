@@ -164,6 +164,15 @@ function initAllOrdersTable() {
                                         }
                                     },
                                     {
+                                        name : "realized",
+                                        data : "realizedValue",
+                                        orderable : false,
+                                        className : "text-right",
+                                        render : function(data, _type, _row, _meta) {
+                                            return formatBigToCurrency(data);
+                                        }
+                                    },
+                                    {
                                         name : "actions",
                                         orderable : false,
                                         render : function(_data, _type, row, _meta) {
@@ -219,6 +228,7 @@ function makeSummaries(data) {
         shares : new Big(0),
         baseValue : new Big(0),
         currentValue : new Big(0),
+        realizedValue : new Big(0),
     };
 
     for(var i = 0; i < data.length; i++) {
@@ -246,6 +256,9 @@ function makeSummaries(data) {
             var fundCostBasis = summaries[fundCode] ? summaries[fundCode].baseValue : new Big(0);
             var costBasisReduction = fundCostBasis.times(sharesProportion);
             totalSummary.baseValue = totalSummary.baseValue.minus(costBasisReduction);
+
+            var realizedValue = order.realizedValue.minus(costBasisReduction);
+            totalSummary.realizedValue = totalSummary.realizedValue.plus(realizedValue);
         }
 
         // compute summary for each fund
@@ -293,6 +306,7 @@ function makeSummaries(data) {
     funds.forEach(function(fundCode) {
         summaryList.push(summaries[fundCode]);
     });
+    debugger;
     return summaryList;
 }
 
@@ -339,7 +353,11 @@ function buildOrderSummaryCard(ordersSummary) {
                 + formatBigToNumber(ordersSummary.shares) + "</td>"));
         panelBodyTable.append(totalShares);
     } else {
-        panelBodyTable.append("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+        var realizedValue = $("<tr />");
+        realizedValue
+                .append($("<td><b>Realized Value :</b></td><td class='pull-right'>"
+                        + formatBigToCurrency(ordersSummary.realizedValue) + "</td>"));
+        panelBodyTable.append(realizedValue);
     }
     var panelBody = $("<div />", {
         "class" : "panel-body"
